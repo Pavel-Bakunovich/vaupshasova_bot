@@ -1,0 +1,1 @@
+SQUAD_TEMPLATE_FILENAME = "squad.template"
