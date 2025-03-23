@@ -1,7 +1,7 @@
 import os
 from psycopg2 import pool
 from dotenv import load_dotenv
-from helpers import fill_template
+from helpers import fill_template,get_next_matchday
 
 load_dotenv()
 connection_string = os.getenv('DATABASE_URL')
@@ -95,10 +95,10 @@ def register_player_matchday(matchday_date, type, player_id):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'INSERT INTO "public"."Matchday" ("Matchday_Date", "Type", "Player_ID", "Time_Stamp") VALUES (\'{matchday_date}\', \'{type}\', \'{player_id}\', NOW())',
+            'INSERT INTO "public"."Matchday" ("Matchday_Date", "Type", "Player_ID", "Time_Stamp") VALUES (\'{matchday_date}\', \'{type}\', \'{player_id}\', \'{date_now}\')',
             matchday_date=matchday_date,
             type=type,
-            player_id=player_id))
+            player_id=player_id, date_now=get_next_matchday()))
     connection.commit()
 
     close_connection_pool(connection_pool)
@@ -126,10 +126,10 @@ def update_registraion_player_matchday(matchday_date, type, player_id):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'UPDATE "public"."Matchday" SET "Type" = \'{type}\', "Time_Stamp" = NOW() WHERE "Player_ID" = \'{player_id}\' AND "Matchday_Date" = \'{matchday_date}\'',
+            'UPDATE "public"."Matchday" SET "Type" = \'{type}\', "Time_Stamp" = \'{date_now}\' WHERE "Player_ID" = \'{player_id}\' AND "Matchday_Date" = \'{matchday_date}\'',
             matchday_date=matchday_date,
             type=type,
-            player_id=player_id))
+            player_id=player_id,date_now=get_next_matchday()))
     connection.commit()
 
     close_connection_pool(connection_pool)
@@ -163,18 +163,3 @@ def get_squad(matchday_date):
     close_connection_pool(connection_pool)
 
     return matchdays
-
-
-#print(find_registraion_player_matchday('03/22/2025',343151297))
-
-#create_player("Pavel", "Bakunovich", "@pavel_bakunovich", 34756345)
-#remove_player(34756345)
-#update_player(15, "Pavel1", "Bakunovich2", "@pavel_bakunovich2", 555)
-
-#def get_players():
-
-#def create_or_update_matchday():
-
-#def register_player_matchday():
-
-#def unregisterplayer_matchday():

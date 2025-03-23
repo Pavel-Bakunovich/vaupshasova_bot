@@ -31,7 +31,7 @@ def add(message):
             if matchday is None:
                 if (database.get_matchday_players_count(
                         helpers.get_next_matchday()) < 12):
-
+    
                     database.register_player_matchday(
                         helpers.get_next_matchday(), "add", player[0])
                     user_message_text = helpers.fill_template(
@@ -58,13 +58,13 @@ def add(message):
                         
                         database.update_registraion_player_matchday(
                             helpers.get_next_matchday(), "chair", player[0])
-
+    
             bot.reply_to(message, user_message_text)
             bot.set_message_reaction(message.chat.id,
                                      message.message_id,
                                      [ReactionTypeEmoji('✍️')],
                                      is_big=True)
-
+    
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:

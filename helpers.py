@@ -1,6 +1,13 @@
 import datetime
 import calendar
-import locale
+import zoneinfo
+import pytz
+
+def get_today_minsk_time():
+  today = datetime.datetime.today() #reference point.
+  tz = pytz.timezone('Europe/Minsk')
+  today_minsk = tz.localize(today)
+  return today_minsk
 
 def fill_template(template, **kwargs):
   result = template
@@ -11,11 +18,11 @@ def fill_template(template, **kwargs):
 
 
 def get_next_matchday():
-  today = datetime.date.today()  #reference point.
-  saturday = today + datetime.timedelta(
-      (calendar.SATURDAY - today.weekday()) % 7)
+  today_minsk = get_today_minsk_time()
+  saturday = today_minsk + datetime.timedelta((calendar.SATURDAY - today_minsk.weekday()) % 7)
   return saturday
 
+get_next_matchday()
 
 def get_next_matchday_formatted():
 
@@ -25,11 +32,13 @@ def get_next_matchday_formatted():
   }
   date = get_next_matchday()
   return f"{date.day} {MONTHS_RU[date.month]} {date.year}"
-  #return get_next_matchday().strftime(format='%d %b %Y')
 
 
 def allow_registration():
-  if (datetime.date.today().weekday() == 5) or (datetime.date.today().weekday() == 6):
+  return True
+  today_minsk = get_today_minsk_time()
+  if (today_minsk.weekday() == 5) or (today_minsk.weekday() == 6):
     return False
   else:
     return True
+
