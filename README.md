@@ -6,3 +6,10 @@ Vaupshasova Bot
 
 
 curl "https://api.telegram.org/botTOKEN/setWebhook?url=https://us-central1-angular-lambda-289018.cloudfunctions.net/vaupshasova_bot"
+
+
+
+Backlog:
+1. Add ability to register player on their behalf. Like /add Сергей Лисовский. This is power user features, only for me.
+2. Add chat restrtiction - only Лига Ваупшасова can use this bot.
+3. Add GenAI. Let it joke around.
