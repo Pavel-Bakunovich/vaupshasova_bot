@@ -11,7 +11,7 @@ curl "https://api.telegram.org/botTOKEN/setWebhook?remove"
 
 BACKLOG
 1. Add ability to register player on their behalf. Like /add Сергей Лисовский. This is power user features, only for me.
-2. Add chat restrtiction - only Лига Ваупшасова can use this bot.
+2. ✅ Add chat restrtiction - only Лига Ваупшасова can use this bot.
 3. Make the bot multi-account. So other football chats can use it.
 4. Let bot pin a message and update it with the squad. Instead of /squad every time when y ou need to check out the squad.
 5. Add GenAI. Let it joke around.
