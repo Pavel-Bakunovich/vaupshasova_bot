@@ -26,45 +26,46 @@ def add(message):
                                             message.from_user.username,
                                             message.from_user.id)
         if (helpers.allow_registration()):
-            matchday = database.find_registraion_player_matchday(
-                helpers.get_next_matchday(), message.from_user.id)
-            if matchday is None:
-                if (database.get_matchday_players_count(
-                        helpers.get_next_matchday()) < 12):
-    
-                    database.register_player_matchday(
-                        helpers.get_next_matchday(), "add", player[0])
-                    user_message_text = helpers.fill_template(
-                        "✍️ {name}, ты добавлен в состав на игру {date}.",
-                        name=get_player_name(player),
-                        date=helpers.get_next_matchday_formatted())
-                else:
-                    user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
-                    
-                
-                    database.update_registraion_player_matchday(
-                        helpers.get_next_matchday(), "chair", player[0])
-            else:
-                if matchday[2] == "add":
-                    user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
-                else:
-                    if (database.get_matchday_players_count(helpers.get_next_matchday()) < 12):
-                        user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
-                        
-                        database.update_registraion_player_matchday(
+            if (helpers.authorized(message.chat.id)):
+                matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), message.from_user.id)
+                if matchday is None:
+                    if (database.get_matchday_players_count(
+                            helpers.get_next_matchday()) < 12):
+        
+                        database.register_player_matchday(
                             helpers.get_next_matchday(), "add", player[0])
+                        user_message_text = helpers.fill_template(
+                            "✍️ {name}, ты добавлен в состав на игру {date}.",
+                            name=get_player_name(player),
+                            date=helpers.get_next_matchday_formatted())
                     else:
-                        user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя на стульчик.", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
+                        user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
                         
+                    
                         database.update_registraion_player_matchday(
                             helpers.get_next_matchday(), "chair", player[0])
-    
-            bot.reply_to(message, user_message_text)
-            bot.set_message_reaction(message.chat.id,
-                                     message.message_id,
-                                     [ReactionTypeEmoji('✍️')],
-                                     is_big=True)
-    
+                else:
+                    if matchday[2] == "add":
+                        user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
+                    else:
+                        if (database.get_matchday_players_count(helpers.get_next_matchday()) < 12):
+                            user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
+                            
+                            database.update_registraion_player_matchday(
+                                helpers.get_next_matchday(), "add", player[0])
+                        else:
+                            user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя на стульчик.", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
+                            
+                            database.update_registraion_player_matchday(
+                                helpers.get_next_matchday(), "chair", player[0])
+        
+                bot.reply_to(message, user_message_text)
+                bot.set_message_reaction(message.chat.id,
+                                        message.message_id,
+                                        [ReactionTypeEmoji('✍️')],
+                                        is_big=True)
+            else:
+                reply_to_unauthorized(bot, message)
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:
@@ -82,24 +83,26 @@ def remove(message):
                                             message.from_user.username,
                                             message.from_user.id)
         if (helpers.allow_registration()):
-            matchday = database.find_registraion_player_matchday(
-                helpers.get_next_matchday(), message.from_user.id)
+            if (helpers.authorized(message.chat.id)):
+                matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), message.from_user.id)
 
-            if matchday is None:
-                user_message_text = helpers.fill_template("{name}, тебя и так нету в составе на {date}!", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
-            else:
-                if matchday[2] == "remove":
+                if matchday is None:
                     user_message_text = helpers.fill_template("{name}, тебя и так нету в составе на {date}!", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
                 else:
-                    user_message_text = helpers.fill_template("❌ {name}, удален из состава на игру {date}!", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
-                    database.update_registraion_player_matchday(
-                        helpers.get_next_matchday(), "remove", player[0])
+                    if matchday[2] == "remove":
+                        user_message_text = helpers.fill_template("{name}, тебя и так нету в составе на {date}!", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
+                    else:
+                        user_message_text = helpers.fill_template("❌ {name}, удален из состава на игру {date}!", name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
+                        database.update_registraion_player_matchday(
+                            helpers.get_next_matchday(), "remove", player[0])
 
-            bot.reply_to(message, user_message_text)
-            bot.set_message_reaction(message.chat.id,
-                                     message.message_id,
-                                     [ReactionTypeEmoji('😭')],
-                                     is_big=True)
+                bot.reply_to(message, user_message_text)
+                bot.set_message_reaction(message.chat.id,
+                                        message.message_id,
+                                        [ReactionTypeEmoji('😭')],
+                                        is_big=True)
+            else:
+                reply_to_unauthorized(bot, message)
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:
@@ -116,32 +119,34 @@ def chair(message):
                                             message.from_user.username,
                                             message.from_user.id)
         if (helpers.allow_registration()):
-            matchday = database.find_registraion_player_matchday(
-                helpers.get_next_matchday(), message.from_user.id)
+            if (helpers.authorized(message.chat.id)):
+                matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), message.from_user.id)
 
-            if matchday is None:
-                database.register_player_matchday(helpers.get_next_matchday(),
-                                                  "chair", player[0])
+                if matchday is None:
+                    database.register_player_matchday(helpers.get_next_matchday(),
+                                                    "chair", player[0])
 
-                user_message_text = helpers.fill_template("🪑 {name}, cел на стульчик на игру {date}" ,name=get_player_name(player))
+                    user_message_text = helpers.fill_template("🪑 {name}, cел на стульчик на игру {date}" ,name=get_player_name(player))
+                else:
+                    if matchday[2] == "add":
+
+                        user_message_text = helpers.fill_template("🪑 {name}, окей, снимаем тебя с состава и записываем на стул на игру {date}!" ,name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
+                        database.update_registraion_player_matchday(
+                            helpers.get_next_matchday(), "chair", player[0])
+                    if matchday[2] == "chair":
+                        user_message_text = helpers.fill_template("🪑 {name}, так ты и так уже на стуле сидишь!" ,name=get_player_name(player))
+                    if matchday[2] == "remove":
+                        user_message_text = helpers.fill_template("🪑 {name}, ты раньше минусовался, но записываем тебя на стул на игру {date}! Так уж и быть." ,name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
+
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
+
+                bot.reply_to(message, user_message_text)
+                bot.set_message_reaction(message.chat.id,
+                                        message.message_id,
+                                        [ReactionTypeEmoji('✍️')],
+                                        is_big=True)
             else:
-                if matchday[2] == "add":
-
-                    user_message_text = helpers.fill_template("🪑 {name}, окей, снимаем тебя с состава и записываем на стул на игру {date}!" ,name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
-                    database.update_registraion_player_matchday(
-                        helpers.get_next_matchday(), "chair", player[0])
-                if matchday[2] == "chair":
-                    user_message_text = helpers.fill_template("🪑 {name}, так ты и так уже на стуле сидишь!" ,name=get_player_name(player))
-                if matchday[2] == "remove":
-                    user_message_text = helpers.fill_template("🪑 {name}, ты раньше минусовался, но записываем тебя на стул на игру {date}! Так уж и быть." ,name=get_player_name(player),date=str(helpers.get_next_matchday_formatted()))
-
-                    database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
-
-            bot.reply_to(message, user_message_text)
-            bot.set_message_reaction(message.chat.id,
-                                     message.message_id,
-                                     [ReactionTypeEmoji('✍️')],
-                                     is_big=True)
+                reply_to_unauthorized(bot, message)
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:
@@ -157,38 +162,40 @@ def squad(message):
                                             message.from_user.username,
                                             message.from_user.id)
         if (helpers.allow_registration()):
-
-            with open(constants.SQUAD_TEMPLATE_FILENAME,
-                      "r") as squad_template_file:
-                squad_template_text = squad_template_file.read()
-            squad_template_text = squad_template_text.replace(
-                "{date}", str(helpers.get_next_matchday_formatted()))
-
-            matchday_roster = database.get_squad(helpers.get_next_matchday())
-            i = 1
-            for player in matchday_roster:
-                if player[2] == 'add':
-                    squad_template_text = squad_template_text.replace(
-                        "{Player " + str(i) + "}",
-                        get_player_name_extended(player))
-                    i += 1
-
-            for player in matchday_roster:
-                if (player[2] == 'chair'):
-                    squad_template_text += "\n🪑 " + get_player_name_extended(
-                        player)
-
-            for player in matchday_roster:
-                if (player[2] == 'remove'):
-                    squad_template_text += "\n❌ " + get_player_name_extended(
-                        player)
-
-            slots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-            for x in slots:
+            if (helpers.authorized(message.chat.id)):
+                with open(constants.SQUAD_TEMPLATE_FILENAME,
+                        "r") as squad_template_file:
+                    squad_template_text = squad_template_file.read()
                 squad_template_text = squad_template_text.replace(
-                    "{Player " + str(x) + "}", "")
+                    "{date}", str(helpers.get_next_matchday_formatted()))
 
-            bot.reply_to(message, squad_template_text)
+                matchday_roster = database.get_squad(helpers.get_next_matchday())
+                i = 1
+                for player in matchday_roster:
+                    if player[2] == 'add':
+                        squad_template_text = squad_template_text.replace(
+                            "{Player " + str(i) + "}",
+                            get_player_name_extended(player))
+                        i += 1
+
+                for player in matchday_roster:
+                    if (player[2] == 'chair'):
+                        squad_template_text += "\n🪑 " + get_player_name_extended(
+                            player)
+
+                for player in matchday_roster:
+                    if (player[2] == 'remove'):
+                        squad_template_text += "\n❌ " + get_player_name_extended(
+                            player)
+
+                slots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                for x in slots:
+                    squad_template_text = squad_template_text.replace(
+                        "{Player " + str(x) + "}", "")
+
+                bot.reply_to(message, squad_template_text)
+            else:
+                reply_to_unauthorized(bot, message)
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:
@@ -212,9 +219,6 @@ def get_player_name(player):
         return str(player[7])
 
 
-#def get_informal_player_name(player):
-
-
 def add_player_if_not_existant(first_name, last_name, username, telegram_id):
     player = database.find_player(telegram_id)
     if player is None:
@@ -235,5 +239,10 @@ def reply_registration_not_allowed(bot, message, player):
                              message.message_id, [ReactionTypeEmoji('🤬')],
                              is_big=True)
 
+def reply_to_unauthorized(bot, message):
+    bot.reply_to(message,"Вам нельзя пользоваться этим ботом. Он предназначается эксклюзивно для Лиги Ваупшасова.")
+    bot.set_message_reaction(message.chat.id,
+                             message.message_id, [ReactionTypeEmoji('🤬')],
+                             is_big=True)
 
 bot.polling()

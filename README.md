@@ -16,5 +16,5 @@ BACKLOG
 4. Let bot pin a message and update it with the squad. Instead of /squad every time when y ou need to check out the squad.
 5. Add GenAI. Let it joke around.
 6. Add message when 3 seats are left: "3 места осталось.", "2 места осталось"...
-7. Fix timezone issue
+7. ✅ Fix timezone issue
 8. ✅ Find cheaper hosting

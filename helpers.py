@@ -35,3 +35,10 @@ def allow_registration():
   else:
     return True
 
+def authorized(chat_id):
+  # This magic number is an ID of our the "Лига Ваупшасова" group chat. 
+  # People can use this bot from withit either exclusively this group or in personal chat. This bot cannot be used in another group chat.
+  if chat_id == -1001369044567 or chat_id > 0:
+    return True
+  else:
+    return False
