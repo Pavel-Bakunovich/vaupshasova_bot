@@ -12,8 +12,6 @@ def fill_template(template, **kwargs):
 def get_today_minsk_time():
   tz = pytz.timezone('Europe/Minsk')
   today_minsk = datetime.datetime.now(tz)
-  print(datetime.datetime.now())
-  print(datetime.datetime.now(tz))
   return today_minsk
 
 def get_next_matchday():
