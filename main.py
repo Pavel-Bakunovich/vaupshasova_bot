@@ -162,7 +162,7 @@ def chair(message):
 @bot.message_handler(commands=['squad'])
 def squad(message):
     try:
-        player = add_player_if_not_existant(message.from_user.first_name,
+        current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
@@ -199,20 +199,21 @@ def squad(message):
                         "{Player " + str(x) + "}", "")
 
                 bot.reply_to(message, squad_template_text)
-                send_random_joke(bot, message, player)
+                send_random_joke(bot, message, current_player)
             else:
                 reply_to_unauthorized(bot, message)
         else:
-            reply_registration_not_allowed(bot, message, player)
+            reply_registration_not_allowed(bot, message, current_player)
     except Exception as e:
         bot.reply_to(message, "Чота я паламался. Давай по-новой.")
         print(e)
 
 
 def send_random_joke(bot, message, player):
-    print(random.random())
-    if (random.random()<0.33):
-        response = deepseek.send_request_deekseek(helpers.fill_template("Придумай злобную шутку про Манчестер Юнайтед. Это сообщение спровоцировал {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько.",
+    print(helpers.fill_template("Придумай злобную шутку про Манчестер Юнайтед. Это сообщение спровоцировал {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько. Шутка не должна быть слишком длинной - примерно 1 короткий абзац.",
+                                                                    name = get_player_name(player)))
+    if (random.random()<1.33):
+        response = deepseek.send_request_deekseek(helpers.fill_template("Придумай злобную шутку про Манчестер Юнайтед. Это сообщение спровоцировал {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько. Шутка не должна быть слишком длинной - примерно 1 короткий абзац.",
                                                                     name = get_player_name(player)))
         bot.send_message(message.chat.id,response)
 
