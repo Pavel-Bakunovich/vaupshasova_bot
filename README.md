@@ -14,7 +14,8 @@ BACKLOG
 2. ✅ Add chat restrtiction - only Лига Ваупшасова can use this bot.
 3. Make the bot multi-account. So other football chats can use it.
 4. Let bot pin a message and update it with the squad. Instead of /squad every time when y ou need to check out the squad.
-5. Add GenAI. Let it joke around.
+5. ✅ Add GenAI. Let it joke around.
 6. Add message when 3 seats are left: "3 места осталось.", "2 места осталось"...
 7. ✅ Fix timezone issue
 8. ✅ Find cheaper hosting
+9. Bot should track those who hasn't yet woke up yet on a game day.
