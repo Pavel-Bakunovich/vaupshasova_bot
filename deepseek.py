@@ -15,7 +15,7 @@ def send_request_deekseek(prompt):
             {"role": "system", "content": constants.SYSTEM_PROMPT_DEEPSEEK},
             {"role": "user", "content": prompt},
         ],
-        temperature=1.0,
+        temperature=1.5,
         stream=False
     )
 
