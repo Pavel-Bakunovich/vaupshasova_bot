@@ -16,13 +16,10 @@ def fill_template(template, **kwargs):
     result = result.replace(placeholder, str(value))
   return result
 
-
 def get_next_matchday():
   today_minsk = get_today_minsk_time()
   saturday = today_minsk + datetime.timedelta((calendar.SATURDAY - today_minsk.weekday()) % 7)
   return saturday
-
-get_next_matchday()
 
 def get_next_matchday_formatted():
 
@@ -32,7 +29,6 @@ def get_next_matchday_formatted():
   }
   date = get_next_matchday()
   return f"{date.day} {MONTHS_RU[date.month]} {date.year}"
-
 
 def allow_registration():
   today_minsk = get_today_minsk_time()
