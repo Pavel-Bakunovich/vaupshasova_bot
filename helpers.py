@@ -35,7 +35,6 @@ def get_next_matchday_formatted():
 
 
 def allow_registration():
-  return True
   today_minsk = get_today_minsk_time()
   if (today_minsk.weekday() == 5) or (today_minsk.weekday() == 6):
     return False
