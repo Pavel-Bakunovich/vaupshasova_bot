@@ -3,6 +3,8 @@ import telebot
 import constants
 import helpers
 import database
+import deepseek
+import random
 from dotenv import load_dotenv
 from telebot.types import ReactionTypeEmoji
 
@@ -64,6 +66,7 @@ def add(message):
                                         message.message_id,
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
+                send_random_joke(bot, message, player)
             else:
                 reply_to_unauthorized(bot, message)
         else:
@@ -101,6 +104,7 @@ def remove(message):
                                         message.message_id,
                                         [ReactionTypeEmoji('😭')],
                                         is_big=True)
+                send_random_joke(bot, message, player)
             else:
                 reply_to_unauthorized(bot, message)
         else:
@@ -145,6 +149,7 @@ def chair(message):
                                         message.message_id,
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
+                send_random_joke(bot, message, player)
             else:
                 reply_to_unauthorized(bot, message)
         else:
@@ -194,6 +199,7 @@ def squad(message):
                         "{Player " + str(x) + "}", "")
 
                 bot.reply_to(message, squad_template_text)
+                send_random_joke(bot, message, player)
             else:
                 reply_to_unauthorized(bot, message)
         else:
@@ -202,6 +208,13 @@ def squad(message):
         bot.reply_to(message, "Чота я паламался. Давай по-новой.")
         print(e)
 
+
+def send_random_joke(bot, message, player):
+    print(random.random())
+    if (random.random()<0.33):
+        response = deepseek.send_request_deekseek(helpers.fill_template("Придумай злобную шутку про Манчестер Юнайтед. Это сообщение спровоцировал {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько.",
+                                                                    name = get_player_name(player)))
+        bot.send_message(message.chat.id,response)
 
 def get_player_name_extended(player):
     if (player[10] is None):
