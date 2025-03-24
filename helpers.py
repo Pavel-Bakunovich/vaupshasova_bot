@@ -1,13 +1,6 @@
 import datetime
 import calendar
-import zoneinfo
 import pytz
-
-def get_today_minsk_time():
-  today = datetime.datetime.today() #reference point.
-  tz = pytz.timezone('Europe/Minsk')
-  today_minsk = tz.localize(today)
-  return today_minsk
 
 def fill_template(template, **kwargs):
   result = template
@@ -15,6 +8,13 @@ def fill_template(template, **kwargs):
     placeholder = f"{{{key}}}"
     result = result.replace(placeholder, str(value))
   return result
+
+def get_today_minsk_time():
+  tz = pytz.timezone('Europe/Minsk')
+  today_minsk = datetime.datetime.now(tz)
+  print(datetime.datetime.now())
+  print(datetime.datetime.now(tz))
+  return today_minsk
 
 def get_next_matchday():
   today_minsk = get_today_minsk_time()
