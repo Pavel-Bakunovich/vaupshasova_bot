@@ -211,7 +211,7 @@ def squad(message):
 
 def send_random_joke(bot, message, player):
     if (random.random()<0.33):
-        response = deepseek.send_request_deekseek(helpers.fill_template("Придумай злобную шутку про Манчестер Юнайтед. Используй обидные обзывательства. Это сообщение спровоцировал {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько. Шутка не должна быть слишком длинной - примерно 1 короткий абзац.",
+        response = deepseek.send_request_deekseek(helpers.fill_template("Придумай злобную шутку про Манчестер Юнайтед. Используй обидные обзывательства. К этому сообщению имеет отношение {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько. Шутка не должна быть слишком длинной - примерно 1 короткий абзац.",
                                                                     name = get_player_name(player)))
         bot.send_message(message.chat.id,response)
 
