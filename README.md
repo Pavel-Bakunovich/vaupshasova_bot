@@ -3,7 +3,7 @@ Vaupshasova Bot
 Это бот, который помогает друзьям собирать состав на игру в футбол - записаться, отписаться, вести список записавшихся на игру.
 
 DEPLOYMENT COMMAND TO GCP CLOUD RUN FUNCTIONS
-./google-cloud-sdk/bin/gcloud functions deploy vaupshasova_bot --set-env-vars "TELEGRAM_TOKEN=TOKEN" --runtime python312 --trigger-http --project=angular-lambda-289018 --source ./GitHub/vaupshasova_bot/
+./google-cloud-sdk/bin/gcloud functions deploy vaupshasova_bot --set-env-vars "TELEGRAM_TOKEN=TOKEN" --runtime python39 --trigger-http --project=angular-lambda-289018 --source ./GitHub/vaupshasova_bot/
 
 SET AND REMOVE WEEBHOOKS
 curl "https://api.telegram.org/botTOKEN/setWebhook?url=https://us-central1-angular-lambda-289018.cloudfunctions.net/vaupshasova_bot"
