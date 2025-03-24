@@ -31,7 +31,7 @@ def remove_player(telegram_id):
 
     cursor.execute(
         fill_template(
-            'DELETE FROM "public"."Players" WHERE "Telegram_ID" = {telegram_id}',
+            'DELETE FROM Players WHERE Telegram_ID = {telegram_id}',
             telegram_id=telegram_id))
     connection.commit()
 
@@ -45,7 +45,7 @@ def update_player(id, first_name, last_name, login, telegram_id):
 
     cursor.execute(
         fill_template(
-            'UPDATE "public"."Players" SET "Telegram_First_Name" = \'{first_name}\', "Telegram_Last_Name" = \'{last_name}\', "Telegram_Login" = \'{login}\', "Telegram_ID" = \'{}\' WHERE "id" = \'{playerID}\'',
+            'UPDATE Players SET Telegram_First_Name = \'{first_name}\', Telegram_Last_Name = \'{last_name}\', Telegram_Login = \'{login}\', Telegram_ID = \'{}\' WHERE id = \'{playerID}\'',
             first_name=first_name,
             last_name=last_name,
             login=login,
@@ -63,7 +63,7 @@ def create_player(first_name, last_name, username, telegram_id):
 
     cursor.execute(
         fill_template(
-            'INSERT INTO "public"."Players" ("Telegram_First_Name", "Telegram_Last_Name", "Telegram_Login", "Telegram_ID") VALUES (\'{first_name}\', \'{last_name}\', \'{username}\', \'{telegram_id}\')',
+            'INSERT INTO Players (Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID) VALUES (\'{first_name}\', \'{last_name}\', \'{username}\', \'{telegram_id}\')',
             first_name=first_name,
             last_name=last_name,
             username=username,
@@ -80,7 +80,7 @@ def find_player(telegram_id):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'SELECT * FROM "public"."Players" WHERE "Telegram_ID" = \'{telegram_id}\'',
+            'SELECT * FROM Players WHERE Telegram_ID = \'{telegram_id}\'',
             telegram_id=telegram_id))
     player = cursor.fetchone()
 
@@ -95,7 +95,7 @@ def register_player_matchday(matchday_date, type, player_id):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'INSERT INTO "public"."Matchday" ("Matchday_Date", "Type", "Player_ID", "Time_Stamp") VALUES (\'{matchday_date}\', \'{type}\', \'{player_id}\', \'{date_now}\')',
+            'INSERT INTO Matchday (Matchday_Date, Type, Player_ID, Time_Stamp) VALUES (\'{matchday_date}\', \'{type}\', \'{player_id}\', \'{date_now}\')',
             matchday_date=matchday_date,
             type=type,
             player_id=player_id, date_now=get_next_matchday()))
@@ -110,7 +110,7 @@ def find_registraion_player_matchday(matchday_date, telegram_id):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'SELECT * FROM "public"."Matchday" INNER JOIN "public"."Players"  ON "public"."Matchday"."Player_ID"="public"."Players"."id" WHERE "public"."Players"."Telegram_ID" = \'{telegram_id}\' AND "public"."Matchday"."Matchday_Date" = \'{matchday_date}\'',
+            'SELECT * FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Players.Telegram_ID = \'{telegram_id}\' AND Matchday.Matchday_Date = \'{matchday_date}\'',
             telegram_id=telegram_id,
             matchday_date=matchday_date))
     matchday = cursor.fetchone()
@@ -126,7 +126,7 @@ def update_registraion_player_matchday(matchday_date, type, player_id):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'UPDATE "public"."Matchday" SET "Type" = \'{type}\', "Time_Stamp" = \'{date_now}\' WHERE "Player_ID" = \'{player_id}\' AND "Matchday_Date" = \'{matchday_date}\'',
+            'UPDATE Matchday SET Type = \'{type}\', Time_Stamp = \'{date_now}\' WHERE Player_ID = \'{player_id}\' AND Matchday_Date = \'{matchday_date}\'',
             matchday_date=matchday_date,
             type=type,
             player_id=player_id,date_now=get_next_matchday()))
@@ -141,7 +141,7 @@ def get_matchday_players_count(matchday_date):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'SELECT COUNT(*) FROM "public"."Matchday" INNER JOIN "public"."Players"  ON "public"."Matchday"."Player_ID"="public"."Players"."id" WHERE "public"."Matchday"."Matchday_Date" = \'{matchday_date}\' AND "public"."Matchday"."Type"=\'add\'',
+            'SELECT COUNT(*) FROM Matchday INNER JOIN Players  ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\' AND Matchday.Type=\'add\'',
             matchday_date=matchday_date))
     matchday_players_count = cursor.fetchone()
 
@@ -156,7 +156,7 @@ def get_squad(matchday_date):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'SELECT * FROM "public"."Matchday" INNER JOIN "public"."Players"  ON "public"."Matchday"."Player_ID"="public"."Players"."id" WHERE "public"."Matchday"."Matchday_Date" = \'{matchday_date}\'',
+            'SELECT * FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\'',
             matchday_date=matchday_date))
     matchdays = cursor.fetchall()
 
