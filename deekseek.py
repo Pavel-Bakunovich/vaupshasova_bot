@@ -21,5 +21,5 @@ def send_request_deekseek(prompt):
 
     return response.choices[0].message.content
 
-print(send_request_deekseek("Расскажи очень обидную шутку про Максима Окунева."))
+#print(send_request_deekseek("Расскажи очень обидную шутку про Максима Окунева."))
 

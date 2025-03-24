@@ -3,3 +3,4 @@ telebot
 pytz
 psycopg2-binary
 dotenv
+openai
