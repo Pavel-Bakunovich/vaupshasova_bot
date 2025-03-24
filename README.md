@@ -12,6 +12,7 @@ curl "https://api.telegram.org/botTOKEN/setWebhook?remove"
 BACKLOG
 1. Add ability to register player on their behalf. Like /add Сергей Лисовский. This is power user features, only for me.
 2. Add chat restrtiction - only Лига Ваупшасова can use this bot.
-3. Add GenAI. Let it joke around.
-4. Add message when 3 seats are leaft: "3 места осталось.", "2 места осталось"...
-5. Find cheaper hosting
+3. Let bot pin a message and update it with the squad. Instead of /squad every time when y ou need to check out the squad.
+4. Add GenAI. Let it joke around.
+5. Add message when 3 seats are left: "3 места осталось.", "2 места осталось"...
+6. Find cheaper hosting
