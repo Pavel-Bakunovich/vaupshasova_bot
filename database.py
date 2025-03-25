@@ -124,6 +124,11 @@ def update_registraion_player_matchday(matchday_date, type, player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
+    print(fill_template(
+            'UPDATE Matchday SET Type = \'{type}\', Time_Stamp = \'{date_now}\' WHERE Player_ID = \'{player_id}\' AND Matchday_Date = \'{matchday_date}\'',
+            matchday_date=matchday_date,
+            type=type,
+            player_id=player_id,date_now=get_next_matchday()))
     cursor.execute(
         fill_template(
             'UPDATE Matchday SET Type = \'{type}\', Time_Stamp = \'{date_now}\' WHERE Player_ID = \'{player_id}\' AND Matchday_Date = \'{matchday_date}\'',

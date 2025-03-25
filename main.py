@@ -35,18 +35,15 @@ def add(message):
             if (helpers.authorized(message.chat.id)):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), message.from_user.id)
                 if matchday is None:
-                    if (database.get_matchday_players_count(
-                            helpers.get_next_matchday()) < 12):
-        
+                    if (database.get_matchday_players_count(helpers.get_next_matchday()) < 12):
                         database.register_player_matchday(helpers.get_next_matchday(), "add", player[0])
-                        user_message_text = helpers.fill_template(
-                            "✍️ {name}, ты добавлен в состав на игру {date}.",
+                        user_message_text = helpers.fill_template("✍️ {name}, ты добавлен в состав на игру {date}.",
                             name=get_player_name(player),
                             date=helpers.get_next_matchday_formatted())
                     else:
                         user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-                        
-                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
+                        print(user_message_text)
+                        database.register_player_matchday(helpers.get_next_matchday(), "chair", player[0])
                 else:
                     if matchday[2] == "add":
                         user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
