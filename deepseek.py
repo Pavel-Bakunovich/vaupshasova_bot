@@ -6,9 +6,6 @@ import constants
 load_dotenv()
 DEEPSEEK_API_KEY = os.environ['DEEPSEEK_API_KEY']
 
-def send_request(prompt):
-    return send_request(prompt, 1.5)
-
 def send_request(prompt, temperature):
     client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 

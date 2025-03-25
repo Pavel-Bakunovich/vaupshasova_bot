@@ -251,7 +251,7 @@ def send_random_joke(bot, message, player):
             prompt = "Придумай злобную шутку про Максима Окунева. Он старый толстый игрок. Шутка должна быть в следующем формате. Вот два примера: На улице летом скоро будет 30, а тебе уже не будет . Кефир обезжиренный, а ты нет. В шутке обязательно должно быть упомянуто имя Максим. В ответа включи только одну шутку."
 
     if prompt != "":
-        response = deepseek.send_request(helpers.fill_template(prompt, name = get_player_name(player)))
+        response = deepseek.send_request(helpers.fill_template(prompt, name = get_player_name(player)), 1.5)
         bot.send_message(message.chat.id, response)        
 
 def get_player_name_extended(player):
