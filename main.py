@@ -229,6 +229,8 @@ def split(message):
                 split_squad = deepseek.send_request(split_squad_template_text, 0)
 
                 bot.reply_to(message, split_squad)
+
+                send_random_joke(bot, message, current_player)
             else:
                 reply_to_unauthorized(bot, message)
         else:
