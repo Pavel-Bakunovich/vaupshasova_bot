@@ -1,7 +1,7 @@
 import os
 from psycopg2 import pool
 from dotenv import load_dotenv
-from helpers import fill_template,get_next_matchday
+from helpers import fill_template,get_next_matchday,get_today_minsk_time
 
 load_dotenv()
 connection_string = os.getenv('DATABASE_URL')
@@ -45,11 +45,11 @@ def update_player(id, first_name, last_name, login, telegram_id):
 
     cursor.execute(
         fill_template(
-            'UPDATE Players SET Telegram_First_Name = \'{first_name}\', Telegram_Last_Name = \'{last_name}\', Telegram_Login = \'{login}\', Telegram_ID = \'{}\' WHERE id = \'{playerID}\'',
+            'UPDATE Players SET Telegram_First_Name = \'{first_name}\', Telegram_Last_Name = \'{last_name}\', Telegram_Login = \'{login}\', Telegram_ID = \'{telegram_id}\' WHERE id = \'{playerID}\'',
             first_name=first_name,
             last_name=last_name,
             login=login,
-            id=id,
+            telegram_id=telegram_id,
             playerID=id))
     connection.commit()
 
@@ -98,7 +98,8 @@ def register_player_matchday(matchday_date, type, player_id):
             'INSERT INTO Matchday (Matchday_Date, Type, Player_ID, Time_Stamp) VALUES (\'{matchday_date}\', \'{type}\', \'{player_id}\', \'{date_now}\')',
             matchday_date=matchday_date,
             type=type,
-            player_id=player_id, date_now=get_next_matchday()))
+            player_id=player_id,
+            date_now=get_today_minsk_time()))
     connection.commit()
 
     close_connection_pool(connection_pool)
@@ -130,7 +131,8 @@ def update_registraion_player_matchday(matchday_date, type, player_id):
             'UPDATE Matchday SET Type = \'{type}\', Time_Stamp = \'{date_now}\' WHERE Player_ID = \'{player_id}\' AND Matchday_Date = \'{matchday_date}\'',
             matchday_date=matchday_date,
             type=type,
-            player_id=player_id,date_now=get_next_matchday()))
+            date_now=get_today_minsk_time(),
+            player_id=player_id))
     connection.commit()
 
     close_connection_pool(connection_pool)
@@ -142,7 +144,7 @@ def get_matchday_players_count(matchday_date):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'SELECT COUNT(*) FROM Matchday INNER JOIN Players  ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\' AND Matchday.Type=\'add\'',
+            'SELECT COUNT(*) FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\' AND Matchday.Type=\'add\'',
             matchday_date=matchday_date))
     matchday_players_count = cursor.fetchone()
 
@@ -164,3 +166,31 @@ def get_squad(matchday_date):
     close_connection_pool(connection_pool)
 
     return matchdays
+
+def wakeup(matchday_date, player_id):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(
+            'UPDATE Matchday SET Wokeup = \'{wokeup}\', Time_Stamp = \'{date_now}\' WHERE Player_ID = \'{player_id}\' AND Matchday_Date = \'{matchday_date}\'',
+            wokeup=True,
+            date_now=get_today_minsk_time(),
+            matchday_date=matchday_date,
+            player_id=player_id))
+    connection.commit()
+    close_connection_pool(connection_pool)
+    return get_sleeping_player_count(matchday_date)
+
+def get_sleeping_player_count(matchday_date):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(
+        fill_template(
+            'SELECT COUNT(*) FROM Matchday WHERE Matchday_Date = \'{matchday_date}\' AND wokeup = FALSE',
+            matchday_date=matchday_date))
+    sleeping_player_count = cursor.fetchone()
+
+    close_connection_pool(connection_pool)
+
+    return sleeping_player_count[0]

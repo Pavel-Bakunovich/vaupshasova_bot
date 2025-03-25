@@ -161,7 +161,7 @@ def chair(message):
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
 
-
+import datetime
 @bot.message_handler(commands=['squad'])
 def squad(message):
     try:
@@ -176,23 +176,29 @@ def squad(message):
                 squad_template_text = squad_template_text.replace("{date}", helpers.get_next_matchday_formatted())
 
                 matchday_roster = database.get_squad(helpers.get_next_matchday())
+                today = helpers.get_today_minsk_time()
+                #today = datetime.date(year = 2025, month = 3, day = 29) - for debugging
                 i = 1
                 for player in matchday_roster:
                     if player[2] == 'add':
-                        squad_template_text = squad_template_text.replace(
-                            "{Player " + str(i) + "}",
-                            get_player_name_extended(player))
+                        if today.weekday() == 5:
+                            if player[5] == True:
+                                squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", "👀 " + get_player_name_extended(player))
+                            else:
+                                squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", "💤 " + get_player_name_extended(player))
+                        else:
+                            squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", get_player_name_extended(player))
                         i += 1
 
                 for player in matchday_roster:
                     if (player[2] == 'chair'):
-                        squad_template_text += "\n🪑 " + get_player_name_extended(
-                            player)
+                        if today.weekday() != 5:
+                            squad_template_text += "\n🪑 " + get_player_name_extended(player)
 
                 for player in matchday_roster:
                     if (player[2] == 'remove'):
-                        squad_template_text += "\n❌ " + get_player_name_extended(
-                            player)
+                        if today.weekday() != 5:
+                            squad_template_text += "\n❌ " + get_player_name_extended(player)
 
                 slots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                 for x in slots:
@@ -269,6 +275,41 @@ def joke(message):
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
 
+@bot.message_handler(commands=['wakeup'])
+def wakeup(message):
+    try:
+        player = add_player_if_not_existant(message.from_user.first_name,
+                                            message.from_user.last_name,
+                                            message.from_user.username,
+                                            message.from_user.id)
+        
+        today = helpers.get_today_minsk_time()
+        if today.weekday() == 5:
+            if (helpers.authorized(message.chat.id)):
+                still_sleeping_count = database.wakeup(helpers.get_next_matchday(), player[0])
+                
+                if still_sleeping_count == 0:
+                    bot.reply_to(message, "Все проснулись! ☀️")
+                else:
+                    if still_sleeping_count <= 3:
+                        bot.reply_to(message, helpers.fill_template("Ждем еще пока проснутся {count} сплюшки", count=still_sleeping_count))
+
+                bot.set_message_reaction(message.chat.id,
+                             message.message_id, [ReactionTypeEmoji('👍')],
+                             is_big=True)
+
+                log(helpers.fill_template("Woke up: {name}",name=get_player_name_formal(player)))
+            else:
+                reply_to_unauthorized(bot, message, player)
+        else:
+            bot.reply_to(message, "Перекличка начинается в субботу! Еще рано.")
+            bot.set_message_reaction(message.chat.id,
+                             message.message_id, [ReactionTypeEmoji('🤬')],
+                             is_big=True)
+    except Exception as e:
+        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        log_error(e)
+
 def send_random_joke(bot, message, player):
     response = ""
     prompt = ""
@@ -292,11 +333,11 @@ def send_abusive_comment(bot, message, bot_message):
         log(helpers.fill_template("Abusive comment sent: \'{joke}\'", joke=abusive_message))
 
 def get_player_name_extended(player):
-    if (player[10] is None):
-        return str(player[6]) + " " + str(player[7]) + " (" + str(
-            player[8]) + ")"
+    if (player[11] is None):
+        return str(player[7]) + " " + str(player[8]) + " (" + str(
+            player[9]) + ")"
     else:
-        return str(player[10]) + " " + str(player[11])
+        return str(player[11]) + " " + str(player[12])
 
 def get_player_name(player):
     if (player[5] is None):
