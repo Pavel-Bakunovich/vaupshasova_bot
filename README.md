@@ -15,7 +15,7 @@ BACKLOG
 3. Let bot pin a message and update it with the squad. Instead of /squad every time when y ou need to check out the squad.
 4. Add message when 3 seats are left: "3 места осталось.", "2 места осталось"...
 5. Bot should track those who hasn't yet woke up yet on a game day.
-6. Functionality to help split squad into 2 teams.
+6. ✅ Functionality to help split squad into 2 teams.
 7. ✅ Add chat restrtiction - only Лига Ваупшасова can use this bot.
 8. ✅ Add GenAI. Let it joke around.
 9. ✅ Fix timezone issue
