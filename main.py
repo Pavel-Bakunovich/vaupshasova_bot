@@ -204,6 +204,38 @@ def squad(message):
         bot.reply_to(message, "Чота я паламался. Давай по-новой.")
         print(e)
 
+@bot.message_handler(commands=['split'])
+def split(message):
+    try:
+        current_player = add_player_if_not_existant(message.from_user.first_name,
+                                            message.from_user.last_name,
+                                            message.from_user.username,
+                                            message.from_user.id)
+        if (helpers.allow_registration()):
+            if (helpers.authorized(message.chat.id)):
+                with open(constants.SPLIT_SQUAD_TEMPLATE_FILENAME,"r") as split_squad_template_file:
+                    split_squad_template_text = split_squad_template_file.read()
+                matchday_roster = database.get_squad(helpers.get_next_matchday())
+
+                i = 1
+                squad_list = ""
+                for player in matchday_roster:
+                    if player[2] == 'add':
+                        squad_list += helpers.fill_template("{number}. {name}\n", number=i, name=get_player_name_extended(player))
+                        i += 1
+
+                split_squad_template_text = helpers.fill_template(split_squad_template_text, squad=squad_list)
+            
+                split_squad = deepseek.send_request(split_squad_template_text, 0)
+
+                bot.reply_to(message, split_squad)
+            else:
+                reply_to_unauthorized(bot, message)
+        else:
+            reply_registration_not_allowed(bot, message, current_player)
+    except Exception as e:
+        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
+        print(e)
 
 def send_random_joke(bot, message, player):
     response = ""
@@ -217,7 +249,7 @@ def send_random_joke(bot, message, player):
             prompt = "Придумай злобную шутку про Максима Окунева. Он старый толстый игрок. Шутка должна быть в следующем формате. Вот два примера: На улице летом скоро будет 30, а тебе уже не будет . Кефир обезжиренный, а ты нет. В шутке обязательно должно быть упомянуто имя Максим. В ответа включи только одну шутку."
 
     if prompt != "":
-        response = deepseek.send_request_deekseek(helpers.fill_template(prompt, name = get_player_name(player)))
+        response = deepseek.send_request(helpers.fill_template(prompt, name = get_player_name(player)))
         bot.send_message(message.chat.id, response)        
 
 def get_player_name_extended(player):
@@ -227,14 +259,12 @@ def get_player_name_extended(player):
     else:
         return str(player[10]) + " " + str(player[11])
 
-
 def get_player_name(player):
     if (player[5] is None):
         return str(player[1]) + " " + str(player[2]) + " (" + str(
             player[3]) + ")"
     else:
         return str(player[7])
-
 
 def add_player_if_not_existant(first_name, last_name, username, telegram_id):
     player = database.find_player(telegram_id)
@@ -243,7 +273,6 @@ def add_player_if_not_existant(first_name, last_name, username, telegram_id):
                                       telegram_id)
     else:
         return player
-
 
 def reply_registration_not_allowed(bot, message, player):
     bot.reply_to(

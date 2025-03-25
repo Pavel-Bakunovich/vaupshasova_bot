@@ -6,7 +6,10 @@ import constants
 load_dotenv()
 DEEPSEEK_API_KEY = os.environ['DEEPSEEK_API_KEY']
 
-def send_request_deekseek(prompt):
+def send_request(prompt):
+    return send_request(prompt, 1.5)
+
+def send_request(prompt, temperature):
     client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url="https://api.deepseek.com")
 
     response = client.chat.completions.create(
@@ -15,11 +18,8 @@ def send_request_deekseek(prompt):
             {"role": "system", "content": constants.SYSTEM_PROMPT_DEEPSEEK},
             {"role": "user", "content": prompt},
         ],
-        temperature=1.5,
+        temperature=temperature,
         stream=False
     )
 
     return response.choices[0].message.content
-
-#print(send_request_deekseek("Расскажи очень обидную шутку про Максима Окунева."))
-
