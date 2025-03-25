@@ -1,3 +1,4 @@
+UNHANDLED_EXCEPTION_MESSAGE="Чота я паламался. Давай по-новой."
 SQUAD_TEMPLATE_FILENAME = "squad.template"
 SPLIT_SQUAD_TEMPLATE_FILENAME = "split_squad.template"
 JOKE_PROMPT_TEMPLATE_FILENAME = "joke.template"

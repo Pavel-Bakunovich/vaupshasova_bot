@@ -5,13 +5,15 @@ import helpers
 import database
 import deepseek
 import random
+from logger import log, log_error
 from dotenv import load_dotenv
 from telebot.types import ReactionTypeEmoji
 
 load_dotenv()
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
+log("Environment variabled loaded.")
 bot = telebot.TeleBot(API_KEY)
-
+log("Bot object initialized.")
 
 @bot.message_handler(commands=['add'])
 def add(message):
@@ -40,9 +42,10 @@ def add(message):
                         user_message_text = helpers.fill_template("✍️ {name}, ты добавлен в состав на игру {date}.",
                             name=get_player_name(player),
                             date=helpers.get_next_matchday_formatted())
+                        log(user_message_text)
                     else:
                         user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-                        
+                        log(user_message_text)
                         database.register_player_matchday(helpers.get_next_matchday(), "chair", player[0])
                 else:
                     if matchday[2] == "add":
@@ -50,11 +53,11 @@ def add(message):
                     else:
                         if (database.get_matchday_players_count(helpers.get_next_matchday()) < 12):
                             user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-                            
+                            log(user_message_text)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), "add", player[0])
                         else:
                             user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-                            
+                            log(user_message_text)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
         
                 bot.reply_to(message, user_message_text)
@@ -65,12 +68,12 @@ def add(message):
                 send_random_joke(bot, message, player)
                 send_abusive_comment(bot, message, user_message_text)
             else:
-                reply_to_unauthorized(bot, message)
+                reply_to_unauthorized(bot, message, player)
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:
-        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
-        print(e)
+        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        log_error(e)
 
 
 @bot.message_handler(commands=['remove'])
@@ -94,7 +97,7 @@ def remove(message):
                     else:
                         user_message_text = helpers.fill_template("❌ {name}, удален из состава на игру {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), "remove", player[0])
-
+                log(user_message_text)
                 bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,
                                         message.message_id,
@@ -103,12 +106,12 @@ def remove(message):
                 send_random_joke(bot, message, player)
                 send_abusive_comment(bot, message, user_message_text)
             else:
-                reply_to_unauthorized(bot, message)
+                reply_to_unauthorized(bot, message, player)
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:
-        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
-        print(e)
+        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        log_error(e)
 
 
 @bot.message_handler(commands=['chair'])
@@ -128,16 +131,19 @@ def chair(message):
                                                     "chair", player[0])
 
                     user_message_text = helpers.fill_template("🪑 {name}, cел на стульчик на игру {date}" ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                    log(user_message_text)
                 else:
                     if matchday[2] == "add":
 
                         user_message_text = helpers.fill_template("🪑 {name}, окей, снимаем тебя с состава и записываем на стул на игру {date}!" ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                        log(user_message_text)
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
                     if matchday[2] == "chair":
                         user_message_text = helpers.fill_template("🪑 {name}, так ты и так уже на стуле сидишь!" ,name=get_player_name(player))
+                        log(user_message_text)
                     if matchday[2] == "remove":
                         user_message_text = helpers.fill_template("🪑 {name}, ты раньше минусовался, но записываем тебя на стул на игру {date}! Так уж и быть." ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-
+                        log(user_message_text)
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
 
                 bot.reply_to(message, user_message_text)
@@ -148,12 +154,12 @@ def chair(message):
                 send_random_joke(bot, message, player)
                 send_abusive_comment(bot, message, user_message_text)
             else:
-                reply_to_unauthorized(bot, message)
+                reply_to_unauthorized(bot, message, player)
         else:
             reply_registration_not_allowed(bot, message, player)
     except Exception as e:
-        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
-        print(e)
+        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        log_error(e)
 
 
 @bot.message_handler(commands=['squad'])
@@ -194,14 +200,15 @@ def squad(message):
                         "{Player " + str(x) + "}", "")
 
                 bot.reply_to(message, squad_template_text)
+                log(helpers.fill_template("Squad list requested by {name}",name=get_player_name_formal(current_player)))
                 send_random_joke(bot, message, current_player)
             else:
-                reply_to_unauthorized(bot, message)
+                reply_to_unauthorized(bot, message, player)
         else:
             reply_registration_not_allowed(bot, message, current_player)
     except Exception as e:
-        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
-        print(e)
+        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        log_error(e)
 
 @bot.message_handler(commands=['split'])
 def split(message):
@@ -228,15 +235,15 @@ def split(message):
                 split_squad = deepseek.send_request(split_squad_template_text, 0)
 
                 bot.reply_to(message, split_squad)
-
+                log(helpers.fill_template("Split squad with GenAI command requested by {name}",name=get_player_name_formal(current_player)))
                 send_random_joke(bot, message, current_player)
             else:
-                reply_to_unauthorized(bot, message)
+                reply_to_unauthorized(bot, message, player)
         else:
             reply_registration_not_allowed(bot, message, current_player)
     except Exception as e:
-        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
-        print(e)
+        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        log_error(e)
 
 @bot.message_handler(commands=['joke'])
 def joke(message):
@@ -254,12 +261,13 @@ def joke(message):
             joke = deepseek.send_request(joke_prompt_template_text, 1.5)
 
             bot.reply_to(message, joke)
+            log(helpers.fill_template("Joke requested by {name}",name=get_player_name_formal(player)))
         else:
-            reply_to_unauthorized(bot, message)
+            reply_to_unauthorized(bot, message, player)
 
     except Exception as e:
-        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
-        print(e)
+        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        log_error(e)
 
 def send_random_joke(bot, message, player):
     response = ""
@@ -274,11 +282,13 @@ def send_random_joke(bot, message, player):
 
     if prompt != "":
         response = deepseek.send_request(helpers.fill_template(prompt, name = get_player_name(player)), 1.5)
-        bot.send_message(message.chat.id, response)        
+        bot.send_message(message.chat.id, response)
+        log(helpers.fill_template("Random joke sent: \'{joke}\'", joke=response))
 
 def send_abusive_comment(bot, message, bot_message):
     abusive_message = deepseek.send_request(helpers.fill_template(constants.ABUSIVE_COMMENT_DEEPSEEK, bot_message = bot_message), 1.5)
     bot.reply_to(message, abusive_message)
+    log(helpers.fill_template("Abusive comment sent: \'{joke}\'", joke=abusive_message))
 
 def get_player_name_extended(player):
     if (player[10] is None):
@@ -319,11 +329,14 @@ def reply_registration_not_allowed(bot, message, player):
     bot.set_message_reaction(message.chat.id,
                              message.message_id, [ReactionTypeEmoji('🤬')],
                              is_big=True)
+    log(helpers.fill_template("Too early for registration message sent to {name}", name=get_player_name_formal(player)))
 
-def reply_to_unauthorized(bot, message):
+def reply_to_unauthorized(bot, message, player):
     bot.reply_to(message,"Вам нельзя пользоваться этим ботом. Он предназначается эксклюзивно для Лиги Ваупшасова.")
     bot.set_message_reaction(message.chat.id,
                              message.message_id, [ReactionTypeEmoji('🤬')],
                              is_big=True)
+    log(helpers.fill_template("Unauthorized message sent: \'{name}\', (id: {id})", name=get_player_name_formal(player),id=message.from_user.id))
 
+log("Started polling.")
 bot.polling()
