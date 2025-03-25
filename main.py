@@ -21,6 +21,10 @@ def add(message):
     #if len(parts) > 1:
     #    params = parts[1]  # This contains "Sergey Lisovskiy"
     #    print("Parameters:", params)
+    #pin message
+    #tb = telebot.TeleBot(api_bot)
+    #message = tb.send_message(group_id, 'Test!')
+    #tb.pin_chat_message(group_id, message.message_id)
     user_message_text = ""
     try:
         player = add_player_if_not_existant(message.from_user.first_name,
@@ -42,9 +46,7 @@ def add(message):
                     else:
                         user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         
-                    
-                        database.update_registraion_player_matchday(
-                            helpers.get_next_matchday(), "chair", player[0])
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
                 else:
                     if matchday[2] == "add":
                         user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
@@ -52,13 +54,11 @@ def add(message):
                         if (database.get_matchday_players_count(helpers.get_next_matchday()) < 12):
                             user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             
-                            database.update_registraion_player_matchday(
-                                helpers.get_next_matchday(), "add", player[0])
+                            database.update_registraion_player_matchday(helpers.get_next_matchday(), "add", player[0])
                         else:
                             user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             
-                            database.update_registraion_player_matchday(
-                                helpers.get_next_matchday(), "chair", player[0])
+                            database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
         
                 bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,
@@ -66,6 +66,7 @@ def add(message):
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
                 send_random_joke(bot, message, player)
+                send_abusive_comment(bot, message, user_message_text)
             else:
                 reply_to_unauthorized(bot, message)
         else:
@@ -95,8 +96,7 @@ def remove(message):
                         user_message_text = helpers.fill_template("{name}, тебя и так нету в составе на {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                     else:
                         user_message_text = helpers.fill_template("❌ {name}, удален из состава на игру {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-                        database.update_registraion_player_matchday(
-                            helpers.get_next_matchday(), "remove", player[0])
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "remove", player[0])
 
                 bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,
@@ -104,6 +104,7 @@ def remove(message):
                                         [ReactionTypeEmoji('😭')],
                                         is_big=True)
                 send_random_joke(bot, message, player)
+                send_abusive_comment(bot, message, user_message_text)
             else:
                 reply_to_unauthorized(bot, message)
         else:
@@ -148,6 +149,7 @@ def chair(message):
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
                 send_random_joke(bot, message, player)
+                send_abusive_comment(bot, message, user_message_text)
             else:
                 reply_to_unauthorized(bot, message)
         else:
@@ -253,6 +255,10 @@ def send_random_joke(bot, message, player):
     if prompt != "":
         response = deepseek.send_request(helpers.fill_template(prompt, name = get_player_name(player)), 1.5)
         bot.send_message(message.chat.id, response)        
+
+def send_abusive_comment(bot, message, bot_message):
+    abusive_message = deepseek.send_request(helpers.fill_template(constants.ABUSIVE_COMMENT_DEEPSEEK, bot_message = bot_message), 1.5)
+    bot.reply_to(message, abusive_message)
 
 def get_player_name_extended(player):
     if (player[10] is None):
