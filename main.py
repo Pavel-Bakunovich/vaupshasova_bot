@@ -42,7 +42,7 @@ def add(message):
                             date=helpers.get_next_matchday_formatted())
                     else:
                         user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-                        print(user_message_text)
+                        
                         database.register_player_matchday(helpers.get_next_matchday(), "chair", player[0])
                 else:
                     if matchday[2] == "add":
@@ -238,15 +238,40 @@ def split(message):
         bot.reply_to(message, "Чота я паламался. Давай по-новой.")
         print(e)
 
+@bot.message_handler(commands=['joke'])
+def joke(message):
+    try:
+        player = add_player_if_not_existant(message.from_user.first_name,
+                                            message.from_user.last_name,
+                                            message.from_user.username,
+                                            message.from_user.id)
+        if (helpers.authorized(message.chat.id)):
+            with open(constants.JOKE_PROMPT_TEMPLATE_FILENAME,"r") as joke_prompt_template_file:
+                joke_prompt_template_text = joke_prompt_template_file.read()
+           
+            joke_prompt_template_text = helpers.fill_template(joke_prompt_template_text, name=get_player_name_formal(player))
+
+            print(joke_prompt_template_text)
+
+            joke = deepseek.send_request(joke_prompt_template_text, 1.5)
+
+            bot.reply_to(message, joke)
+        else:
+            reply_to_unauthorized(bot, message)
+
+    except Exception as e:
+        bot.reply_to(message, "Чота я паламался. Давай по-новой.")
+        print(e)
+
 def send_random_joke(bot, message, player):
     response = ""
     prompt = ""
     random_number = random.random()
-    if (random_number < 0.30):
+    if (random_number < 0.20):
         prompt = "Придумай злобную шутку про Манчестер Юнайтед. Используй обидные обзывательства. К этому сообщению имеет отношение {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько. Шутка не должна быть слишком длинной - максимум 2 предложения."
         
     else:
-        if (random_number > 0.70):
+        if (random_number > 0.80):
             prompt = "Придумай злобную шутку про Максима Окунева. Он старый толстый игрок. Шутка должна быть в следующем формате. Вот два примера: На улице летом скоро будет 30, а тебе уже не будет . Кефир обезжиренный, а ты нет. В шутке обязательно должно быть упомянуто имя Максим. В ответа включи только одну шутку."
 
     if prompt != "":
@@ -270,6 +295,13 @@ def get_player_name(player):
             player[3]) + ")"
     else:
         return str(player[7])
+
+def get_player_name_formal(player):
+    if (player[5] is None):
+        return str(player[1]) + " " + str(player[2]) + " (" + str(
+            player[3]) + ")"
+    else:
+        return str(player[5]) + " " + str(player[6])
 
 def add_player_if_not_existant(first_name, last_name, username, telegram_id):
     player = database.find_player(telegram_id)
