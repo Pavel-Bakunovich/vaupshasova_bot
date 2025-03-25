@@ -286,9 +286,10 @@ def send_random_joke(bot, message, player):
         log(helpers.fill_template("Random joke sent: \'{joke}\'", joke=response))
 
 def send_abusive_comment(bot, message, bot_message):
-    abusive_message = deepseek.send_request(helpers.fill_template(constants.ABUSIVE_COMMENT_DEEPSEEK, bot_message = bot_message), 1.5)
-    bot.reply_to(message, abusive_message)
-    log(helpers.fill_template("Abusive comment sent: \'{joke}\'", joke=abusive_message))
+    if (random.random() < 0.20):
+        abusive_message = deepseek.send_request(helpers.fill_template(constants.ABUSIVE_COMMENT_DEEPSEEK, bot_message = bot_message), 1.5)
+        bot.reply_to(message, abusive_message)
+        log(helpers.fill_template("Abusive comment sent: \'{joke}\'", joke=abusive_message))
 
 def get_player_name_extended(player):
     if (player[10] is None):
