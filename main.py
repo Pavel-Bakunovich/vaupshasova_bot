@@ -251,8 +251,6 @@ def joke(message):
            
             joke_prompt_template_text = helpers.fill_template(joke_prompt_template_text, name=get_player_name_formal(player))
 
-            print(joke_prompt_template_text)
-
             joke = deepseek.send_request(joke_prompt_template_text, 1.5)
 
             bot.reply_to(message, joke)
