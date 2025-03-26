@@ -288,6 +288,7 @@ def talk(message):
                 talk_prompt_template_text = talk_prompt_template_file.read()
            
             parts = message.text.split(' ', 1)
+            params = ""
             if len(parts) > 1:
                 params = parts[1]
                 talk_prompt_template_text = helpers.fill_template(talk_prompt_template_text, player_prompt=params)
@@ -299,7 +300,7 @@ def talk(message):
             response = deepseek.send_request(talk_prompt_template_text, 1.5)
 
             bot.reply_to(message, response)
-            log(helpers.fill_template("Talk command requested by {name}: \'{player_message}\'",name=get_player_name_formal(player),player_message=params))
+            log(helpers.fill_template("Talk command requested by {name}: \'{player_message}\'",name=get_player_name_formal(player),player_message=str(params)))
         else:
             reply_to_unauthorized(bot, message, player)
     except Exception as e:
