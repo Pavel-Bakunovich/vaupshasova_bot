@@ -269,7 +269,6 @@ def joke(message):
             if len(parts) > 1:
                 params = parts[1]
                 joke_prompt_template_text = helpers.fill_template(joke_prompt_template_text, message_from_player=params)
-                log(joke_prompt_template_text)
             else:
                 joke_prompt_template_text = helpers.fill_template(joke_prompt_template_text, message_from_player="Ничего не сказал.")
 
