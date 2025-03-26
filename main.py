@@ -60,13 +60,13 @@ def add(message):
                             log(user_message_text)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
         
-                bot.reply_to(message, user_message_text)
+                bot_message = bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,
                                         message.message_id,
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
                 send_random_joke(bot, message, player)
-                send_abusive_comment(bot, message, user_message_text)
+                send_abusive_comment(bot, bot_message, user_message_text)
             else:
                 reply_to_unauthorized(bot, message, player)
         else:
@@ -98,13 +98,13 @@ def remove(message):
                         user_message_text = helpers.fill_template("❌ {name}, удален из состава на игру {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), "remove", player[0])
                 log(user_message_text)
-                bot.reply_to(message, user_message_text)
+                bot_message = bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,
                                         message.message_id,
                                         [ReactionTypeEmoji('😭')],
                                         is_big=True)
                 send_random_joke(bot, message, player)
-                send_abusive_comment(bot, message, user_message_text)
+                send_abusive_comment(bot, bot_message, user_message_text)
             else:
                 reply_to_unauthorized(bot, message, player)
         else:
@@ -146,13 +146,13 @@ def chair(message):
                         log(user_message_text)
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
 
-                bot.reply_to(message, user_message_text)
+                bot_message = bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,
                                         message.message_id,
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
                 send_random_joke(bot, message, player)
-                send_abusive_comment(bot, message, user_message_text)
+                send_abusive_comment(bot, bot_message, user_message_text)
             else:
                 reply_to_unauthorized(bot, message, player)
         else:
@@ -270,7 +270,6 @@ def joke(message):
             log(helpers.fill_template("Joke requested by {name}",name=get_player_name_formal(player)))
         else:
             reply_to_unauthorized(bot, message, player)
-
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
@@ -299,6 +298,7 @@ def wakeup(message):
                              is_big=True)
 
                 log(helpers.fill_template("Woke up: {name}",name=get_player_name_formal(player)))
+                send_random_joke(bot, message, player)
             else:
                 reply_to_unauthorized(bot, message, player)
         else:
@@ -356,8 +356,7 @@ def get_player_name_formal(player):
 def add_player_if_not_existant(first_name, last_name, username, telegram_id):
     player = database.find_player(telegram_id)
     if player is None:
-        return database.create_player(first_name, last_name, username,
-                                      telegram_id)
+        return database.create_player(first_name, last_name, username, telegram_id)
     else:
         return player
 
