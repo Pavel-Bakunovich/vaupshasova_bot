@@ -159,7 +159,7 @@ def get_squad(matchday_date):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'SELECT * FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\'',
+            'SELECT * FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\'  ORDER BY Time_Stamp ASC',
             matchday_date=matchday_date))
     matchdays = cursor.fetchall()
 
