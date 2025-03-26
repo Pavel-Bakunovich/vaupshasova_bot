@@ -258,10 +258,21 @@ def joke(message):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
+        
+    
+
         if (helpers.authorized(message.chat.id)):
             with open(constants.JOKE_PROMPT_TEMPLATE_FILENAME,"r") as joke_prompt_template_file:
                 joke_prompt_template_text = joke_prompt_template_file.read()
            
+            parts = message.text.split(' ', 1)
+            if len(parts) > 1:
+                params = parts[1]
+                joke_prompt_template_text = helpers.fill_template(joke_prompt_template_text, message_from_player=params)
+                log(joke_prompt_template_text)
+            else:
+                joke_prompt_template_text = helpers.fill_template(joke_prompt_template_text, message_from_player="Ничего не сказал.")
+
             joke_prompt_template_text = helpers.fill_template(joke_prompt_template_text, name=get_player_name_formal(player))
 
             joke = deepseek.send_request(joke_prompt_template_text, 1.5)
