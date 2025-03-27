@@ -357,7 +357,7 @@ def send_random_joke(bot, message, player):
     if prompt != "":
         response = deepseek.send_request(helpers.fill_template(prompt, name = get_player_name(player)), 1.5)
         bot.send_message(message.chat.id, response)
-        log(helpers.fill_template("Random joke sent: \'{joke}\'", joke=response))
+        log("Random joke sent")
 
 def send_abusive_comment(bot, message, bot_message):
     if (random.random() < 0.20):
