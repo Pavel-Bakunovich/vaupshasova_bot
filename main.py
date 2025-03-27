@@ -30,8 +30,9 @@ def add(message):
         if (helpers.allow_registration()):
             if (helpers.authorized(message.chat.id)):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), message.from_user.id)
+                matchday_player_count = database.get_matchday_players_count(helpers.get_next_matchday())
                 if matchday is None:
-                    if (database.get_matchday_players_count(helpers.get_next_matchday()) < 12):
+                    if (matchday_player_count < 12):
                         database.register_player_matchday(helpers.get_next_matchday(), "add", player[0])
                         user_message_text = helpers.fill_template("✍️ {name}, ты добавлен в состав на игру {date}.",
                             name=get_player_name(player),
@@ -45,12 +46,12 @@ def add(message):
                     if matchday[2] == "add":
                         user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
                     else:
-                        if (database.get_matchday_players_count(helpers.get_next_matchday()) < 12):
+                        if (matchday_player_count < 12):
                             user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             log(user_message_text)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), "add", player[0])
                         else:
-                            user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                            user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест! Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             log(user_message_text)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
         
@@ -59,6 +60,10 @@ def add(message):
                                         message.message_id,
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
+                
+                matchday_player_count = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
+                if (matchday_player_count <= 3 and matchday_player_count > 0):
+                    bot.reply_to(message, helpers.fill_template("⚠️ Внимание, осталось мест: {free_spots_count}",free_spots_count=matchday_player_count))
                 send_random_joke(bot, message, player)
                 send_abusive_comment(bot, bot_message, user_message_text)
             else:
@@ -128,7 +133,6 @@ def chair(message):
                     log(user_message_text)
                 else:
                     if matchday[2] == "add":
-
                         user_message_text = helpers.fill_template("🪑 {name}, окей, снимаем тебя с состава и записываем на стул на игру {date}!" ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         log(user_message_text)
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
@@ -363,7 +367,7 @@ def send_abusive_comment(bot, message, bot_message):
     if (random.random() < 0.20):
         abusive_message = deepseek.send_request(helpers.fill_template(constants.ABUSIVE_COMMENT_DEEPSEEK, bot_message = bot_message), 1.5)
         bot.reply_to(message, abusive_message)
-        log(helpers.fill_template("Abusive comment sent: \'{joke}\'", joke=abusive_message))
+        log(helpers.fill_template("Abusive comment sent in response to: \'{abusive_message}\'", abusive_message=abusive_message))
 
 def get_player_name_extended(player):
     if (player[11] is None):
