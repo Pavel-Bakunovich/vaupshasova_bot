@@ -1,10 +1,5 @@
 import os
 import telebot
-import constants
-import helpers
-import database
-import deepseek
-import random
 import command_add
 import command_remove
 import command_chair
@@ -13,10 +8,8 @@ import command_joke
 import command_split
 import command_talk
 import command_wakeup
-from common import allow_registration,authorized
-from logger import log, log_error
+from logger import log
 from dotenv import load_dotenv
-from telebot.types import ReactionTypeEmoji
 
 load_dotenv()
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
