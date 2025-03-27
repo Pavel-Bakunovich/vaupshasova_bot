@@ -1,7 +1,7 @@
 import os
 from psycopg2 import pool
 from dotenv import load_dotenv
-from helpers import fill_template,get_next_matchday,get_today_minsk_time
+from helpers import fill_template, get_today_minsk_time
 
 load_dotenv()
 connection_string = os.getenv('DATABASE_URL')
