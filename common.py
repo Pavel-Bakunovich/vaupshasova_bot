@@ -12,7 +12,28 @@ def add_player_if_not_existant(first_name, last_name, username, telegram_id):
       return database.create_player(first_name, last_name, username, telegram_id)
   else:
       return player
-  
+
+def add_player_if_not_existant_with_params(input_text, first_name, last_name, username, telegram_id):
+    parts = input_text.split(' ', 1)
+    if len(parts) > 1:
+        input_player_name = parts[1].split()
+        print("first_name: "+input_player_name[0])
+        print("last_name: "+input_player_name[1])
+        player = database.find_player_by_name(input_player_name)
+        
+        if player is None:
+            if len(input_player_name) > 1:
+                #replace with database.create_player_no_telegram(), where name will be put into Friendly_Name columns
+                player = database.create_player(first_name, input_player_name[0], input_player_name[1], 0)
+            else:
+                if len(input_player_name) == 1:
+                    #replace with database.create_player_no_telegram(), where name will be put into Friendly_Name columns
+                    player = database.create_player(first_name, None, input_player_name[0], 0)
+    else:
+        player = add_player_if_not_existant(first_name, last_name, username, telegram_id)
+    
+    return player
+
 def get_player_name_extended(player):
     if (player[11] is None):
         return str(player[7]) + " " + str(player[8]) + " (" + str(
