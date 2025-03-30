@@ -41,7 +41,7 @@ def execute(message, bot):
                                         message.message_id,
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
-                send_random_joke(bot, message, player)
+                send_random_joke(bot, message)
                 send_abusive_comment(bot, bot_message, user_message_text)
             else:
                 reply_to_unauthorized(bot, message, player)

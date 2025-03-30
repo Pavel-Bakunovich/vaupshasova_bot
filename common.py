@@ -55,19 +55,10 @@ def get_player_name_formal(player):
     else:
         return str(player[5]) + " " + str(player[6])
     
-def send_random_joke(bot, message, player):
-    response = ""
-    prompt = ""
-    random_number = random.random()
-    if (random_number < 0.20):
-        prompt = "Придумай злобную шутку про Манчестер Юнайтед. Используй обидные обзывательства. К этому сообщению имеет отношение {name}. Больльщики Манчестер Юнайтед в нашем чате: Сергей Мшар и Дима Шилько. Шутка не должна быть слишком длинной - максимум 2 предложения."
-        
-    else:
-        if (random_number > 0.80):
-            prompt = "Придумай злобную шутку про Максима Окунева. Он старый толстый игрок. Шутка должна быть в следующем формате. Вот два примера: На улице летом скоро будет 30, а тебе уже не будет . Кефир обезжиренный, а ты нет. В шутке обязательно должно быть упомянуто имя Максим. В ответа включи только одну шутку."
-
-    if prompt != "":
-        response = deepseek.send_request(fill_template(prompt, name = get_player_name(player)), 1.5)
+def send_random_joke(bot, message):
+    if (random.random() < 0.20):
+        prompt = "Придумай злобную шутку про Максима Окунева. Он старый толстый игрок. Шутка должна быть в следующем формате. Вот два примера: На улице летом скоро будет 30, а тебе уже не будет. Кефир обезжиренный, а ты нет. В шутке обязательно должно быть упомянуто имя Максим. В ответ включи только одну шутку."
+        response = deepseek.send_request(prompt, 1.5)
         bot.send_message(message.chat.id, response)
         log("Random joke sent")
 
@@ -75,7 +66,7 @@ def send_abusive_comment(bot, message, bot_message):
     if (random.random() < 0.20):
         abusive_message = deepseek.send_request(fill_template(constants.ABUSIVE_COMMENT_DEEPSEEK, bot_message = bot_message), 1.5)
         bot.reply_to(message, abusive_message)
-        log(fill_template("Abusive comment sent in response to: \'{abusive_message}\'", abusive_message=abusive_message))
+        log(fill_template("Abusive comment sent in response to: \'{bot_message}\'", bot_message=bot_message))
 
 def reply_registration_not_allowed(bot, message, player):
     bot.reply_to(

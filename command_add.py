@@ -63,7 +63,7 @@ def execute(message, bot):
             matchday_player_count = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
             if (matchday_player_count <= 3 and matchday_player_count > 0):
                 bot.reply_to(message, helpers.fill_template("⚠️ Внимание, осталось мест: {free_spots_count}",free_spots_count=matchday_player_count))
-            send_random_joke(bot, message, player)
+            send_random_joke(bot, message)
             send_abusive_comment(bot, bot_message, user_message_text)
         else:
             reply_to_unauthorized(bot, message, player)
