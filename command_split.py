@@ -21,7 +21,7 @@ def execute(message, bot):
                 i = 1
                 squad_list = ""
                 for player in matchday_roster:
-                    if player[2] == 'add':
+                    if player[2] == constants.TYPE_ADD:
                         squad_list += helpers.fill_template("{number}. {name}\n", number=i, name=get_player_name_extended(player))
                         i += 1
 

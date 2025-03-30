@@ -21,11 +21,11 @@ def execute(message, bot):
                 if matchday is None:
                     user_message_text = helpers.fill_template("{name}, тебя и так нету в составе на {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                 else:
-                    if matchday[2] == "remove":
+                    if matchday[2] == constants.TYPE_REMOVE:
                         user_message_text = helpers.fill_template("{name}, тебя и так нету в составе на {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                     else:
-                        user_message_text = helpers.fill_template("❌ {name}, удален из состава на игру {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
-                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "remove", player[0])
+                        user_message_text = helpers.fill_template("❌ {name} удален из состава на игру {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_REMOVE, player[0])
                 log(user_message_text)
                 bot_message = bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,

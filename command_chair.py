@@ -18,23 +18,22 @@ def execute(message, bot):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), message.from_user.id)
 
                 if matchday is None:
-                    database.register_player_matchday(helpers.get_next_matchday(),
-                                                    "chair", player[0])
+                    database.register_player_matchday(helpers.get_next_matchday(),constants.TYPE_CHAIR, player[0])
 
                     user_message_text = helpers.fill_template("🪑 {name}, cел на стульчик на игру {date}" ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                     log(user_message_text)
                 else:
-                    if matchday[2] == "add":
+                    if matchday[2] == constants.TYPE_ADD:
                         user_message_text = helpers.fill_template("🪑 {name}, окей, снимаем тебя с состава и записываем на стул на игру {date}!" ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         log(user_message_text)
-                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
-                    if matchday[2] == "chair":
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player[0])
+                    if matchday[2] == constants.TYPE_CHAIR:
                         user_message_text = helpers.fill_template("🪑 {name}, так ты и так уже на стуле сидишь!" ,name=get_player_name(player))
                         log(user_message_text)
-                    if matchday[2] == "remove":
+                    if matchday[2] == constants.TYPE_REMOVE:
                         user_message_text = helpers.fill_template("🪑 {name}, ты раньше минусовался, но записываем тебя на стул на игру {date}! Так уж и быть." ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         log(user_message_text)
-                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player[0])
 
                 bot_message = bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,

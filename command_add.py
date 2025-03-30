@@ -32,7 +32,7 @@ def execute(message, bot):
             matchday_player_count = database.get_matchday_players_count(helpers.get_next_matchday())
             if matchday is None:
                 if (matchday_player_count < 12):
-                    database.register_player_matchday(helpers.get_next_matchday(), "add", player[0])
+                    database.register_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player[0])
                     user_message_text = helpers.fill_template("✍️ {name}, ты добавлен в состав на игру {date}.",
                         name=get_player_name(player),
                         date=helpers.get_next_matchday_formatted())
@@ -40,19 +40,19 @@ def execute(message, bot):
                 else:
                     user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                     log(user_message_text)
-                    database.register_player_matchday(helpers.get_next_matchday(), "chair", player[0])
+                    database.register_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player[0])
             else:
-                if matchday[2] == "add":
+                if matchday[2] == constants.TYPE_ADD:
                     user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
                 else:
                     if (matchday_player_count < 12):
                         user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         log(user_message_text)
-                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "add", player[0])
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player[0])
                     else:
                         user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест! Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         log(user_message_text)
-                        database.update_registraion_player_matchday(helpers.get_next_matchday(), "chair", player[0])
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player[0])
     
             bot_message = bot.reply_to(message, user_message_text)
             bot.set_message_reaction(message.chat.id,

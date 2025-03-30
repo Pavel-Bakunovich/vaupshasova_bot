@@ -57,8 +57,7 @@ def get_player_name_formal(player):
     
 def send_random_joke(bot, message):
     if (random.random() < 0.20):
-        prompt = "Придумай злобную шутку про Максима Окунева. Он старый толстый игрок. Шутка должна быть в следующем формате. Вот два примера: На улице летом скоро будет 30, а тебе уже не будет. Кефир обезжиренный, а ты нет. В шутке обязательно должно быть упомянуто имя Максим. В ответ включи только одну шутку."
-        response = deepseek.send_request(prompt, 1.5)
+        response = deepseek.send_request(constants.RANDOM_MAKSIM_JOKE_PROMPT_DEEPSEEK, 1.5)
         bot.send_message(message.chat.id, response)
         log("Random joke sent")
 

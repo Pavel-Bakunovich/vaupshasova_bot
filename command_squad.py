@@ -5,6 +5,7 @@ from helpers import authorized
 from common import add_player_if_not_existant, send_random_joke, reply_to_unauthorized, get_player_name_extended, get_player_name_formal
 import database
 import constants
+import datetime
 
 def execute(message, bot):
     try:
@@ -19,10 +20,10 @@ def execute(message, bot):
 
             matchday_roster = database.get_squad(helpers.get_next_matchday())
             today = helpers.get_today_minsk_time()
-            #today = datetime.date(year = 2025, month = 3, day = 29) - for debugging
+            #today = datetime.date(year = 2025, month = 3, day = 29)# - for debugging
             i = 1
             for player in matchday_roster:
-                if player[2] == 'add':
+                if player[2] == constants.TYPE_ADD:
                     if today.weekday() == 5:
                         if player[5] == True:
                             squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", "👀 " + get_player_name_extended(player))
@@ -33,12 +34,12 @@ def execute(message, bot):
                     i += 1
 
             for player in matchday_roster:
-                if (player[2] == 'chair'):
+                if (player[2] == constants.TYPE_CHAIR):
                     if today.weekday() != 5:
                         squad_template_text += "\n🪑 " + get_player_name_extended(player)
 
             for player in matchday_roster:
-                if (player[2] == 'remove'):
+                if (player[2] == constants.TYPE_REMOVE):
                     if today.weekday() != 5:
                         squad_template_text += "\n❌ " + get_player_name_extended(player)
 
