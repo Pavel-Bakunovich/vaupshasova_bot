@@ -26,7 +26,7 @@ def execute(message, bot):
 
             talk_prompt_template_text = helpers.fill_template(talk_prompt_template_text, player_name=get_player_name_formal(player))
 
-            response = deepseek.send_request(talk_prompt_template_text, 1.5)
+            response = deepseek.send_request(talk_prompt_template_text, 0)
 
             bot.reply_to(message, response)
             log(helpers.fill_template("Talk command requested by {name}: \'{player_message}\'",name=get_player_name_formal(player),player_message=str(params)))
