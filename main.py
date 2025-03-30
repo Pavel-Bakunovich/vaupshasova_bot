@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
-log("Environment variabled loaded.")
+log("Environment variables loaded.")
 bot = telebot.TeleBot(API_KEY)
 log("Bot object initialized.")
 
