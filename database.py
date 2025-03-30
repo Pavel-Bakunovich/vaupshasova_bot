@@ -209,7 +209,7 @@ def get_sleeping_player_count(matchday_date):
     cursor = connection.cursor()
     cursor.execute(
         fill_template(
-            'SELECT COUNT(*) FROM Matchday WHERE Matchday_Date = \'{matchday_date}\' AND wokeup = FALSE',
+            'SELECT COUNT(*) FROM Matchday WHERE Matchday_Date = \'{matchday_date}\' AND wokeup = FALSE AND type=\'add\'',
             matchday_date=matchday_date))
     sleeping_player_count = cursor.fetchone()
 
