@@ -71,8 +71,7 @@ def send_abusive_comment(bot, message, bot_message):
 def reply_registration_not_allowed(bot, message, player):
     bot.reply_to(
         message,
-        fill_template(
-            "{player_name}, eще рано. Регистрация на {date} открывается в понедельник.",
+        fill_template("{player_name}, eще рано. Регистрация на {date} открывается в понедельник.",
             date=get_next_matchday_formatted(),
             player_name=get_player_name(player)))
     bot.set_message_reaction(message.chat.id,
