@@ -73,5 +73,5 @@ def wakeup(message):
     command_wakeup.execute(message, bot)
 
 
-#log("Started polling.")
-#bot.infinity_polling()
+log("Started polling.")
+bot.infinity_polling()
