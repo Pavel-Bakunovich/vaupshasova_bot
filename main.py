@@ -72,16 +72,6 @@ def talk(message):
 def wakeup(message):
     command_wakeup.execute(message, bot)
 
-#bot.register_message_handler(callback=add, commands=['add'])
-#bot.register_message_handler(callback=remove, commands=['remove'])
-#bot.register_message_handler(callback=chair, commands=['chair'])
-#bot.register_message_handler(callback=squad, commands=['squad'])
-#bot.register_message_handler(callback=split, commands=['split'])
-#bot.register_message_handler(callback=joke, commands=['joke'])
-#bot.register_message_handler(callback=talk, commands=['talk'])
-#bot.register_message_handler(callback=wakeup, commands=['wakeup'])
-#log("Command handlers registered.")
 
-
-log("Started polling.")
-bot.infinity_polling()
+#log("Started polling.")
+#bot.infinity_polling()
