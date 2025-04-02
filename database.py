@@ -2,6 +2,7 @@ import os
 from psycopg2 import pool
 from dotenv import load_dotenv
 from helpers import fill_template, get_today_minsk_time
+from logger import log_error
 
 load_dotenv()
 connection_string = os.getenv('DATABASE_URL')
@@ -10,7 +11,7 @@ connection_string = os.getenv('DATABASE_URL')
 def create_connection_pool():
     connection_pool = pool.SimpleConnectionPool(1, 10, connection_string)
     if not connection_pool:
-        print("Connection pool not created successfully")
+        log_error("Connection pool not created successfully")
     conn = connection_pool.getconn()
     cur = conn.cursor()
 
