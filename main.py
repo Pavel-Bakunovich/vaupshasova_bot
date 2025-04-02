@@ -82,5 +82,6 @@ def wakeup(message):
 #bot.register_message_handler(callback=wakeup, commands=['wakeup'])
 #log("Command handlers registered.")
 
-log("Started polling.")
-bot.infinity_polling()
+if (bot.get_webhook_info().url == ""):
+    log("Started polling.")
+    bot.infinity_polling()
