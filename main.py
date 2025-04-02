@@ -15,6 +15,8 @@ dotenv.load_dotenv()
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
 log("Environment variables loaded.")
 bot = telebot.TeleBot(API_KEY)
+bot.remove_webhook()
+bot.set_webhook("https://europe-central2-angular-lambda-289018.cloudfunctions.net/vaupshasova_bot")
 log("Bot object initialized.")
 
 def vaupshasova_bot(request):
@@ -31,6 +33,7 @@ def vaupshasova_bot(request):
         bot.register_message_handler(callback=talk, commands=['talk'])
         bot.register_message_handler(callback=wakeup, commands=['wakeup'])
         bot.process_new_updates([update])
+        log("Webhook Invoked: " + update.message.text)
     return "OK"
 
 @bot.message_handler(commands=['add'])
@@ -73,5 +76,6 @@ def wakeup(message):
     command_wakeup.execute(message, bot)
 
 
-log("Started polling.")
-bot.infinity_polling()
+#log("Started polling.")
+#bot.infinity_polling()
+log("Webhook URL: " + bot.get_webhook_info().url)
