@@ -8,10 +8,10 @@ import command_joke
 import command_split
 import command_talk
 import command_wakeup
+import dotenv
 from logger import log
-from dotenv import load_dotenv
 
-load_dotenv()
+dotenv.load_dotenv()
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
 log("Environment variables loaded.")
 bot = telebot.TeleBot(API_KEY)
@@ -59,4 +59,4 @@ def wakeup(message):
 
 
 log("Started polling.")
-bot.polling()
+bot.infinity_polling()
