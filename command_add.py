@@ -44,6 +44,7 @@ def execute(message, bot):
             else:
                 if matchday[2] == constants.TYPE_ADD:
                     user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
+                    log(user_message_text)
                 else:
                     if (matchday_player_count < 12):
                         user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
