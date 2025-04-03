@@ -4,7 +4,6 @@ import command_add
 import command_remove
 import command_chair
 import command_squad
-import command_joke
 import command_split
 import command_talk
 import command_wakeup
