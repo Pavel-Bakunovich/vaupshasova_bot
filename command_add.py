@@ -28,7 +28,7 @@ def execute(message, bot):
         if (allow_registration()):
             if (authorized(message.chat.id)):
                 if player is not None:
-                    #here replace message.from_user.id with player.telegram_id
+                    #Somewhere here need to chekc for if_CEO() and message_has_params()
                     matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player[4])
                     matchday_player_count = database.get_matchday_players_count(helpers.get_next_matchday())
                     if matchday is None:
