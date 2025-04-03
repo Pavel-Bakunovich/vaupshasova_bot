@@ -17,18 +17,18 @@ def add_player_if_not_existant_with_params(input_text, first_name, last_name, us
     parts = input_text.split(' ', 1)
     if len(parts) > 1:
         input_player_name = parts[1].split()
-        print("first_name: "+input_player_name[0])
-        print("last_name: "+input_player_name[1])
-        player = database.find_player_by_name(input_player_name)
+        input_first_name = None
+        input_last_name = None
+        if len(input_player_name) == 1:
+            input_last_name = input_player_name[0]
+        else:
+            if len(input_player_name) == 2:
+                input_first_name =input_player_name[0] 
+                input_last_name = input_player_name[1]
         
-        if player is None:
-            if len(input_player_name) > 1:
-                #replace with database.create_player_no_telegram(), where name will be put into Friendly_Name columns
-                player = database.create_player(first_name, input_player_name[0], input_player_name[1], 0)
-            else:
-                if len(input_player_name) == 1:
-                    #replace with database.create_player_no_telegram(), where name will be put into Friendly_Name columns
-                    player = database.create_player(first_name, None, input_player_name[0], 0)
+        log("first_name: "+str(input_first_name))
+        log("last_name: "+str(input_last_name))
+        player = database.find_player_by_name(input_first_name, input_last_name)
     else:
         player = add_player_if_not_existant(first_name, last_name, username, telegram_id)
     
@@ -84,3 +84,10 @@ def reply_to_unauthorized(bot, message, player):
                              message.message_id, [ReactionTypeEmoji('🤬')],
                              is_big=True)
     log(fill_template("Unauthorized message sent: \'{name}\', (id: {id})", name=get_player_name_formal(player),id=message.from_user.id))
+
+def reply_no_player_found(bot, message, player_name):
+    bot.reply_to(message,fill_template("Не нашлось такого игрока: \'{name}\'", name=player_name))
+    bot.set_message_reaction(message.chat.id,
+                             message.message_id, [ReactionTypeEmoji('🤬')],
+                             is_big=True)
+    log(fill_template("No player found: \'{name}\'", name=player_name))

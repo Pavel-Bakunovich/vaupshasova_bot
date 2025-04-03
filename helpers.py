@@ -1,5 +1,6 @@
 import datetime
 import calendar
+import constants
 import pytz
 
 def fill_template(template, **kwargs):
@@ -42,3 +43,6 @@ def authorized(chat_id):
     return True
   else:
     return False
+  
+def if_CEO(telegram_id):
+  return telegram_id == constants.CEO_TELEGRAM_ID

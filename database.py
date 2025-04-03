@@ -90,21 +90,21 @@ def find_player(telegram_id):
     return player
 
 
-def find_player_by_name(input_player_name):
-    #input_player_name here is a list of 2 values - first name and last name. Could be just 1 alue.
+def find_player_by_name(first_name, last_name):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
 
-    if len(input_player_name) > 1:
-        cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_First_Name = \'{first_name}\' AND Friendly_Last_Name = \'{last_name}\'',first_name=input_player_name[0], last_name=input_player_name[1]))
+    if (first_name is not None) and (last_name is not None):
+        cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_First_Name = \'{first_name}\' AND Friendly_Last_Name = \'{last_name}\'',first_name=first_name, last_name=last_name))
         player = cursor.fetchone()
     else:
-        if len(input_player_name) == 1:
-            cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_Last_Name = \'{last_name}\'',last_name=input_player_name[0]))
+        if last_name is not None:
+            cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_Last_Name = \'{last_name}\'',last_name=last_name))
             player = cursor.fetchone()
-            if player is None:
-                cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_First_Name = \'{first_name}\'',first_name=input_player_name[0]))
+        else:
+            if first_name is not None:
+                cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_First_Name = \'{first_name}\'',first_name=first_name))
                 player = cursor.fetchone()
 
     close_connection_pool(connection_pool)

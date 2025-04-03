@@ -2,6 +2,8 @@ TYPE_ADD = "add"
 TYPE_REMOVE = "remove"
 TYPE_CHAIR = "chair"
 
+CEO_TELEGRAM_ID=343151297
+
 UNHANDLED_EXCEPTION_MESSAGE="Чота я паламался. Давай по-новой."
 SQUAD_TEMPLATE_FILENAME = "squad.txt"
 SPLIT_SQUAD_TEMPLATE_FILENAME = "prompt_split_squad.txt"
