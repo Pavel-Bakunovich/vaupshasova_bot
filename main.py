@@ -36,9 +36,7 @@ def vaupshasova_bot(request):
 
 @bot.message_handler(commands=['add'])
 def add(message):
-    log("DEBUG: Step 3 - enter handler add()")
     command_add.execute(message, bot)
-    log("DEBUG: Step 4 - end of handler add()")
 
 
 @bot.message_handler(commands=['remove'])
@@ -72,5 +70,5 @@ def wakeup(message):
 
 
 #log("Webhook URL: " + bot.get_webhook_info().url)
-#log("Started polling.")
-#bot.infinity_polling()
+log("Started polling.")
+bot.infinity_polling()
