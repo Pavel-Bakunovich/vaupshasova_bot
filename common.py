@@ -22,7 +22,7 @@ def add_player_if_not_existant_with_params(input_text, first_name, last_name, us
         if len(input_player_name) == 1:
             input_last_name = input_player_name[0]
         else:
-            if len(input_player_name) > 2:
+            if len(input_player_name) >= 2:
                 input_first_name =input_player_name[0] 
                 input_last_name = input_player_name[1]
         player = database.find_player_by_name(input_first_name, input_last_name)
