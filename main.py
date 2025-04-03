@@ -20,7 +20,6 @@ log("Bot object initialized.")
 
 def vaupshasova_bot(request):
     if request.method == "POST":
-        log("DEBUG: Step 1 - enter to vaupshasova_bot()")
         bot = telebot.TeleBot(API_KEY)
         request_body_dict = request.get_json(force=True)
         update = telebot.types.Update.de_json(request_body_dict)
@@ -33,7 +32,6 @@ def vaupshasova_bot(request):
         bot.register_message_handler(callback=wakeup, commands=['wakeup'])
         bot.process_new_updates([update])
         log("Webhook Invoked: " + update.message.text)
-        log("DEBUG: Step 2 - end of vaupshasova_bot()")
     return "OK"
 
 @bot.message_handler(commands=['add'])

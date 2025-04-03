@@ -13,19 +13,18 @@ def execute(message, bot):
     #tb.pin_chat_message(group_id, message.message_id)
     user_message_text = ""
     try:
+        log("DEBUG: Step 1 - enter to add_player_if_not_existant_with_params()")
         player = add_player_if_not_existant_with_params(message.text,
                                                         message.from_user.first_name,
                                                         message.from_user.last_name,
                                                         message.from_user.username,
                                                         message.from_user.id)
-
+        log("DEBUG: Step 2 - end of add_player_if_not_existant_with_params()")
         if validate_access(message.chat.id, player, bot, message):
             player_telegram_id = player[4]
             player_id = player[0]
             if validate_CEO_zone(message.from_user.id,get_arguments(message.text)):
-                log("DEBUG: Step 5 - enter find_registraion_player_matchday()")
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
-                log("DEBUG: Step 6 - end of find_registraion_player_matchday()")
                 matchday_player_count = database.get_matchday_players_count(helpers.get_next_matchday())
                 if matchday is None:
                     if (matchday_player_count < 12):
