@@ -29,7 +29,6 @@ def vaupshasova_bot(request):
         bot.register_message_handler(callback=chair, commands=['chair'])
         bot.register_message_handler(callback=squad, commands=['squad'])
         bot.register_message_handler(callback=split, commands=['split'])
-        bot.register_message_handler(callback=joke, commands=['joke'])
         bot.register_message_handler(callback=talk, commands=['talk'])
         bot.register_message_handler(callback=wakeup, commands=['wakeup'])
         bot.process_new_updates([update])
@@ -59,11 +58,6 @@ def squad(message):
 @bot.message_handler(commands=['split'])
 def split(message):
     command_split.execute(message, bot)
-
-
-@bot.message_handler(commands=['joke'])
-def joke(message):
-    command_joke.execute(message, bot)
 
 
 @bot.message_handler(commands=['talk'])
