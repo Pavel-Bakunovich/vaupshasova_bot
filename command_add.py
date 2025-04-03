@@ -23,7 +23,9 @@ def execute(message, bot):
             player_telegram_id = player[4]
             player_id = player[0]
             if validate_CEO_zone(message.from_user.id,get_arguments(message.text)):
+                log("DEBUG: Step 5 - enter find_registraion_player_matchday()")
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
+                log("DEBUG: Step 6 - end of find_registraion_player_matchday()")
                 matchday_player_count = database.get_matchday_players_count(helpers.get_next_matchday())
                 if matchday is None:
                     if (matchday_player_count < 12):
