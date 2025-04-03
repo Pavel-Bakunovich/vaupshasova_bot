@@ -1,4 +1,5 @@
 import logging
+import sys
 #template_info = "{time}: {message}"
 #template_error = "{time}: ERROR: {message}"
 #date_format="%d %b %Y %H:%M:%S"
@@ -8,9 +9,9 @@ logger = logging.getLogger(__name__)
 #logger.addHandler(consoleHandler)
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.StreamHandler()]
+    handlers=[logging.StreamHandler(stream=sys.stdout)]
 )
 
 def log(message):
