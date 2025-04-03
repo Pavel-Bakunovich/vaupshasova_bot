@@ -94,22 +94,18 @@ def find_player_by_name(first_name, last_name):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-
     if (first_name is not None) and (last_name is not None):
         cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_First_Name = \'{first_name}\' AND Friendly_Last_Name = \'{last_name}\'',first_name=first_name, last_name=last_name))
-        player = cursor.fetchone()
     else:
         if last_name is not None:
             cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_Last_Name = \'{last_name}\'',last_name=last_name))
-            player = cursor.fetchone()
-        else:
-            if first_name is not None:
-                cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_First_Name = \'{first_name}\'',first_name=first_name))
-                player = cursor.fetchone()
-
+    player = cursor.fetchall()
+    result = None
+    if len(player) == 1:
+        result = player[0]
     close_connection_pool(connection_pool)
 
-    return player
+    return result
 
 
 def register_player_matchday(matchday_date, type, player_id):

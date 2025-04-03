@@ -39,10 +39,17 @@ def allow_registration():
 def authorized(chat_id):
   # This magic number is an ID of our the "Лига Ваупшасова" group chat. 
   # People can use this bot from withit either exclusively this group or in personal chat. This bot cannot be used in another group chat.
-  if chat_id == -1001369044567 or chat_id > 0:
+  if chat_id == constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID or chat_id > 0:
     return True
   else:
     return False
   
-def if_CEO(telegram_id):
+def is_CEO(telegram_id):
   return telegram_id == constants.CEO_TELEGRAM_ID
+
+def get_arguments(input):
+    parts = input.split(' ', 1)
+    if len(parts) > 1:
+        return parts[1]
+    else:
+        return None

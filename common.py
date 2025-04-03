@@ -4,7 +4,7 @@ import random
 import database
 from telebot.types import ReactionTypeEmoji
 from logger import log, log_error
-from helpers import fill_template, get_today_minsk_time,get_next_matchday_formatted
+from helpers import fill_template,get_next_matchday_formatted,allow_registration,authorized,is_CEO,get_arguments
   
 def add_player_if_not_existant(first_name, last_name, username, telegram_id):
   player = database.find_player(telegram_id)
@@ -22,12 +22,9 @@ def add_player_if_not_existant_with_params(input_text, first_name, last_name, us
         if len(input_player_name) == 1:
             input_last_name = input_player_name[0]
         else:
-            if len(input_player_name) == 2:
+            if len(input_player_name) > 2:
                 input_first_name =input_player_name[0] 
                 input_last_name = input_player_name[1]
-        
-        log("first_name: "+str(input_first_name))
-        log("last_name: "+str(input_last_name))
         player = database.find_player_by_name(input_first_name, input_last_name)
     else:
         player = add_player_if_not_existant(first_name, last_name, username, telegram_id)
@@ -91,3 +88,28 @@ def reply_no_player_found(bot, message, player_name):
                              message.message_id, [ReactionTypeEmoji('🤬')],
                              is_big=True)
     log(fill_template("No player found: \'{name}\'", name=player_name))
+
+def reply_only_CEO_can_do_it(bot, message, player_name):
+    bot.reply_to(message,"Это может делать только Директор.")
+    bot.set_message_reaction(message.chat.id,
+                             message.message_id, [ReactionTypeEmoji('🤬')],
+                             is_big=True)
+    log("Access restriction: Only CEO can do it")
+
+def validate_access(chat_id, player, bot, message):
+    access = False
+    if (allow_registration()):
+        if (authorized(chat_id)):
+            if player is not None:
+                access = True
+            else:
+                reply_no_player_found(bot, message, get_arguments(message.text))
+        else:
+            reply_to_unauthorized(bot, message, player)
+    else:
+        reply_registration_not_allowed(bot, message, player)
+
+    return access
+
+def validate_CEO_zone(telegram_id, arguments):
+    return ((is_CEO(telegram_id) is False) and (arguments is None)) or (is_CEO(telegram_id) is True)
