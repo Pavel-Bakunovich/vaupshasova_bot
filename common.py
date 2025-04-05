@@ -67,8 +67,7 @@ def send_abusive_comment(bot, message, bot_message):
 def reply_registration_not_allowed(bot, message, player):
     bot.reply_to(
         message,
-        fill_template("{player_name}, eще рано. Регистрация на {date} открывается в понедельник.",
-            date=get_next_matchday_formatted(),
+        fill_template("{player_name}, eще рано. Регистрация на следующую игру открывается в понедельник.",
             player_name=get_player_name(player)))
     bot.set_message_reaction(message.chat.id,
                              message.message_id, [ReactionTypeEmoji('🤬')],
@@ -98,17 +97,16 @@ def reply_only_CEO_can_do_it(bot, message, player_name):
 
 def validate_access(chat_id, player, bot, message):
     access = False
-    if (allow_registration()):
-        if (authorized(chat_id)):
-            if player is not None:
+    if player is not None:
+        if (allow_registration()):
+            if (authorized(chat_id)):    
                 access = True
             else:
-                reply_no_player_found(bot, message, get_arguments(message.text))
+                reply_to_unauthorized(bot, message, player)
         else:
-            reply_to_unauthorized(bot, message, player)
+            reply_registration_not_allowed(bot, message, player)
     else:
-        reply_registration_not_allowed(bot, message, player)
-
+        reply_no_player_found(bot, message, get_arguments(message.text))
     return access
 
 def validate_CEO_zone(telegram_id, arguments):
