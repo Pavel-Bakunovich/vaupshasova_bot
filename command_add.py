@@ -13,13 +13,11 @@ def execute(message, bot):
     #tb.pin_chat_message(group_id, message.message_id)
     user_message_text = ""
     try:
-        log("DEBUG: Step 1 - enter to add_player_if_not_existant_with_params()")
         player = add_player_if_not_existant_with_params(message.text,
                                                         message.from_user.first_name,
                                                         message.from_user.last_name,
                                                         message.from_user.username,
                                                         message.from_user.id)
-        log("DEBUG: Step 2 - end of add_player_if_not_existant_with_params()")
         if validate_access(message.chat.id, player, bot, message):
             player_telegram_id = player[4]
             player_id = player[0]
