@@ -5,3 +5,4 @@ dotenv
 openai
 python-dotenv
 pytelegrambotapi
+APScheduler==3.11.0

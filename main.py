@@ -7,6 +7,7 @@ import command_squad
 import command_split
 import command_talk
 import command_wakeup
+import alerts
 import dotenv
 from logger import log
 
@@ -17,6 +18,7 @@ bot = telebot.TeleBot(API_KEY)
 #bot.remove_webhook()
 #bot.set_webhook("https://europe-central2-angular-lambda-289018.cloudfunctions.net/vaupshasova_bot")
 log("Bot object initialized.")
+
 
 def vaupshasova_bot(request):
     if request.method == "POST":
@@ -33,6 +35,7 @@ def vaupshasova_bot(request):
         bot.process_new_updates([update])
         log("Webhook Invoked: " + update.message.text)
     return "OK"
+
 
 @bot.message_handler(commands=['add'])
 def add(message):
@@ -68,7 +71,10 @@ def talk(message):
 def wakeup(message):
     command_wakeup.execute(message, bot)
 
+alerts.schedule_alerts()
+log("Alerts scheduled.")
 
 #log("Webhook URL: " + bot.get_webhook_info().url)
 log("Started polling.")
+log("Bot is up and running.")
 bot.infinity_polling()
