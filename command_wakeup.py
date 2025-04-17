@@ -31,7 +31,6 @@ def execute(message, bot):
                     bot.set_message_reaction(message.chat.id, message.message_id, [ReactionTypeEmoji('👍')], is_big=True)
 
                     log(helpers.fill_template("Woke up: {name}",name=get_player_name_formal(player)))
-                    send_random_joke(bot, message)
                 else:
                     reply_no_player_found(bot, message, get_arguments(message.text))
             else:

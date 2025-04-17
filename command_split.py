@@ -31,7 +31,6 @@ def execute(message, bot):
 
                 bot.reply_to(message, split_squad)
                 log(helpers.fill_template("Split squad with GenAI command requested by {name}",name=get_player_name_formal(current_player)))
-                send_random_joke(bot, message)
             else:
                 reply_to_unauthorized(bot, message, player)
         else:

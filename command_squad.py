@@ -50,7 +50,6 @@ def execute(message, bot):
 
             bot.reply_to(message, squad_template_text)
             log(helpers.fill_template("Squad list requested by {name}",name=get_player_name_formal(current_player)))
-            send_random_joke(bot, message)
         else:
             reply_to_unauthorized(bot, message, player)
     except Exception as e:

@@ -53,7 +53,7 @@ def start_waking_up():
 
 def randon_abusive_comment():
     try:
-        response = deepseek.send_request(constants.RANDOM_MAKSIM_JOKE_PROMPT_DEEPSEEK, 1)
+        response = deepseek.send_request(constants.RANDOM_MAKSIM_JOKE_PROMPT_DEEPSEEK, 1.5)
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(response))
         log("[Automated message] Random abusive comment sent out.")
     except Exception as e:
