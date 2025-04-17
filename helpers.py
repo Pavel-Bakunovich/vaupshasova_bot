@@ -21,7 +21,6 @@ def get_next_matchday():
   return saturday
 
 def get_next_matchday_formatted():
-
   MONTHS_RU = {
     1: 'янв', 2: 'фев', 3: 'мар', 4: 'апр', 5: 'мая', 6: 'июн',
     7: 'июл', 8: 'авг', 9: 'сен', 10: 'окт', 11: 'ноя', 12: 'дек'
