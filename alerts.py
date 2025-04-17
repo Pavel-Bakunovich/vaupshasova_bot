@@ -27,8 +27,8 @@ def schedule_alerts():
                       timezone=timezone('Europe/Minsk'))
     scheduler.add_job(randon_abusive_comment,
                       'cron',
-                      hour=18,
-                      minute=45,
+                      hour=8,
+                      minute=0,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.start()
