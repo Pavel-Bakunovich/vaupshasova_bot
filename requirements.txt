@@ -3,3 +3,5 @@ pytz
 psycopg2-binary
 dotenv
 openai
+python-dotenv
+pytelegrambotapi
