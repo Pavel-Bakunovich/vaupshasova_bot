@@ -2,7 +2,7 @@ from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 import helpers
 from helpers import get_arguments
-from common import add_player_if_not_existant_with_params, get_player_name, send_random_joke, send_abusive_comment,reply_only_CEO_can_do_it,validate_access,validate_CEO_zone
+from common import add_player_if_not_existant_with_params, get_player_name, send_abusive_comment,reply_only_CEO_can_do_it,validate_access,validate_CEO_zone
 import database
 import constants
 

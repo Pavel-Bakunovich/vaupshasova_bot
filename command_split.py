@@ -1,7 +1,7 @@
 from logger import log, log_error
 import helpers
 from helpers import allow_registration,authorized
-from common import add_player_if_not_existant, send_random_joke, reply_registration_not_allowed, reply_to_unauthorized, get_player_name_formal, get_player_name_extended
+from common import add_player_if_not_existant, reply_registration_not_allowed, reply_to_unauthorized, get_player_name_formal, get_player_name_extended
 import database
 import constants
 import deepseek
