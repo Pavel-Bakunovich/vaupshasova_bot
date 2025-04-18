@@ -37,7 +37,7 @@ def schedule_alerts():
 
 def start_registration():
     try:
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, fill_template("📝 Погнали регистрироваться на {date}! /add", date=get_next_matchday_formatted()), message_thread_id=30988)
+        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, fill_template("📝 Погнали регистрироваться на {date}! /add", date=get_next_matchday_formatted()), message_thread_id=constants.TELEGRAM_GATHER_SQUAD_TOPIC_ID)
         log("[Automated message] 📝 Start of registration message sent out.")
     except Exception as e:
         log_error(e)
@@ -45,7 +45,7 @@ def start_registration():
 
 def start_waking_up():
     try:
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, "💤 Просыпаемся! /wakeup", message_thread_id=30990)
+        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, "💤 Просыпаемся! /wakeup", message_thread_id=constants.TELEGRAM_GAMEDAY_TOPIC_ID)
         log("[Automated message] 💤 Start of waking message sent out.")
     except Exception as e:
         log_error(e)
