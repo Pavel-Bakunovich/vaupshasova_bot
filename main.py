@@ -19,7 +19,7 @@ bot = telebot.TeleBot(API_KEY)
 #bot.set_webhook("https://europe-central2-angular-lambda-289018.cloudfunctions.net/vaupshasova_bot")
 log("Bot object initialized.")
 
-
+"""
 def vaupshasova_bot(request):
     if request.method == "POST":
         bot = telebot.TeleBot(API_KEY)
@@ -35,7 +35,7 @@ def vaupshasova_bot(request):
         bot.process_new_updates([update])
         log("Webhook Invoked: " + update.message.text)
     return "OK"
-
+"""
 
 @bot.message_handler(commands=['add'])
 def add(message):

@@ -8,7 +8,6 @@ import constants
 
 def execute(message, bot):
     #pin message
-    #tb = telebot.TeleBot(api_bot)
     #message = tb.send_message(group_id, 'Test!')
     #tb.pin_chat_message(group_id, message.message_id)
     user_message_text = ""
