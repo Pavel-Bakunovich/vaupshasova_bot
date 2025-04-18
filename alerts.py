@@ -26,7 +26,7 @@ def schedule_alerts():
                       hour=6,
                       minute=0,
                       timezone=timezone('Europe/Minsk'))
-    scheduler.add_job(randon_abusive_comment,
+    scheduler.add_job(random_abusive_comment,
                       'cron',
                       hour=8,
                       minute=0,
@@ -51,7 +51,7 @@ def start_waking_up():
         log_error(e)
 
 
-def randon_abusive_comment():
+def random_abusive_comment():
     try:
         response = deepseek.send_request(constants.RANDOM_MAKSIM_JOKE_PROMPT_DEEPSEEK, 1.5)
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(response))
