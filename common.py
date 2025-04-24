@@ -51,17 +51,13 @@ def get_player_name_formal(player):
             player[3]) + ")"
     else:
         return str(player[5]) + " " + str(player[6])
-""" 
-def send_random_joke(bot, message):
-    if (random.random() < 0.20):
-        response = deepseek.send_request(constants.RANDOM_MAKSIM_JOKE_PROMPT_DEEPSEEK, 1.5)
-        bot.send_message(message.chat.id, response)
-        log("Random joke sent")
-"""
 
 def send_abusive_comment(bot, message, bot_message):
     if (random.random() < 0.20):
-        abusive_message = deepseek.send_request(fill_template(constants.ABUSIVE_COMMENT_DEEPSEEK, bot_message = bot_message), 1.5)
+        with open(constants.ABUSIVE_COMMENT_PROMPT_FILENAME,"r") as abusive_comment_prompt_file:
+            abusive_comment_prompt = abusive_comment_prompt_file.read()
+
+        abusive_message = deepseek.send_request(fill_template(abusive_comment_prompt, bot_message = bot_message), 1.5)
         bot.reply_to(message, abusive_message)
         log(fill_template("Abusive comment sent in response to: \'{bot_message}\'", bot_message=bot_message))
 

@@ -53,7 +53,10 @@ def start_waking_up():
 
 def random_abusive_comment():
     try:
-        response = deepseek.send_request(constants.RANDOM_MAKSIM_JOKE_PROMPT_DEEPSEEK, 1.5)
+        with open(constants.MAKSIM_JOKE_PROMPT_TEMPLATE_FILENAME,"r") as maksim_joke_prompt_template_file:
+            maksim_joke_prompt_template_text = maksim_joke_prompt_template_file.read()
+
+        response = deepseek.send_request(maksim_joke_prompt_template_text, 1.5)
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(response))
         log("[Automated message] Random abusive comment sent out.")
     except Exception as e:
