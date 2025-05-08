@@ -29,8 +29,8 @@ def schedule_alerts():
                       timezone=timezone('Europe/Minsk'))
     scheduler.add_job(good_morning,
                       'cron',
-                      hour=15,
-                      minute=40,
+                      hour=8,
+                      minute=0,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.start()
