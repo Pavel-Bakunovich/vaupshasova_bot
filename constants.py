@@ -11,6 +11,6 @@ UNHANDLED_EXCEPTION_MESSAGE="Чота я паламался. Давай по-н�
 SQUAD_TEMPLATE_FILENAME = "squad.txt"
 SPLIT_SQUAD_TEMPLATE_FILENAME = "prompt_split_squad.txt"
 TALK_PROMPT_TEMPLATE_FILENAME = "prompt_talk.txt"
-MAKSIM_JOKE_PROMPT_TEMPLATE_FILENAME = "prompt_maksim_joke.txt"
+GOOD_MORNING_PROMPT_TEMPLATE_FILENAME = "prompt_good_morning.txt"
 SYSTEM_PROMPT_FILENAME="prompt_system.txt"
 ABUSIVE_COMMENT_PROMPT_FILENAME="prompt_abusive_comment.txt"

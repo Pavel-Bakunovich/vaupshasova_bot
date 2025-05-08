@@ -6,11 +6,12 @@ import constants
 from logger import log, log_error
 from pytz import timezone
 from helpers import get_next_matchday_formatted, fill_template
+import requests
 
+WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
 bot = telebot.TeleBot(API_KEY)
 scheduler = None
-
 
 def schedule_alerts():
     scheduler = BackgroundScheduler()
@@ -20,13 +21,13 @@ def schedule_alerts():
                       hour=8,
                       minute=0,
                       timezone=timezone('Europe/Minsk'))
-    scheduler.add_job(start_waking_up,
+    scheduler.add_job(start_waking_up, 
                       'cron',
                       day_of_week='sat',
                       hour=6,
                       minute=0,
                       timezone=timezone('Europe/Minsk'))
-    scheduler.add_job(random_abusive_comment,
+    scheduler.add_job(good_morning,
                       'cron',
                       hour=8,
                       minute=0,
@@ -51,12 +52,23 @@ def start_waking_up():
         log_error(e)
 
 
-def random_abusive_comment():
+def good_morning():
     try:
-        with open(constants.MAKSIM_JOKE_PROMPT_TEMPLATE_FILENAME,"r") as maksim_joke_prompt_template_file:
-            maksim_joke_prompt_template_text = maksim_joke_prompt_template_file.read()
+        base_URL="http://api.weatherapi.com/v1/forecast.json" 
+        PARAMS = {'key':WEATHER_API_KEY,
+                  'q':"Minsk",
+                  'days':1,
+                  'aqi':"no",
+                  'alerts':"no"}
+        
+        response = requests.get(url = base_URL, params = PARAMS)
 
-        response = deepseek.send_request(maksim_joke_prompt_template_text, 1.5)
+        weather_forecast = response.json()
+
+        with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
+            good_morning_prompt_template_text = good_morning_prompt_template_file.read()
+
+        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, JSON_weather_forecast=weather_forecast), 1.5)
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(response))
         log("[Automated message] Random abusive comment sent out.")
     except Exception as e:
