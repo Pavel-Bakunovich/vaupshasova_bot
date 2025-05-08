@@ -70,7 +70,7 @@ def good_morning():
 
         response = deepseek.send_request(fill_template(good_morning_prompt_template_text, JSON_weather_forecast=weather_forecast), 1.5)
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(response))
-        log("[Automated message] Random abusive comment sent out.")
+        log("[Automated message] Good morning message sent out.")
     except Exception as e:
         log_error(e)
     
