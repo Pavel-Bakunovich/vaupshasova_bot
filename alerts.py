@@ -5,7 +5,7 @@ import deepseek
 import constants
 from logger import log, log_error
 from pytz import timezone
-from helpers import get_next_matchday_formatted, fill_template
+from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template
 import requests
 
 WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
@@ -103,11 +103,13 @@ def good_morning():
                                         sunset = weather_forecast['forecast']['forecastday'][0]['astro']['sunset'],
                                         moonrise = weather_forecast['forecast']['forecastday'][0]['astro']['moonrise'],
                                         moonset =weather_forecast['forecast']['forecastday'][0]['astro']['moonset'])
-        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast=weather_forecast_text), 1.5)
+        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast=weather_forecast_text, date=get_today_minsk_time_formatted()), 1.5)
 
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(response))
 
         log(fill_template("[Automated message] Good morning message sent out. Weather: {weather}", weather=weather_forecast_text))
+
+        log(fill_template(good_morning_prompt_template_text, weather_forecast=weather_forecast_text, date=get_today_minsk_time_formatted()))
 
     except Exception as e:
         log_error(e)
