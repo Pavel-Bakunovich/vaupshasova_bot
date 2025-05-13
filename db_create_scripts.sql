@@ -18,6 +18,11 @@ CREATE TABLE Matchday (
     Player_ID INTEGER,
     Time_Stamp TIMESTAMP WITH TIME ZONE,
     Wokeup BOOLEAN DEFAULT FALSE,
+    Squad TEXT,
+    Goals SMALLINT,
+    Assists SMALLINT,
+    Own_Goals SMALLINT,
+    Money DECIMAL(2),
     CONSTRAINT constraint_1 FOREIGN KEY(Player_ID) REFERENCES public.Players (id) ON UPDATE NO ACTION ON DELETE NO ACTION
     );
 
