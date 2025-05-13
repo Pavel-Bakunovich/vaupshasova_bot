@@ -18,3 +18,11 @@ CREATE TABLE Matchday (
    Wokeup BOOLEAN DEFAULT 'FALSE'
    CONSTRAINT constraint_1 FOREIGN KEY (Player_ID) REFERENCES public.Players (id) ON UPDATE NO ACTION ON DELETE NO ACTION,
 )
+
+CREATE TABLE Games (
+  Game_ID integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  Game_Date timestamp with time zone,
+  Score_Tomato smallint,
+  Score_Corn smallint,
+  Paid_for_Pitch decimal(2)
+)
