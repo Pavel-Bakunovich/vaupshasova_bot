@@ -13,7 +13,6 @@ CREATE TABLE Players (
 
 CREATE TABLE Matchday (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    Matchday_Date DATE,
     Type TEXT,
     Player_ID INTEGER,
     Time_Stamp TIMESTAMP WITH TIME ZONE,
@@ -27,7 +26,7 @@ CREATE TABLE Matchday (
     );
 
 CREATE TABLE Games (
-  Game_ID integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   Game_Date timestamp with time zone,
   Score_Tomato smallint,
   Score_Corn smallint,
