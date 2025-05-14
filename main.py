@@ -7,6 +7,8 @@ import command_squad
 import command_split
 import command_talk
 import command_wakeup
+import command_register_lineups
+import command_print_lineups
 import alerts
 import dotenv
 from logger import log
@@ -70,6 +72,14 @@ def talk(message):
 @bot.message_handler(commands=['wakeup'])
 def wakeup(message):
     command_wakeup.execute(message, bot)
+
+@bot.message_handler(commands=['register_lineups'])
+def register_lineups(message):
+    command_register_lineups.execute(message, bot)
+
+@bot.message_handler(commands=['print_lineups'])
+def print_lineups(message):
+    command_print_lineups.execute(message, bot)
 
 alerts.schedule_alerts()
 log("Alerts scheduled.")

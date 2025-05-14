@@ -21,13 +21,15 @@ def execute(message, bot):
                 i = 1
                 squad_list = ""
                 for player in matchday_roster:
-                    if player[2] == constants.TYPE_ADD:
+                    matchday_player_registration_type = player[1]
+                    if matchday_player_registration_type == constants.TYPE_ADD:
                         squad_list += helpers.fill_template("{number}. {name}\n", number=i, name=get_player_name_extended(player))
                         i += 1
 
                 split_squad_template_text = helpers.fill_template(split_squad_template_text, squad=squad_list)
-            
+                log(split_squad_template_text)
                 split_squad = deepseek.send_request(split_squad_template_text, 0)
+                log (squad_list)
 
                 bot.reply_to(message, split_squad)
                 log(helpers.fill_template("Split squad with GenAI command requested by {name}",name=get_player_name_formal(current_player)))

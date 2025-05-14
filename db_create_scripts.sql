@@ -13,6 +13,7 @@ CREATE TABLE Players (
 
 CREATE TABLE Matchday (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    Game_ID INTEGER,
     Type TEXT,
     Player_ID INTEGER,
     Time_Stamp TIMESTAMP WITH TIME ZONE,
@@ -22,12 +23,13 @@ CREATE TABLE Matchday (
     Assists SMALLINT,
     Own_Goals SMALLINT,
     Money DECIMAL(2),
-    CONSTRAINT constraint_1 FOREIGN KEY(Player_ID) REFERENCES public.Players (id) ON UPDATE NO ACTION ON DELETE NO ACTION
+    CONSTRAINT constraint_1 FOREIGN KEY(Player_ID) REFERENCES public.Players (id) ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT constraint_2 FOREIGN KEY(Game_ID) REFERENCES public.Games (id) ON UPDATE NO ACTION ON DELETE NO ACTION
     );
 
 CREATE TABLE Games (
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  Game_Date timestamp with time zone,
+  Game_Date date,
   Score_Tomato smallint,
   Score_Corn smallint,
   Paid_for_Pitch decimal(2)

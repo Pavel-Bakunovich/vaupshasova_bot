@@ -2,11 +2,10 @@ import os
 from psycopg2 import pool
 from dotenv import load_dotenv
 from helpers import fill_template, get_today_minsk_time
-from logger import log_error
+from logger import log, log_error
 
 load_dotenv()
 connection_string = os.getenv('DATABASE_URL')
-
 
 def create_connection_pool():
     connection_pool = pool.SimpleConnectionPool(1, 10, connection_string)
@@ -17,13 +16,24 @@ def create_connection_pool():
 
     return connection_pool
 
-
 def close_connection_pool(pool):
     conn = pool.getconn()
     conn.close()
     pool.putconn(conn)
     pool.closeall()
 
+def get_game_id(matchday_date):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+
+    cursor.execute(f"SELECT id FROM Games WHERE Game_Date = '{matchday_date}'")
+    game_day = cursor.fetchone()
+    if game_day is None:
+        cursor.execute(f"INSERT INTO Games (Game_Date) VALUES ('{matchday_date}')")
+    
+    connection.commit()
+    return game_day[0]
 
 def remove_player(telegram_id):
     connection_pool = create_connection_pool()
@@ -79,14 +89,9 @@ def find_player(telegram_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-    cursor.execute(
-        fill_template(
-            'SELECT * FROM Players WHERE Telegram_ID = \'{telegram_id}\'',
-            telegram_id=telegram_id))
+    cursor.execute(f'SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Telegram_ID = {telegram_id}')
     player = cursor.fetchone()
-
     close_connection_pool(connection_pool)
-
     return player
 
 
@@ -95,10 +100,10 @@ def find_player_by_name(first_name, last_name):
     connection = connection_pool.getconn()
     cursor = connection.cursor()
     if (first_name is not None) and (last_name is not None):
-        cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_First_Name = \'{first_name}\' AND Friendly_Last_Name = \'{last_name}\'',first_name=first_name, last_name=last_name))
+        cursor.execute(fill_template('SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Friendly_First_Name = \'{first_name}\' AND Friendly_Last_Name = \'{last_name}\'',first_name=first_name, last_name=last_name))
     else:
         if last_name is not None:
-            cursor.execute(fill_template('SELECT * FROM Players WHERE Friendly_Last_Name = \'{last_name}\'',last_name=last_name))
+            cursor.execute(fill_template('SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Friendly_Last_Name = \'{last_name}\'',last_name=last_name))
     player = cursor.fetchall()
     result = None
     if len(player) == 1:
@@ -107,95 +112,75 @@ def find_player_by_name(first_name, last_name):
 
     return result
 
-
 def register_player_matchday(matchday_date, type, player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-    cursor.execute(
-        fill_template(
-            'INSERT INTO Matchday (Matchday_Date, Type, Player_ID, Time_Stamp) VALUES (\'{matchday_date}\', \'{type}\', \'{player_id}\', \'{date_now}\')',
-            matchday_date=matchday_date,
-            type=type,
-            player_id=player_id,
-            date_now=get_today_minsk_time()))
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'INSERT INTO Matchday (Game_ID, Type, Player_ID, Time_Stamp) VALUES (\'{game_id}\', \'{type}\', \'{player_id}\', \'{get_today_minsk_time()}\')')
     connection.commit()
 
     close_connection_pool(connection_pool)
 
+def update_player_squad_for_matchday(player_id, squad, matchday_date):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f"UPDATE Matchday SET Squad = \'{squad}\', Time_Stamp = \'{get_today_minsk_time()}\' WHERE Player_ID = \'{player_id}\' AND Game_ID = {game_id}")
+
+    connection.commit()
+
+    close_connection_pool(connection_pool)    
 
 def find_registraion_player_matchday(matchday_date, telegram_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-    cursor.execute(
-        fill_template(
-            'SELECT * FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Players.Telegram_ID = \'{telegram_id}\' AND Matchday.Matchday_Date = \'{matchday_date}\'',
-            telegram_id=telegram_id,
-            matchday_date=matchday_date))
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'SELECT Players.id, Matchday.Type, Matchday.Wokeup, Players.Telegram_First_Name, Players.Telegram_Last_Name, Players.Telegram_Login, Players.Telegram_ID, Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.Informal_Friendly_First_Name, Matchday.Squad FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Players.Telegram_ID = \'{telegram_id}\' AND Matchday.Game_ID = \'{game_id}\'')
     matchday = cursor.fetchone()
 
     close_connection_pool(connection_pool)
 
     return matchday
 
-
 def update_registraion_player_matchday(matchday_date, type, player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-
-    cursor.execute(
-        fill_template(
-            'UPDATE Matchday SET Type = \'{type}\', Time_Stamp = \'{date_now}\' WHERE Player_ID = \'{player_id}\' AND Matchday_Date = \'{matchday_date}\'',
-            matchday_date=matchday_date,
-            type=type,
-            date_now=get_today_minsk_time(),
-            player_id=player_id))
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'UPDATE Matchday SET Type = \'{type}\', Time_Stamp = \'{get_today_minsk_time()}\' WHERE Player_ID = \'{player_id}\' AND Game_ID = \'{game_id}\'')
     connection.commit()
 
     close_connection_pool(connection_pool)
-
 
 def get_matchday_players_count(matchday_date):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-    cursor.execute(
-        fill_template(
-            'SELECT COUNT(*) FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\' AND Matchday.Type=\'add\'',
-            matchday_date=matchday_date))
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'SELECT COUNT(*) FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Game_ID = {game_id} AND Matchday.Type=\'add\'')
     matchday_players_count = cursor.fetchone()
-
     close_connection_pool(connection_pool)
-
     return matchday_players_count[0]
-
 
 def get_squad(matchday_date):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-    cursor.execute(
-        fill_template(
-            'SELECT * FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Matchday_Date = \'{matchday_date}\'  ORDER BY Time_Stamp ASC',
-            matchday_date=matchday_date))
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'SELECT Players.id, Matchday.Type, Matchday.Wokeup, Players.Telegram_First_Name, Players.Telegram_Last_Name, Players.Telegram_Login, Players.Telegram_ID, Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.Informal_Friendly_First_Name, Matchday.Squad FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Game_ID = \'{game_id}\' ORDER BY Matchday.Squad, Matchday.Time_Stamp ASC')
     matchdays = cursor.fetchall()
-
     close_connection_pool(connection_pool)
-
     return matchdays
 
 def wakeup(matchday_date, player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-    cursor.execute(fill_template(
-            'UPDATE Matchday SET Wokeup = \'{wokeup}\', Time_Stamp = \'{date_now}\' WHERE Player_ID = \'{player_id}\' AND Matchday_Date = \'{matchday_date}\'',
-            wokeup=True,
-            date_now=get_today_minsk_time(),
-            matchday_date=matchday_date,
-            player_id=player_id))
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'UPDATE Matchday SET Wokeup = \'{True}\', Time_Stamp = \'{get_today_minsk_time()}\' WHERE Player_ID = {player_id} AND Game_ID = {game_id}')
     connection.commit()
     close_connection_pool(connection_pool)
     return get_sleeping_player_count(matchday_date)
@@ -204,12 +189,8 @@ def get_sleeping_player_count(matchday_date):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-    cursor.execute(
-        fill_template(
-            'SELECT COUNT(*) FROM Matchday WHERE Matchday_Date = \'{matchday_date}\' AND wokeup = FALSE AND type=\'add\'',
-            matchday_date=matchday_date))
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'SELECT COUNT(*) FROM Matchday WHERE Game_ID = \'{game_id}\' AND wokeup = FALSE AND type=\'add\'')
     sleeping_player_count = cursor.fetchone()
-
     close_connection_pool(connection_pool)
-
     return sleeping_player_count[0]

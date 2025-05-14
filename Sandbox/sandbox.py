@@ -1,3 +1,4 @@
+"""
 import json
 
 with open("Sandbox/players.json","r") as players_file:
@@ -15,3 +16,4 @@ with open("Sandbox/players.json","r") as players_file:
 
 insert_query = "INSERT INTO Players (telegram_first_name, telegram_last_name, telegram_login, telegram_id, friendly_first_name, friendly_last_name, informal_friendly_first_name) VALUES " + insert_query
 print(insert_query)
+"""

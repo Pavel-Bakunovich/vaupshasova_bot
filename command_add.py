@@ -18,8 +18,9 @@ def execute(message, bot):
                                                         message.from_user.username,
                                                         message.from_user.id)
         if validate_access(message.chat.id, player, bot, message):
-            player_telegram_id = player[4]
-            player_id = player[0]
+            player_telegram_id = player[3]
+            player_id = player[7]
+            
             if validate_CEO_zone(message.from_user.id,get_arguments(message.text)):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
                 matchday_player_count = database.get_matchday_players_count(helpers.get_next_matchday())
@@ -35,18 +36,19 @@ def execute(message, bot):
                         log(user_message_text)
                         database.register_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player_id)
                 else:
-                    if matchday[2] == constants.TYPE_ADD:
+                    player_registration_type = matchday[1]
+                    if player_registration_type == constants.TYPE_ADD:
                         user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
                         log(user_message_text)
                     else:
                         if (matchday_player_count < 12):
                             user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             log(user_message_text)
-                            database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player[0])
+                            database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player_id)
                         else:
                             user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест! Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             log(user_message_text)
-                            database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player[0])
+                            database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player_id)
 
                 bot_message = bot.reply_to(message, user_message_text)
                 bot.set_message_reaction(message.chat.id,

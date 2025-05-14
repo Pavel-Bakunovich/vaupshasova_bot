@@ -16,8 +16,8 @@ def execute(message, bot):
                                                         message.from_user.id)
         
         if validate_access(message.chat.id, player, bot, message):
-            player_telegram_id = player[4]
-            player_id = player[0]
+            player_telegram_id = player[3]
+            player_id = player[7]
             if validate_CEO_zone(message.from_user.id,get_arguments(message.text)):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
 
@@ -27,14 +27,15 @@ def execute(message, bot):
                     user_message_text = helpers.fill_template("🪑 {name}, cел на стульчик на игру {date}" ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                     log(user_message_text)
                 else:
-                    if matchday[2] == constants.TYPE_ADD:
+                    player_registration_type = matchday[1]
+                    if player_registration_type == constants.TYPE_ADD:
                         user_message_text = helpers.fill_template("🪑 {name}, окей, снимаем тебя с состава и записываем на стул на игру {date}!" ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         log(user_message_text)
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player_id)
-                    if matchday[2] == constants.TYPE_CHAIR:
+                    if player_registration_type == constants.TYPE_CHAIR:
                         user_message_text = helpers.fill_template("🪑 {name}, так ты и так уже на стуле сидишь!" ,name=get_player_name(player))
                         log(user_message_text)
-                    if matchday[2] == constants.TYPE_REMOVE:
+                    if player_registration_type == constants.TYPE_REMOVE:
                         user_message_text = helpers.fill_template("🪑 {name}, ты раньше минусовался, но записываем тебя на стул на игру {date}! Так уж и быть." ,name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                         log(user_message_text)
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player_id)

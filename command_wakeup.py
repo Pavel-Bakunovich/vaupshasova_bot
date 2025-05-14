@@ -19,7 +19,7 @@ def execute(message, bot):
         if today.weekday() == 5:
             if (authorized(message.chat.id)):
                 if player is not None:
-                    player_id = player[0]
+                    player_id = player[7]
                     still_sleeping_count = database.wakeup(helpers.get_next_matchday(),player_id)
                     
                     if still_sleeping_count == 0:

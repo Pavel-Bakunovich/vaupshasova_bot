@@ -23,23 +23,33 @@ def execute(message, bot):
             #today = datetime.date(year = 2025, month = 3, day = 29)# - for debugging
             i = 1
             for player in matchday_roster:
-                if player[2] == constants.TYPE_ADD:
+                matchday_player_registration_type = player[1]
+                squad = player[10]
+                player_wokeup = player[2]
+                if matchday_player_registration_type == constants.TYPE_ADD:
                     if today.weekday() == 5:
-                        if player[5] == True:
+                        if player_wokeup == True:
                             squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", "👀 " + get_player_name_extended(player))
                         else:
                             squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", "💤 " + get_player_name_extended(player))
                     else:
-                        squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", get_player_name_extended(player))
+                        if squad is not None:
+                            squad = squad.replace(constants.SQUAD_CORN, constants.SQUAD_CORN_EMOJI)
+                            squad = squad.replace(constants.SQUAD_TOMATO, constants.SQUAD_TOMATO_EMOJI)
+                            squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", squad + get_player_name_extended(player))
+                        else:
+                            squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", get_player_name_extended(player))
                     i += 1
 
             for player in matchday_roster:
-                if (player[2] == constants.TYPE_CHAIR):
+                player_registration_type_for_chair = player[1]
+                if (player_registration_type_for_chair == constants.TYPE_CHAIR):
                     if today.weekday() != 5:
                         squad_template_text += "\n🪑 " + get_player_name_extended(player)
 
             for player in matchday_roster:
-                if (player[2] == constants.TYPE_REMOVE):
+                player_registration_type_for_remove = player[1]
+                if (player_registration_type_for_remove == constants.TYPE_REMOVE):
                     if today.weekday() != 5:
                         squad_template_text += "\n❌ " + get_player_name_extended(player)
 

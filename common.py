@@ -32,25 +32,40 @@ def add_player_if_not_existant_with_params(input_text, first_name, last_name, us
     return player
 
 def get_player_name_extended(player):
-    if (player[11] is None):
-        return str(player[7]) + " " + str(player[8]) + " (" + str(
-            player[9]) + ")"
+    Telegram_First_Name = str(player[3])
+    Telegram_Last_Name = str(player[4])
+    Telegram_Login = str(player[5])
+    Friendly_First_Name = str(player[7])
+    Friendly_Last_Name = str(player[8])
+    Informal_Friendly_First_Name = str(player[9])
+    if (Friendly_First_Name is None):
+        return f"{Telegram_First_Name} {Telegram_Last_Name} ({Telegram_Login})"
     else:
-        return str(player[11]) + " " + str(player[12])
+        return f"{Friendly_First_Name} {Friendly_Last_Name}"
 
 def get_player_name(player):
-    if (player[5] is None):
-        return str(player[1]) + " " + str(player[2]) + " (" + str(
-            player[3]) + ")"
+    Telegram_First_Name = str(player[0])
+    Telegram_Last_Name = str(player[1])
+    Telegram_Login = str(player[2])
+    Friendly_First_Name = str(player[4])
+    Friendly_Last_Name = str(player[5])
+    Informal_Friendly_First_Name = str(player[6])
+    if (Friendly_First_Name is None):
+        return f"{Telegram_First_Name} {Telegram_Last_Name} ({Telegram_Login})"
     else:
-        return str(player[7])
+        return Informal_Friendly_First_Name
 
 def get_player_name_formal(player):
-    if (player[5] is None):
-        return str(player[1]) + " " + str(player[2]) + " (" + str(
-            player[3]) + ")"
+    Telegram_First_Name = str(player[0])
+    Telegram_Last_Name = str(player[1])
+    Telegram_Login = str(player[2])
+    Friendly_First_Name = str(player[4])
+    Friendly_Last_Name = str(player[5])
+    Informal_Friendly_First_Name = str(player[6])
+    if (Friendly_First_Name is None):
+        return f"{Telegram_First_Name} {Telegram_Last_Name} ({Telegram_Login})"
     else:
-        return str(player[5]) + " " + str(player[6])
+        return f"{Friendly_First_Name} {Friendly_Last_Name}"
 
 def send_abusive_comment(bot, message, bot_message):
     if (random.random() < 0.20):
