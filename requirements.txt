@@ -6,4 +6,4 @@ openai
 python-dotenv
 APScheduler==3.11.0
 prettytable
-PIL
+Pillow
