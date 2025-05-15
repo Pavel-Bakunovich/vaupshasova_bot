@@ -33,5 +33,6 @@ CREATE TABLE Games (
   Game_Date date,
   Score_Tomato smallint,
   Score_Corn smallint,
-  Paid_for_Pitch decimal(2)
+  Paid_for_Pitch decimal(2),
+  Played boolean DEFAULT 'TRUE'
 )
