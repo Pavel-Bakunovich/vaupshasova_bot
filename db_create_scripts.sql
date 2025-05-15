@@ -22,7 +22,8 @@ CREATE TABLE Matchday (
     Goals SMALLINT,
     Assists SMALLINT,
     Own_Goals SMALLINT,
-    Money DECIMAL(2),
+    Money_Given DECIMAL(2),
+    Balance_Change DECIMAL(2),
     CONSTRAINT constraint_1 FOREIGN KEY(Player_ID) REFERENCES public.Players (id) ON UPDATE NO ACTION ON DELETE NO ACTION,
     CONSTRAINT constraint_2 FOREIGN KEY(Game_ID) REFERENCES public.Games (id) ON UPDATE NO ACTION ON DELETE NO ACTION
     );
