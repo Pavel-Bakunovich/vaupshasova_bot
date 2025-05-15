@@ -22,8 +22,9 @@ CREATE TABLE Matchday (
     Goals SMALLINT,
     Assists SMALLINT,
     Own_Goals SMALLINT,
-    Money_Given DECIMAL(2),
-    Balance_Change DECIMAL(2),
+    Money_Given DECIMAL,
+    Balance_Change DECIMAL,
+    Comment text,
     CONSTRAINT constraint_1 FOREIGN KEY(Player_ID) REFERENCES public.Players (id) ON UPDATE NO ACTION ON DELETE NO ACTION,
     CONSTRAINT constraint_2 FOREIGN KEY(Game_ID) REFERENCES public.Games (id) ON UPDATE NO ACTION ON DELETE NO ACTION
     );
@@ -33,6 +34,6 @@ CREATE TABLE Games (
   Game_Date date,
   Score_Tomato smallint,
   Score_Corn smallint,
-  Paid_for_Pitch decimal(2),
+  Paid_for_Pitch decimal,
   Played boolean DEFAULT 'TRUE'
 )
