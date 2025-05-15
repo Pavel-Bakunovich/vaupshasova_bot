@@ -100,10 +100,12 @@ def find_player_by_name(first_name, last_name):
     connection = connection_pool.getconn()
     cursor = connection.cursor()
     if (first_name is not None) and (last_name is not None):
-        cursor.execute(fill_template('SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Friendly_First_Name = \'{first_name}\' AND Friendly_Last_Name = \'{last_name}\'',first_name=first_name, last_name=last_name))
+        cursor.execute(f"SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Friendly_First_Name = '{first_name}' AND Friendly_Last_Name = '{last_name}'")
     else:
         if last_name is not None:
-            cursor.execute(fill_template('SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Friendly_Last_Name = \'{last_name}\'',last_name=last_name))
+            cursor.execute(f"SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Friendly_Last_Name = '{last_name}'")
+        else:
+            cursor.execute(f"SELECT Telegram_First_Name, Telegram_Last_Name, Telegram_Login, Telegram_ID, Friendly_First_Name, Friendly_Last_Name, Informal_Friendly_First_Name, id FROM Players WHERE Friendly_First_Name = '{first_name}'")
     player = cursor.fetchall()
     result = None
     if len(player) == 1:
