@@ -10,6 +10,15 @@ import command_wakeup
 import command_register_lineups
 import command_print_lineups
 import command_season_stats
+import command_alltime_stats
+import command_balance
+import command_how_much_we_owe
+import command_my_balance
+import command_my_stats
+import command_register_game_stats
+import command_register_money
+import command_register_pitch_payment
+import command_register_score
 import alerts
 import dotenv
 from logger import log
@@ -74,17 +83,56 @@ def talk(message):
 def wakeup(message):
     command_wakeup.execute(message, bot)
 
+
 @bot.message_handler(commands=['register_lineups'])
 def register_lineups(message):
     command_register_lineups.execute(message, bot)
+
 
 @bot.message_handler(commands=['print_lineups'])
 def print_lineups(message):
     command_print_lineups.execute(message, bot)
 
+
 @bot.message_handler(commands=['season_stats'])
 def season_stats(message):
     command_season_stats.execute(message, bot)
+
+@bot.message_handler(commands=['alltime_stats'])
+def alltime_stats(message):
+    command_alltime_stats.execute(message, bot)
+
+@bot.message_handler(commands=['balance'])
+def balance(message):
+    command_balance.execute(message, bot)
+
+@bot.message_handler(commands=['how_much_we_owe'])
+def how_much_we_owe(message):
+    command_how_much_we_owe.execute(message, bot)
+
+@bot.message_handler(commands=['my_balance'])
+def my_balance(message):
+    command_my_balance.execute(message, bot)
+
+@bot.message_handler(commands=['my_stats'])
+def my_stats(message):
+    command_my_stats.execute(message, bot)
+
+@bot.message_handler(commands=['register_game_stats'])
+def game_stats(message):
+    command_register_game_stats.execute(message, bot)
+
+@bot.message_handler(commands=['register_money'])
+def register_money(message):
+    command_register_money.execute(message, bot)
+
+@bot.message_handler(commands=['register_pitch_payment'])
+def register_pitch_payment(message):
+    command_register_pitch_payment.execute(message, bot)
+
+@bot.message_handler(commands=['register_score'])
+def register_score(message):
+    command_register_score.execute(message, bot)
 
 alerts.schedule_alerts()
 log("Alerts scheduled.")
