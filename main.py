@@ -9,6 +9,7 @@ import command_talk
 import command_wakeup
 import command_register_lineups
 import command_print_lineups
+import command_season_stats
 import alerts
 import dotenv
 from logger import log
@@ -80,6 +81,10 @@ def register_lineups(message):
 @bot.message_handler(commands=['print_lineups'])
 def print_lineups(message):
     command_print_lineups.execute(message, bot)
+
+@bot.message_handler(commands=['season_stats'])
+def season_stats(message):
+    command_season_stats.execute(message, bot)
 
 alerts.schedule_alerts()
 log("Alerts scheduled.")

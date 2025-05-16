@@ -5,6 +5,7 @@ import database
 from telebot.types import ReactionTypeEmoji
 from logger import log, log_error
 from helpers import fill_template,get_next_matchday_formatted,allow_registration,authorized,is_CEO,get_arguments
+from PIL import Image, ImageDraw, ImageFont
   
 def add_player_if_not_existant(first_name, last_name, username, telegram_id):
   player = database.find_player(telegram_id)
@@ -123,3 +124,42 @@ def validate_access(chat_id, player, bot, message):
 
 def validate_CEO_zone(telegram_id, arguments):
     return ((is_CEO(telegram_id) is False) and (arguments is None)) or (is_CEO(telegram_id) is True)
+
+
+def text_to_image(text, font_size=15, image_size=(900, 600), 
+                  bg_color=(255, 255, 255), text_color=(0, 0, 0)):
+ 
+    # Create a blank image with the specified background color
+    image = Image.new("RGB", image_size, bg_color)
+    draw = ImageDraw.Draw(image)
+    
+    try:
+        # Try to use arial font (common on Windows)
+        font = ImageFont.truetype("PTMono.ttf", font_size)
+    except:
+        try:
+            # Try to use arial font (common on Mac)
+            font = ImageFont.truetype("Arial Unicode.ttf", font_size)
+        except:
+            try:
+                # Try to use DejaVuSans (common on Linux)
+                font = ImageFont.truetype("DejaVuSans.ttf", font_size)
+            except:
+                # Fall back to default font
+                font = ImageFont.load_default()
+                print("Warning: Using default font which may not support all characters")
+    
+    # Calculate text position (centered) - modern method
+    # Get text bounding box
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    
+    # Calculate position to center text
+    x = (image_size[0] - text_width) / 2
+    y = (image_size[1] - text_height) / 2
+    
+    # Draw the text on the image
+    draw.text((x, y), text, font=font, fill=text_color)
+
+    return image

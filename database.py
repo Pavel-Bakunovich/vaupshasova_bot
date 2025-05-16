@@ -31,6 +31,32 @@ def add_game_stats(player_id, game_id, goals, assists, own_goals):
     connection.commit()
     close_connection_pool(connection_pool)
 
+def get_season_stats(year):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+
+    cursor.execute(f'''
+    SELECT Players.Friendly_First_Name, Players.Friendly_Last_Name,
+      COUNT(Matchday.Player_ID) as Games_Played,
+      SUM(Goals) as Goals_Sum,
+      SUM(Assists) as Assists_Sum,
+      SUM(Own_Goals) as Own_Goals_Sum
+  FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID
+                INNER JOIN Games on Games.id = Matchday.Game_ID
+  WHERE Matchday.type like 'add'
+          and Games.game_date < '{year}-12-31'
+          and Games.game_date > '{year}-01-01'
+GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name
+ORDER BY Goals_Sum DESC
+LIMIT 25
+    ''')
+    stats = cursor.fetchall()
+    
+    connection.commit()
+    return stats
+
+
 def add_matchday_money(player_id, game_id, money_given, balance_change, comment):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()

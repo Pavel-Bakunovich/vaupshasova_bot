@@ -36,7 +36,7 @@ def execute(message, bot):
                         if squad is not None:
                             squad = squad.replace(constants.SQUAD_CORN, constants.SQUAD_CORN_EMOJI)
                             squad = squad.replace(constants.SQUAD_TOMATO, constants.SQUAD_TOMATO_EMOJI)
-                            squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", squad + get_player_name_extended(player))
+                            squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", squad + " " + get_player_name_extended(player))
                         else:
                             squad_template_text = squad_template_text.replace("{Player " + str(i) + "}", get_player_name_extended(player))
                     i += 1
