@@ -12,7 +12,7 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        bot.reply_to(message, "Пока эта команда не работает. Не дури галавы.")
+        bot.reply_to(message, "🛑 Пока эта команда не работает. Не дури галавы.")
         '''if validate_access(message.chat.id, player, bot, message):
             table = pt.PrettyTable(['N','Игрок', 'Игры', 'Голы', 'Асисты', 'Автоголы'])
             table.align['N'] = 'c'
