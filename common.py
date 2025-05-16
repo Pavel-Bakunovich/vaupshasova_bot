@@ -136,7 +136,7 @@ def validate_access_no_game_registration_needed(chat_id, player, bot, message):
 def validate_CEO_zone(telegram_id, arguments):
     return ((is_CEO(telegram_id) is False) and (arguments is None)) or (is_CEO(telegram_id) is True)
 
-def validate_CEO_zone_no_arguments(telegram_id, arguments):
+def validate_CEO_zone_no_arguments(telegram_id):
     return is_CEO(telegram_id) is True
 
 
