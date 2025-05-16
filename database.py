@@ -47,6 +47,7 @@ def get_season_stats(year):
   WHERE Matchday.type like 'add'
           and Games.game_date < '{year}-12-31'
           and Games.game_date > '{year}-01-01'
+          and Games.game_date < current_date
 GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name
 ORDER BY Goals_Sum DESC
 LIMIT 25
