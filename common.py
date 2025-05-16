@@ -101,7 +101,7 @@ def reply_no_player_found(bot, message, player_name):
                              is_big=True)
     log(fill_template("No player found: \'{name}\'", name=player_name))
 
-def reply_only_CEO_can_do_it(bot, message, player_name):
+def reply_only_CEO_can_do_it(bot, message):
     bot.reply_to(message,"Это может делать только Директор.")
     bot.set_message_reaction(message.chat.id,
                              message.message_id, [ReactionTypeEmoji('🤬')],
@@ -122,8 +122,22 @@ def validate_access(chat_id, player, bot, message):
         reply_no_player_found(bot, message, get_arguments(message.text))
     return access
 
+def validate_access_no_game_registration_needed(chat_id, player, bot, message):
+    access = False
+    if player is not None:
+        if (authorized(chat_id)):    
+            access = True
+        else:
+            reply_to_unauthorized(bot, message, player)
+    else:
+        reply_no_player_found(bot, message, get_arguments(message.text))
+    return access
+
 def validate_CEO_zone(telegram_id, arguments):
     return ((is_CEO(telegram_id) is False) and (arguments is None)) or (is_CEO(telegram_id) is True)
+
+def validate_CEO_zone_no_arguments(telegram_id, arguments):
+    return is_CEO(telegram_id) is True
 
 
 def text_to_image(text, font_size=15, image_size=(900, 600), 

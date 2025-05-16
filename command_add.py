@@ -61,7 +61,7 @@ def execute(message, bot):
                     bot.reply_to(message, helpers.fill_template("⚠️ Внимание, осталось мест: {free_spots_count}",free_spots_count=matchday_player_count))
                 send_abusive_comment(bot, bot_message, user_message_text)
             else:
-                reply_only_CEO_can_do_it(bot, message, player)
+                reply_only_CEO_can_do_it(bot, message)
 
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)

@@ -38,7 +38,7 @@ def execute(message, bot):
                                         is_big=True)
                 send_abusive_comment(bot, bot_message, user_message_text)
             else:
-                reply_only_CEO_can_do_it(bot, message, player)
+                reply_only_CEO_can_do_it(bot, message)
 
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)

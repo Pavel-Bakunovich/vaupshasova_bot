@@ -13,6 +13,9 @@ SQUAD_CORN="Corn"
 SQUAD_TOMATO_EMOJI="🍅"
 SQUAD_CORN_EMOJI="🌽"
 
+COST_OF_1_GAME = 7
+SYMBOL_TO_OVERRIDE_MONEY_REGISTRATION="-"
+
 UNHANDLED_EXCEPTION_MESSAGE="Чота я паламался. Давай по-новой."
 SQUAD_TEMPLATE_FILENAME = "squad.txt"
 SPLIT_SQUAD_TEMPLATE_FILENAME = "prompt_split_squad.txt"

@@ -48,6 +48,7 @@ def get_season_stats(year):
           and Games.game_date < '{year}-12-31'
           and Games.game_date > '{year}-01-01'
           and Games.game_date < current_date
+          and Games.Played = TRUE
 GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name
 ORDER BY Goals_Sum DESC
 LIMIT 25
@@ -63,6 +64,7 @@ def add_matchday_money(player_id, game_id, money_given, balance_change, comment)
     connection = connection_pool.getconn()
     cursor = connection.cursor()
     cursor.execute(f"UPDATE Matchday SET Money_Given={money_given}, Balance_Change={balance_change}, Comment='{comment}' WHERE Player_ID = {player_id} AND Game_ID = {game_id}")
+    connection.commit()
     close_connection_pool(connection_pool)
 
 
@@ -84,6 +86,17 @@ def get_game_id(matchday_date):
     if game_day is None:
         cursor.execute(f"INSERT INTO Games (Game_Date) VALUES ('{matchday_date}')")
     
+    connection.commit()
+    return game_day[0]
+
+def get_game_id_without_adding_new(matchday_date):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT id FROM Games WHERE Game_Date = '{matchday_date}'")
+    game_day = cursor.fetchone()
+    if game_day is None:
+        return None
     connection.commit()
     return game_day[0]
 

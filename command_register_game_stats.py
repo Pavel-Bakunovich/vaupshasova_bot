@@ -1,53 +1,73 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday
-from common import add_player_if_not_existant, validate_access, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 import re
+import datetime
 
 def execute(message, bot):
     try:
+        bot.set_message_reaction(message.chat.id,
+                                            message.message_id,
+                                            [ReactionTypeEmoji('👾')],
+                                            is_big=True)
         player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        bot.reply_to(message, "🛑 Пока эта команда не работает. Не дури галавы.")
-        '''if validate_access(message.chat.id, player, bot, message):
+        if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
             command_and_argument_split = message.text.split('\n', 1)
             if len(command_and_argument_split)>1:
-                parts = command_and_argument_split[1].split('\n')
-                
-                for line in parts:
-                    lineup_player_params = re.split(r'[\s]+', line.strip())
-                    first_name = lineup_player_params[0]
-                    last_name = lineup_player_params[1]
-                    lineup_player = database.find_player_by_name(first_name, last_name)
-                    if lineup_player is not None:
-                        player_id = lineup_player[7]
-                        goals = lineup_player_params[2]
-                        assists = lineup_player_params[3]
-                        own_goals = lineup_player_params[4]
-                        game_id = database.get_game_id()
-                        #database.add_game_stats(player_id,game_id,goals,assists,own_goals)
-                        #database.update_player_squad_for_matchday(squad_player_id, squad, get_next_matchday())
-                    else:
-                        log(f"Can't find player to register in a lineup: {lineup_player_params}")
-                log(f"Game stats successfully registered")
-                bot.reply_to(message, "Результат деления на команды внесен!")
-                bot.set_message_reaction(message.chat.id,
-                                    message.message_id,
-                                    [ReactionTypeEmoji('✍️')],
-                                    is_big=True)
+                date_params = command_and_argument_split[0].split(' ', 1)
+                if len(date_params) > 1:
+                    date = None
+                    try:
+                        date = datetime.datetime.strptime(date_params[1], "%b %d, %Y")
+                    except:
+                        bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_game_stats May 17, 2025")
+                    if date is not None:
+                        parts = command_and_argument_split[1].split('\n')
+                        game_id = database.get_game_id_without_adding_new(date)
+                        
+                        if game_id is not None:
+                            for line in parts:
+                                lineup_player_params = re.split(r'[\s]+', line.strip())
+                                first_name = lineup_player_params[0]
+                                last_name = lineup_player_params[1]
+                                lineup_player = database.find_player_by_name(first_name, last_name)
+                                if lineup_player is not None:
+                                    player_id = lineup_player[7]
+                                    goals = lineup_player_params[2]
+                                    assists = lineup_player_params[3]
+                                    own_goals = lineup_player_params[4]
+                                    if goals.isdigit() is False or assists.isdigit() is False or own_goals.isdigit() is False:
+                                        bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
+                                    else:
+                                        database.add_game_stats(player_id,game_id,goals,assists,own_goals)
+                                else:
+                                    bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
+                                    log(f"Can't find player to register in a lineup: {lineup_player_params}")
+                            log(f"Game stats successfully registered")
+                            bot.reply_to(message, "✅ Статистика записана! Цифры мутятся, статистика крутится! Красава!")
+                            bot.set_message_reaction(message.chat.id,
+                                                message.message_id,
+                                                [ReactionTypeEmoji('✍️')],
+                                                is_big=True)
+                        else:
+                            bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
+                else:
+                    bot.reply_to(message, "Дату надо указать! Без даты ничего не получится. Откуда ж я знаю за какой день эту статистику записывать? Вот в таком формате пиши: /register_game_stats May 17, 2025")
             else:
-                bot.reply_to(message, "Пришли результат дележки! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись.")'''
+                bot.reply_to(message, "Пришли результат дележки! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись!")
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
 
         
         '''
-/register_game_stats
+/register_game_stats May 17, 2025
 Ваня Шмарловский 4 5 0
 Костя Ведьгун 3 2 0
 Юра Лупинов 0 8 1

@@ -1,7 +1,7 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted
-from common import add_player_if_not_existant, validate_access, get_player_name_extended, text_to_image, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access, get_player_name_extended, text_to_image, validate_access_no_game_registration_needed, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 import re
@@ -19,7 +19,7 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access(message.chat.id, player, bot, message):
+        if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
             table = pt.PrettyTable(['N', 'Игрок', 'Сдал', 'Баланс', 'Команда', 'Голы', 'Асисты', 'Автоголы'])
             table.align['N'] = 'c'
             table.align['Игрок'] = 'l'
