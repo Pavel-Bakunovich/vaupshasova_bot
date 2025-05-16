@@ -9,6 +9,12 @@ import re
 import prettytable as pt
 from PIL import Image, ImageDraw, ImageFont
 
+def get_player_balance(player_id, players_balances):
+    for player in players_balances:
+        if player[0] == player_id:
+            return player[3]
+    return None
+
 def execute(message, bot):
     try:
         player = add_player_if_not_existant(message.from_user.first_name,
@@ -28,6 +34,7 @@ def execute(message, bot):
             table.hrules = True
             matchday_roster = database.get_squad(get_next_matchday())
             i = 1
+            players_balances = database.get_players_balance()
             for player in matchday_roster:
                 matchday_player_registration_type = player[1]
                 player_id = player[0]
@@ -38,7 +45,8 @@ def execute(message, bot):
                         squad = squad.replace(constants.SQUAD_TOMATO, "П")
                     else:
                         squad = "-"
-                    table.add_row([i, get_player_name_extended(player), "", "- р.",squad, "", "", ""])
+                    balance = get_player_balance(player_id, players_balances)
+                    table.add_row([i, get_player_name_extended(player), "", f"{balance} р.",squad, "", "", ""])
                     i+=1
             table._min_width = {"Голы" : 15, "Асисты" : 15, "Автоголы": 5}
             table._max_width = {"Голы" : 15, "Асисты" : 15, "Автоголы": 5}
