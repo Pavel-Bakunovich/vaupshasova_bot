@@ -34,19 +34,14 @@ def execute(message, bot):
                 own_goals = player[5]
                 table.add_row([i, f"{first_name} {last_name}", games_played, goals, assists, own_goals])
                 i+=1
-
-            score = pt.PrettyTable([' ', 'К ', ':', 'П'])
-            score.align[' '] = 'c'
+            header_current_season = f'Сезон {get_today_minsk_time().year}'
+            score = pt.PrettyTable([header_current_season, 'К ', ':', 'П'])
+            score.align[header_current_season] = 'c'
             score.align['K'] = 'c'
             score.align[':'] = 'c'
             score.align['П'] = 'c'
-            #score.add_row(["Общий счет за сезон", " ", ":", " "])
-            
-            #score._min_width = {"K" : 5, "П" : 5}
-            #score._max_width = {"K" : 5, "П" : 5}
-
             season_score = database.get_season_score(get_today_minsk_time().year)
-            score.add_row(["Общий счет за сезон", season_score[1], season_score[2], season_score[0]])
+            score.add_row(["Общий счет", season_score[1], season_score[2], season_score[0]])
 
             photo = text_to_image(f"{score.get_string()}\n{table.get_string()}",image_size=(600, 1000))
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
