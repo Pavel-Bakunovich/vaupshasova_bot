@@ -270,6 +270,19 @@ def get_squad(matchday_date):
     close_connection_pool(connection_pool)
     return matchdays
 
+def get_scores():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+        SELECT game_date, score_corn, score_tomato, paid_for_pitch, played FROM Games
+        ORDER BY game_date DESC
+        LIMIT 25
+                   ''')
+    scores = cursor.fetchall()
+    close_connection_pool(connection_pool)
+    return scores
+
 def get_players_balance():
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()

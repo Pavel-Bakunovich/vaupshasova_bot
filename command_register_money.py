@@ -49,7 +49,7 @@ def execute(message, bot):
                                             bot.reply_to(message, f"Что-то не то с данными по деньгам для этого игрока: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                         else:
                                             money_given_int = int(money_given)
-                                            balance_change_int = money_given_int - constants.COST_OF_1_GAME
+                                            balance_change_int = money_given_int - constants.COST_OF_1_GAME_PER_PLAYER
                                             database.add_matchday_money(player_id,game_id,money_given,balance_change_int,comment)
                                             output += f"{first_name} {last_name}: {balance_change_int}\n"
                                     else:
