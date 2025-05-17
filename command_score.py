@@ -30,7 +30,7 @@ def execute(message, bot):
                 paid_for_pitch = f"{game_score[3]} р." if game_score[3] is not None else ""
                 played = "Отменили" if game_score[4] == False else ""
                 table.add_row([date, score_corn, ":", score_tomato, paid_for_pitch, played])
-            photo = text_to_image(table.get_string(), image_size=(650, 950))
+            photo = text_to_image(table.get_string(), image_size=(650, 1000))
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
             log(f"Successfullty provided game scores /score. Requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
