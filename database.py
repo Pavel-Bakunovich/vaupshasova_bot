@@ -51,13 +51,34 @@ def get_season_stats(year):
           and Games.Played = TRUE
 GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name
 ORDER BY Goals_Sum DESC
-LIMIT 25
+LIMIT 20;
     ''')
     stats = cursor.fetchall()
     
     connection.commit()
     return stats
 
+def get_season_score(year):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+
+    cursor.execute(f'''
+    SELECT 
+    SUM(CASE WHEN score_tomato > score_corn THEN 1 ELSE 0 END) AS tomato_wins,
+    SUM(CASE WHEN score_corn > score_tomato THEN 1 ELSE 0 END) AS corn_wins,
+    SUM(CASE WHEN score_tomato = score_corn THEN 1 ELSE 0 END) AS draws
+FROM 
+    Games
+	WHERE Games.game_date <= '{year}-12-31'
+          and Games.game_date >= '{year}-01-01'
+          and Games.game_date <= current_date
+          and Games.Played = TRUE;
+    ''')
+    season_score = cursor.fetchone()
+    
+    connection.commit()
+    return season_score
 
 def add_matchday_money(player_id, game_id, money_given, balance_change, comment):
     connection_pool = create_connection_pool()
