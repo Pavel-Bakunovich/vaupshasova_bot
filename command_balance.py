@@ -19,8 +19,8 @@ def execute(message, bot):
             table.hrules = True
             players_balance = database.get_players_balance()
             for balance_item in players_balance:
-                player_name = f"{balance_item[0]} {balance_item[1]}"
-                balance = balance_item[2]
+                player_name = f"{balance_item[1]} {balance_item[2]}"
+                balance = balance_item[3]
                 table.add_row([player_name, balance])
             photo = text_to_image(table.get_string(), image_size=(320, 1200), font_size=11)
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
