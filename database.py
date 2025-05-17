@@ -283,6 +283,34 @@ def get_scores():
     close_connection_pool(connection_pool)
     return scores
 
+def how_many_games_since_last_layment_for_pitch():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+        SELECT COUNT(id) FROM Games WHERE game_date > (SELECT game_date FROM Games
+            WHERE Paid_for_Pitch is not NULL and played = TRUE
+        ORDER BY game_date DESC
+        LIMIT 1)
+                   ''')
+    games_since_last_layment = cursor.fetchone()
+    close_connection_pool(connection_pool)
+    return games_since_last_layment[0]
+
+def date_of_last_layment_for_pitch():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+        SELECT game_date FROM Games
+        WHERE paid_for_Pitch is not NULL
+                ORDER BY game_date DESC
+            LIMIT 1
+                   ''')
+    date_of_last_layment_for_pitch = cursor.fetchone()
+    close_connection_pool(connection_pool)
+    return date_of_last_layment_for_pitch[0]
+
 def get_players_balance():
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()

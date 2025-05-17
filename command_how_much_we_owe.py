@@ -1,6 +1,6 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
-from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
+from helpers import format_date, get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
 from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
@@ -12,30 +12,13 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        bot.reply_to(message, "🛑 Пока эта команда не работает. Не дури галавы.")
-        '''if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
-            table = pt.PrettyTable(['N','Игрок', 'Игры', 'Голы', 'Асисты', 'Автоголы'])
-            table.align['N'] = 'c'
-            table.align['Игрок'] = 'l'
-            table.align['Игры'] = 'c'
-            table.align['Голы'] = 'c'
-            table.align['Асисты'] = 'c'
-            table.align['Автоголы'] = 'c'
-            table.hrules = True
-            season_stats = database.get_season_stats(get_today_minsk_time().year)
-            i = 1
+        if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
+            games_since_last_layment_for_pitch = database.how_many_games_since_last_layment_for_pitch()
+            date_of_last_layment_for_pitch = format_date(database.date_of_last_layment_for_pitch())
+            how_much_we_owe = games_since_last_layment_for_pitch * constants.COST_OF_1_GAME
+
+            bot.reply_to(message, f"Последний раз мы платили за поле {date_of_last_layment_for_pitch}. С того момента уже сыграли {games_since_last_layment_for_pitch} игр.\n💲 Сумма к оплате: {how_much_we_owe} р.")
             
-            for player in season_stats:
-                first_name = player[0]
-                last_name = player[1]
-                games_played = player[2]
-                goals = player[3]
-                assists = player[4]
-                own_goals = player[5]
-                table.add_row([i, f"{first_name} {last_name}", games_played, goals, assists, own_goals])
-                i+=1
-            photo = text_to_image(table.get_string(),image_size=(600, 1000))
-            bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)'''
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
