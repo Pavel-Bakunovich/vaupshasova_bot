@@ -50,7 +50,7 @@ def execute(message, bot):
 
             photo = text_to_image(f"{score.get_string()}\n{table.get_string()}",image_size=(600, 1000))
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
-            log(f"Successfullty printer lineups. Requested by: {get_player_name_formal(current_player)}")
+            log(f"Successfullty provided season stats. Requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
