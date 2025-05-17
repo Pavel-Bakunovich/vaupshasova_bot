@@ -80,6 +80,23 @@ FROM
     connection.commit()
     return season_score
 
+def get_players_balance():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+SELECT Players.Friendly_First_Name, Players.Friendly_Last_Name,
+      SUM(Balance_Change) as Balance
+  FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID
+GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.Birthday, Players.Height, Players.id
+HAVING SUM(Balance_Change) is not NULL and SUM(Balance_Change) <> 0
+ORDER BY Balance ASC
+    ''')
+    players_balance = cursor.fetchall()
+    
+    connection.commit()
+    return players_balance
+
 def add_matchday_money(player_id, game_id, money_given, balance_change, comment):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
@@ -310,15 +327,6 @@ def date_of_last_layment_for_pitch():
     date_of_last_layment_for_pitch = cursor.fetchone()
     close_connection_pool(connection_pool)
     return date_of_last_layment_for_pitch[0]
-
-def get_players_balance():
-    connection_pool = create_connection_pool()
-    connection = connection_pool.getconn()
-    cursor = connection.cursor()
-    cursor.execute(f"SELECT Players.id, Players.Friendly_First_Name, Players.Friendly_Last_Name, SUM(Balance_Change) as Balance FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.Birthday, Players.Height, Players.id ORDER BY Balance ASC")
-    matchdays = cursor.fetchall()
-    close_connection_pool(connection_pool)
-    return matchdays
 
 def wakeup(matchday_date, player_id):
     connection_pool = create_connection_pool()
