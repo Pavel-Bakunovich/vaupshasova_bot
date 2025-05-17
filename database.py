@@ -45,9 +45,9 @@ def get_season_stats(year):
   FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID
                 INNER JOIN Games on Games.id = Matchday.Game_ID
   WHERE Matchday.type like 'add'
-          and Games.game_date < '{year}-12-31'
-          and Games.game_date > '{year}-01-01'
-          and Games.game_date < current_date
+          and Games.game_date <= '{year}-12-31'
+          and Games.game_date >= '{year}-01-01'
+          and Games.game_date <= current_date
           and Games.Played = TRUE
 GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name
 ORDER BY Goals_Sum DESC
