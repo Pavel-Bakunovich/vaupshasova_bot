@@ -48,10 +48,10 @@ def execute(message, bot):
                                         if money_given.isdigit() is False:
                                             bot.reply_to(message, f"Что-то не то с данными по деньгам для этого игрока: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                         else:
-                                            money_given_int = int(money_given)
-                                            balance_change_int = money_given_int - constants.COST_OF_1_GAME_PER_PLAYER
-                                            database.add_matchday_money(player_id,game_id,money_given,balance_change_int,comment)
-                                            output += f"{first_name} {last_name}: {balance_change_int}\n"
+                                            money_given_float = float(money_given)
+                                            balance_change_int = money_given_float - constants.COST_OF_1_GAME_PER_PLAYER
+                                            database.add_matchday_money(player_id,game_id,money_given_float,balance_change_int,comment)
+                                            output += f"{first_name} {last_name}: {balance_change_int} р.\n"
                                     else:
                                         bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                         log(f"Can't find player to register in a lineup: {lineup_player_params}")

@@ -58,6 +58,78 @@ LIMIT 20;
     connection.commit()
     return stats
 
+def get_individual_stats(player_id):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+            SELECT 
+                EXTRACT(year FROM Games.game_date) as Season,
+                COUNT(Matchday.Player_ID) as Games_Played,
+                SUM(Goals) as Goals_Sum,
+                SUM(Assists) as Assists_Sum,
+                SUM(Own_Goals) as Own_Goals_Sum
+            FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID
+                            INNER JOIN Games on Games.id = Matchday.Game_ID
+            WHERE Matchday.type like 'add'
+                    and Games.game_date <= current_date
+                    and Games.Played = TRUE
+            GROUP BY EXTRACT(year FROM Games.game_date), Players.id
+            HAVING Players.id = {player_id}
+            ORDER BY Season DESC
+    ''')
+    stats = cursor.fetchall()
+    connection.commit()
+    return stats
+
+def get_last_individual_games(player_id):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+        SELECT Games.game_date, Games.score_corn, Games.score_tomato, Matchday.goals, Matchday.assists, Matchday.own_goals, Matchday.squad FROM Matchday
+            INNER JOIN Games on Games.id = Matchday.Game_id
+            WHERE played = True and type = 'add' and Matchday.Player_id = {player_id}
+            ORDER BY game_date DESC
+            LIMIT 25
+    ''')
+    stats = cursor.fetchall()
+    connection.commit()
+    return stats
+
+def get_win_rate(player_id):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+SELECT 
+    Player_Id, Players.Friendly_First_Name, Players.Friendly_Last_Name,
+    COUNT(*) AS total_games,
+    SUM(CASE 
+        WHEN (Squad = 'Corn' AND Games.score_corn > Games.score_tomato) OR
+             (Squad = 'Tomato' AND Games.score_tomato > Games.score_corn)
+        THEN 1 ELSE 0 END) AS wins,
+    ROUND(
+        SUM(CASE 
+            WHEN (Squad = 'Corn' AND Games.score_corn > Games.score_tomato) OR
+                 (Squad = 'Tomato' AND Games.score_tomato > Games.score_corn)
+            THEN 1 ELSE 0 END) * 100.0 / COUNT(*),
+        2
+    ) AS win_rate_percentage
+FROM 
+    Matchday
+INNER JOIN Games ON Games.id = Matchday.Game_ID
+INNER JOIN Players ON Players.id = Matchday.Player_Id
+GROUP BY 
+    Players.Id, Player_Id,Players.Friendly_First_Name, Players.Friendly_Last_Name,Matchday.type
+HAVING COUNT(*) > 5 and Matchday.type = 'add' and Players.Id = {player_id}
+ORDER BY 
+    win_rate_percentage DESC;
+    ''')
+    stats = cursor.fetchone()
+    connection.commit()
+    return stats
+
 def get_season_score(year):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
