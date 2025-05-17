@@ -209,6 +209,14 @@ def register_player_matchday(matchday_date, type, player_id):
     connection.commit()
     close_connection_pool(connection_pool)
 
+def register_game_score(game_id, score_corn, score_tomato):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'UPDATE Games SET score_corn = {score_corn}, score_tomato = {score_tomato} WHERE ID = {game_id};')
+    connection.commit()
+    close_connection_pool(connection_pool)
+
 def update_player_squad_for_matchday(player_id, squad, matchday_date):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
