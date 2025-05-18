@@ -233,6 +233,43 @@ ORDER BY Balance ASC
     connection.commit()
     return players_balance
 
+def get_individual_balance(player_id):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+SELECT SUM(Balance_Change) as Balance,
+	  SUM(money_given) as total_money_given
+  FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID
+  where Matchday.Player_ID = {player_id}
+GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.id
+HAVING SUM(Balance_Change) is not NULL and SUM(Balance_Change) <> 0
+ORDER BY Balance ASC
+    ''')
+    balance = cursor.fetchone()
+    connection.commit()
+    return balance
+
+def get_payments_history(player_id):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+SELECT Games.game_date as Payment_Date,
+	Matchday.money_given,
+	matchday.balance_change,
+	SUM(balance_change) OVER (ORDER BY Games.game_date) AS Actual_balance
+  FROM Matchday
+  INNER JOIN Players ON Players.id = Matchday.Player_ID
+  LEFT JOIN Games on Games.id = Matchday.Game_ID
+  where Matchday.Player_ID = {player_id} and balance_change is not NULL
+ORDER BY Games.game_date DESC
+LIMIT 25
+    ''')
+    payment_history = cursor.fetchall()
+    connection.commit()
+    return payment_history
+
 def add_matchday_money(player_id, game_id, money_given, balance_change, comment):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
