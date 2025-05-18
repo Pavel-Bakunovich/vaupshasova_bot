@@ -130,6 +130,70 @@ ORDER BY
     connection.commit()
     return stats
 
+def get_alltime_stats():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+SELECT 
+    Players.Friendly_First_Name, Players.Friendly_Last_Name,
+    COUNT(Matchday.Player_ID) as Games_Played,
+	SUM(Goals) as Goals_Sum,
+	SUM(Assists) as Assists_Sum,
+	SUM(Own_Goals) as Own_Goals_Sum,
+	ROUND(SUM(CAST(Matchday.goals as decimal))/COUNT(Matchday.Player_ID),2) as avg_goals,
+    SUM(CASE 
+        WHEN (Squad = 'Corn' AND Games.score_corn > Games.score_tomato) OR
+             (Squad = 'Tomato' AND Games.score_tomato > Games.score_corn)
+        THEN 1 ELSE 0 END) AS wins,
+    ROUND(
+        SUM(CASE 
+            WHEN (Squad = 'Corn' AND Games.score_corn > Games.score_tomato) OR
+                 (Squad = 'Tomato' AND Games.score_tomato > Games.score_corn)
+            THEN 1 ELSE 0 END) * 100.0 / COUNT(*),
+        2
+    ) AS win_rate_percentage
+FROM 
+    Matchday
+	
+INNER JOIN Games ON Games.id = Matchday.Game_ID
+INNER JOIN Players ON Players.id = Matchday.Player_Id
+where Matchday.type like 'add'
+	and Games.game_date <= current_date
+	and Games.Played = TRUE
+GROUP BY 
+    Players.Id, Player_Id,Players.Friendly_First_Name, Players.Friendly_Last_Name--, Matchday.type
+HAVING COUNT(*) > 5
+ORDER BY 
+    Games_Played DESC
+LIMIT 35
+    ''')
+    stats = cursor.fetchall()
+    connection.commit()
+    return stats
+
+def get_alltime_stats_games_goal():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+SELECT 
+	(select count(*) from games
+		where Games.game_date <= current_date
+		and Games.Played = TRUE) as total_games,
+	SUM(Goals) as Goals_Sum,
+	SUM(Own_Goals) as Own_Goals_Sum
+FROM 
+    Matchday
+INNER JOIN Games ON Games.id = Matchday.Game_ID
+where Matchday.type like 'add'
+	and Games.game_date <= current_date
+	and Games.Played = TRUE;
+    ''')
+    stats = cursor.fetchone()
+    connection.commit()
+    return stats
+
 def get_season_score(year):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
@@ -191,10 +255,13 @@ def get_game_id(matchday_date):
     connection = connection_pool.getconn()
     cursor = connection.cursor()
 
-    cursor.execute(f"SELECT id FROM Games WHERE Game_Date = '{matchday_date}'")
+    select = f"SELECT id FROM Games WHERE Game_Date = '{matchday_date}'"
+    cursor.execute(select)
     game_day = cursor.fetchone()
     if game_day is None:
         cursor.execute(f"INSERT INTO Games (Game_Date) VALUES ('{matchday_date}')")
+        cursor.execute(select)
+        game_day = cursor.fetchone()
     
     connection.commit()
     return game_day[0]
