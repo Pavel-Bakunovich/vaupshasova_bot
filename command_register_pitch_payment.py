@@ -8,6 +8,10 @@ import prettytable as pt
 
 def execute(message, bot):
     try:
+        bot.set_message_reaction(message.chat.id,
+                                            message.message_id,
+                                            [ReactionTypeEmoji('👾')],
+                                            is_big=True)
         player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
@@ -35,7 +39,12 @@ def execute(message, bot):
                 table.add_row([i, f"{first_name} {last_name}", games_played, goals, assists, own_goals])
                 i+=1
             photo = text_to_image(table.get_string(),image_size=(600, 1000))
-            bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)'''
+            bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
+            bot.set_message_reaction(message.chat.id,
+                                                    message.message_id,
+                                                    [ReactionTypeEmoji('✍️')],
+                                                    is_big=True)
+            '''
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
