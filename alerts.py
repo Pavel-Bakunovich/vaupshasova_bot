@@ -5,8 +5,9 @@ import deepseek
 import constants
 from logger import log, log_error
 from pytz import timezone
-from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template
+from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
 import requests
+import database
 
 WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
@@ -31,6 +32,13 @@ def schedule_alerts():
                       'cron',
                       hour=7,
                       minute=0,
+                      timezone=timezone('Europe/Minsk'))
+
+    scheduler.add_job(pitch_payment_reminder, 
+                      'cron',
+                      day_of_week='mon',
+                      hour=15,
+                      minute=00,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.start()
@@ -113,7 +121,18 @@ def good_morning():
 
     except Exception as e:
         log_error(e)
-    
+
+def pitch_payment_reminder():
+    try:
+        games_since_last_layment_for_pitch = database.how_many_games_since_last_layment_for_pitch()
+        date_of_last_layment_for_pitch = format_date(database.date_of_last_layment_for_pitch())
+        how_much_we_owe = games_since_last_layment_for_pitch * constants.COST_OF_1_GAME
+        message_text = f"💵 Напоминка про оплату за поле.\nВ последний раз мы платили за поле {date_of_last_layment_for_pitch}.\nС момента последней оплаты прошло {games_since_last_layment_for_pitch} игр (в том числе считая следующую субботу).\n💲Сумма к оплате: {how_much_we_owe} р."
+        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, message_text, message_thread_id=constants.TELEGRAM_ACCOUNTING_TOPIC_ID)
+        log("Pitch payment reminder sent out.")
+    except Exception as e:
+        log_error(e)
+
 def shutdown():
     if scheduler is not None:
         scheduler.shutdown()

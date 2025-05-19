@@ -17,7 +17,7 @@ def execute(message, bot):
             date_of_last_layment_for_pitch = format_date(database.date_of_last_layment_for_pitch())
             how_much_we_owe = games_since_last_layment_for_pitch * constants.COST_OF_1_GAME
 
-            bot.reply_to(message, f"Последний раз мы платили за поле {date_of_last_layment_for_pitch}. С того момента уже сыграли {games_since_last_layment_for_pitch} игр.\n💲 Сумма к оплате: {how_much_we_owe} р.")
+            bot.reply_to(message, f"Последний раз мы платили за поле {date_of_last_layment_for_pitch}. С того момента уже сыграли {games_since_last_layment_for_pitch} игр (в том числе считая следующую субботу).\n💲 Сумма к оплате: {how_much_we_owe} р.")
             
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
