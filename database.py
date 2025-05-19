@@ -243,7 +243,6 @@ SELECT SUM(Balance_Change) as Balance,
   FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID
   where Matchday.Player_ID = {player_id}
 GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.id
-HAVING SUM(Balance_Change) is not NULL and SUM(Balance_Change) <> 0
 ORDER BY Balance ASC
     ''')
     balance = cursor.fetchone()
