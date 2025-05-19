@@ -21,7 +21,8 @@ def execute(message, bot):
             for balance_item in players_balance:
                 player_name = f"{balance_item[1]} {balance_item[2]}"
                 balance = balance_item[3]
-                table.add_row([player_name, balance])
+                if balance != 0:
+                    table.add_row([player_name, balance])
             photo = text_to_image(table.get_string(), image_size=(320, 1200), font_size=11)
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
             log(f"Successfullty provided players balance /balance. Requested by: {get_player_name_formal(current_player)}")
