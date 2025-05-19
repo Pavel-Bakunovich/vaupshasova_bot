@@ -89,7 +89,9 @@ def get_last_individual_games(player_id):
     cursor.execute(f'''
         SELECT Games.game_date, Games.score_corn, Games.score_tomato, Matchday.goals, Matchday.assists, Matchday.own_goals, Matchday.squad FROM Matchday
             INNER JOIN Games on Games.id = Matchday.Game_id
-            WHERE played = True and type = 'add' and Matchday.Player_id = {player_id}
+            WHERE played = True and type = 'add'
+                    and Matchday.Player_id = {player_id}
+                    and Games.game_date <= current_date
             ORDER BY game_date DESC
             LIMIT 25
     ''')
