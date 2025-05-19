@@ -60,7 +60,7 @@ def execute(message, bot):
                 else:
                     bot.reply_to(message, "Дату надо указать! Без даты ничего не получится. Откуда ж я знаю за какой день эту статистику записывать? Вот в таком формате пиши: /register_game_stats May 17, 2025")
             else:
-                bot.reply_to(message, "Пришли результат дележки! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись!")
+                bot.reply_to(message, "Пришли голы/асисты/автоголы! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись!")
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
