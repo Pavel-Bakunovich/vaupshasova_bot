@@ -127,7 +127,7 @@ def pitch_payment_reminder():
         games_since_last_layment_for_pitch = database.how_many_games_since_last_layment_for_pitch()
         date_of_last_layment_for_pitch = format_date(database.date_of_last_layment_for_pitch())
         how_much_we_owe = games_since_last_layment_for_pitch * constants.COST_OF_1_GAME
-        message_text = f"💵 Напоминка про оплату за поле.\nВ последний раз мы платили за поле {date_of_last_layment_for_pitch}.\nС момента последней оплаты прошло {games_since_last_layment_for_pitch} игр (в том числе считая следующую субботу).\n💲Сумма к оплате: {how_much_we_owe} р."
+        message_text = f"💵 Напоминка про оплату за поле.\nПоследний раз мы платили за поле {date_of_last_layment_for_pitch}.\nС момента последней оплаты прошло {games_since_last_layment_for_pitch} игр (в том числе считая следующую субботу).\n💲Сумма к оплате: {how_much_we_owe} р."
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, message_text, message_thread_id=constants.TELEGRAM_ACCOUNTING_TOPIC_ID)
         log("Pitch payment reminder sent out.")
     except Exception as e:
