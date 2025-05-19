@@ -8,6 +8,10 @@ import re
 
 def execute(message, bot):
     try:
+        bot.set_message_reaction(message.chat.id,
+                                            message.message_id,
+                                            [ReactionTypeEmoji('👾')],
+                                            is_big=True)
         player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
