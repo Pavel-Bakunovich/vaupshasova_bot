@@ -505,6 +505,14 @@ def date_of_last_layment_for_pitch():
     close_connection_pool(connection_pool)
     return date_of_last_layment_for_pitch[0]
 
+def register_pitch_payment(game_id, payment_sum):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'UPDATE Games SET paid_for_pitch = {payment_sum} WHERE id = {game_id}')
+    connection.commit()
+    close_connection_pool(connection_pool)
+
 def wakeup(matchday_date, player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()

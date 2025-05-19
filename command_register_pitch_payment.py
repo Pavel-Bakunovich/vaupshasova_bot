@@ -1,10 +1,12 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
-from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone_no_arguments
 import database
 import constants
 import prettytable as pt
+import datetime
+import re
 
 def execute(message, bot):
     try:
@@ -16,35 +18,43 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        bot.reply_to(message, "🛑 Пока эта команда не работает. Не дури галавы.")
-        '''if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
-            table = pt.PrettyTable(['N','Игрок', 'Игры', 'Голы', 'Асисты', 'Автоголы'])
-            table.align['N'] = 'c'
-            table.align['Игрок'] = 'l'
-            table.align['Игры'] = 'c'
-            table.align['Голы'] = 'c'
-            table.align['Асисты'] = 'c'
-            table.align['Автоголы'] = 'c'
-            table.hrules = True
-            season_stats = database.get_season_stats(get_today_minsk_time().year)
-            i = 1
-            
-            for player in season_stats:
-                first_name = player[0]
-                last_name = player[1]
-                games_played = player[2]
-                goals = player[3]
-                assists = player[4]
-                own_goals = player[5]
-                table.add_row([i, f"{first_name} {last_name}", games_played, goals, assists, own_goals])
-                i+=1
-            photo = text_to_image(table.get_string(),image_size=(600, 1000))
-            bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
-            bot.set_message_reaction(message.chat.id,
-                                                    message.message_id,
-                                                    [ReactionTypeEmoji('✍️')],
-                                                    is_big=True)
-            '''
+        if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
+            if validate_CEO_zone_no_arguments(message.from_user.id):
+                command_and_argument_split = message.text.split('\n', 1)
+                if len(command_and_argument_split)>1:
+                    date_params = command_and_argument_split[0].split(' ', 1)
+                    if len(date_params) > 1:
+                        date = None
+                        try:
+                            date = datetime.datetime.strptime(date_params[1], "%b %d, %Y")
+                        except:
+                            bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_pitch_payment May 17, 2025")
+                        if date is not None:
+                            parts = command_and_argument_split[1].split('\n')
+                            
+                            payment_sum = parts[0]
+
+                            game_id = database.get_game_id_without_adding_new(date)
+                            
+                            if game_id is not None:
+                                if payment_sum.isdigit() is False:
+                                    bot.reply_to(message, "Не пойму что за сумма. Напиши нормально сумму.")    
+                                else:
+                                    database.register_pitch_payment(game_id, float(payment_sum))
+                                    log(f"Pitch payment successfully registered")
+                                    bot.reply_to(message, "✅ Оплата за поле записана! Деньги мутятся, бухгалтерия крутится! Красава!")
+                                    bot.set_message_reaction(message.chat.id,
+                                                        message.message_id,
+                                                        [ReactionTypeEmoji('✍️')],
+                                                        is_big=True)
+                            else:
+                                bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
+                    else:
+                        bot.reply_to(message, "Дату надо указать! Без даты ничего не получится. Откуда ж я знаю за какой день записывать, что мы оплатили поле? Вот в таком формате пиши: /register_pitch_payment May 17, 2025")
+                else:
+                    bot.reply_to(message, "Пришли даннные сколько мы заплатили за поле! Ты ж ничего не прислал.")
+            else:
+                reply_only_CEO_can_do_it(bot, message)  
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
