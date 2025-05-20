@@ -4,13 +4,14 @@ from dotenv import load_dotenv
 import os
 import dropbox
 from logger import log, log_error
+from helpers import get_today_minsk_time
 
 class Database_backup:
     def __init__(self):
         load_dotenv()
         self.connection_string = os.getenv('DATABASE_URL')
         self.DROPBOX_TOKEN = os.environ['DROPBOX_TOKEN']
-        date = datetime.datetime.now()
+        date = get_today_minsk_time()
         self.time_stamp = date.strftime("%b %d, %Y - %H:%M:%S")
         self.date_stamp = date.strftime("%b %d, %Y")
 
