@@ -3,6 +3,7 @@ import datetime
 from dotenv import load_dotenv
 import os
 import dropbox
+from logger import log, log_error
 
 class Database_backup:
     def __init__(self):
@@ -18,16 +19,16 @@ class Database_backup:
             drp = dropbox.Dropbox(self.DROPBOX_TOKEN)
             with open(file_name, 'rb') as file:
                 drp.files_upload(file.read(), f"/Backup - {self.date_stamp}/{file_name}")    
-                print(f"File '{file_name}' uploaded to Dropbox as 'Backup - {self.date_stamp}'")
+                log(f"File '{file_name}' uploaded to Dropbox as 'Backup - {self.date_stamp}'")
         except dropbox.exceptions.ApiError as err:
-            print(f"API error: {err}")
+            log(f"API error: {err}")
         except Exception as e:
-            print(f"Error: {e}") 
+            log(f"Error: {e}") 
 
     def backup_table(self, table_name):
         connection_pool = pool.SimpleConnectionPool(1, 10, self.connection_string)
         if not connection_pool:
-            print("Connection pool not created successfully")
+            log("Connection pool not created successfully")
         conn = connection_pool.getconn()
         cur = conn.cursor()
         cur.execute(f"SELECT * FROM {table_name}")

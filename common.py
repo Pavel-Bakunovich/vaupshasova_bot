@@ -161,7 +161,7 @@ def text_to_image(text, font_size=15, image_size=(900, 600),
             except:
                 # Fall back to default font
                 font = ImageFont.load_default()
-                print("Warning: Using default font which may not support all characters")
+                log("Warning: Using default font which may not support all characters")
     
     # Calculate text position (centered) - modern method
     # Get text bounding box
