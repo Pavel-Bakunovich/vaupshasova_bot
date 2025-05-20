@@ -8,7 +8,8 @@ CREATE TABLE Players (
     Friendly_Last_Name TEXT,
     Informal_Friendly_First_Name TEXT,
     Birthday DATE,
-    Height SMALLINT
+    Height SMALLINT,
+    CONSTRAINT players_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE Matchday (
@@ -26,7 +27,8 @@ CREATE TABLE Matchday (
     Balance_Change DECIMAL,
     Comment text,
     CONSTRAINT constraint_1 FOREIGN KEY(Player_ID) REFERENCES public.Players (id) ON UPDATE NO ACTION ON DELETE NO ACTION,
-    CONSTRAINT constraint_2 FOREIGN KEY(Game_ID) REFERENCES public.Games (id) ON UPDATE NO ACTION ON DELETE NO ACTION
+    CONSTRAINT constraint_2 FOREIGN KEY(Game_ID) REFERENCES public.Games (id) ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT matchday_pkey1 PRIMARY KEY (id)
     );
 
 CREATE TABLE Games (
@@ -35,5 +37,6 @@ CREATE TABLE Games (
   Score_Tomato smallint,
   Score_Corn smallint,
   Paid_for_Pitch decimal,
-  Played boolean DEFAULT 'TRUE'
+  Played boolean DEFAULT TRUE,
+  CONSTRAINT games_pkey PRIMARY KEY (id)
 )

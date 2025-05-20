@@ -8,6 +8,7 @@ from pytz import timezone
 from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
 import requests
 import database
+from backup import Database_backup
 
 WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
@@ -39,6 +40,12 @@ def schedule_alerts():
                       day_of_week='mon',
                       hour=15,
                       minute=00,
+                      timezone=timezone('Europe/Minsk'))
+    
+    scheduler.add_job(daily_backup,
+                      'cron',
+                      hour=00,
+                      minute=35,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.start()
@@ -130,6 +137,16 @@ def pitch_payment_reminder():
         message_text = f"💵 Напоминка про оплату за поле.\nПоследний раз мы платили за поле {date_of_last_layment_for_pitch}.\nС момента последней оплаты прошло {games_since_last_layment_for_pitch} игр (в том числе считая следующую субботу).\n💲Сумма к оплате: {how_much_we_owe} р."
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, message_text, message_thread_id=constants.TELEGRAM_ACCOUNTING_TOPIC_ID)
         log("Pitch payment reminder sent out.")
+    except Exception as e:
+        log_error(e)
+
+def daily_backup():
+    try:
+        backuper = Database_backup()
+        backuper.backup_table("players")
+        backuper.backup_table("games")
+        backuper.backup_table("matchday")
+        log("✅💿 Database backup successfully created")
     except Exception as e:
         log_error(e)
 
