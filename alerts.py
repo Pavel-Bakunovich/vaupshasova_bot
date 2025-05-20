@@ -30,21 +30,21 @@ def schedule_alerts():
                       timezone=timezone('Europe/Minsk'))
     scheduler.add_job(good_morning,
                       'cron',
-                      hour=0,
-                      minute=50,
+                      hour=7,
+                      minute=0,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.add_job(pitch_payment_reminder, 
                       'cron',
-                      day_of_week='mon',
+                      day_of_week='fri',
                       hour=15,
                       minute=00,
                       timezone=timezone('Europe/Minsk'))
     
     scheduler.add_job(daily_backup,
                       'cron',
-                      hour=00,
-                      minute=51,
+                      hour=5,
+                      minute=0,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.start()

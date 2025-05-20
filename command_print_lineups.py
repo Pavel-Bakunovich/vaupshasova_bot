@@ -15,10 +15,6 @@ def get_player_balance(player_id, players_balances):
 
 def execute(message, bot):
     try:
-        bot.set_message_reaction(message.chat.id,
-                                            message.message_id,
-                                            [ReactionTypeEmoji('👾')],
-                                            is_big=True)
         current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
