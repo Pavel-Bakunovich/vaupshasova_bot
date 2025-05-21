@@ -41,5 +41,26 @@ class Database_backup:
         connection_pool.putconn(conn)
         connection_pool.closeall()
 
+    def restore_table(self, table_name, backup_file_name, restore_to_connection_string):
+        connection_pool = pool.SimpleConnectionPool(1, 10, restore_to_connection_string)
+        conn = connection_pool.getconn()
+        cur = conn.cursor()
+        #cur.execute(f"TRUNCATE TABLE {table_name}")
+        
+        with open(backup_file_name, 'rt') as backup_file:
+            cur.copy_from(backup_file, table_name, sep=',', null='\\N')
+        
+        conn.commit()
+        conn.close()
+        connection_pool.putconn(conn)
+        connection_pool.closeall()
 
+'''
+# Sample code for restoring database from a backup
 
+backuper = Database_backup()
+connection_string = "postgresql://neondb_owner:npg_jQ1sIrzSbt5O@ep-icy-snowflake-a28p25ll-pooler.eu-central-1.aws.neon.tech/vaupshasova_db?sslmode=require"
+backuper.restore_table("players", "players - May 21, 2025 - 18:25:00.csv", connection_string)
+backuper.restore_table("games", "games - May 21, 2025 - 18:25:00.csv", connection_string)
+backuper.restore_table("matchday", "matchday - May 21, 2025 - 18:25:00.csv", connection_string)
+'''
