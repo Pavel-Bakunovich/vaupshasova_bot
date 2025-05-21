@@ -1,17 +1,11 @@
 import logging
-#template_info = "{time}: {message}"
-#template_error = "{time}: ERROR: {message}"
-#date_format="%d %b %Y %H:%M:%S"
 logger = logging.getLogger(__name__)
-#consoleHandler = logging.StreamHandler()
-#consoleHandler.setFormatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
-#logger.addHandler(consoleHandler)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.StreamHandler()]
-)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.propagate = False
 
 def log(message):
     logger.info(message)
