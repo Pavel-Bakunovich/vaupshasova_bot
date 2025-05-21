@@ -36,6 +36,7 @@ def execute(message, bot):
             output = f"{get_player_name_formal(current_player)}.\nТекущий баланс: {individual_balance[0]} р.\nСдал денег за всю историю: {individual_balance[1]} р.\n{table.get_string()}"
             photo = text_to_image(output,image_size=(600, 900),font_size=12)
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
+            log(f"/my_balance requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
