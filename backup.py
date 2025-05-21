@@ -25,7 +25,7 @@ class Database_backup:
     
     def save_to_dropbox(self, file_name):
         try:
-            access_token = refresh_access_token()
+            access_token = self.refresh_access_token()
             drp = dropbox.Dropbox(access_token)
             with open(file_name, 'rb') as file:
                 drp.files_upload(file.read(), f"/Backup - {self.date_stamp}/{file_name}")    
