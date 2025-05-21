@@ -11,7 +11,7 @@ class Database_backup:
     def __init__(self):
         load_dotenv()
         self.connection_string = os.getenv('DATABASE_URL')
-        self.DROPBOX_API_KEY = os.environ['DROPBOX_API_KEY']
+        self.DROPBOX_APP_KEY = os.environ['DROPBOX_APP_KEY']
         self.DROPBOX_APP_SECRET = os.environ['DROPBOX_APP_SECRET']
         self.DROPBOX_REFRESH_TOKEN = os.environ['DROPBOX_REFRESH_TOKEN']
         date = get_today_minsk_time()
@@ -19,15 +19,10 @@ class Database_backup:
         self.date_stamp = date.strftime("%b %d, %Y")
     
     def save_to_dropbox(self, file_name):
-        try:
-            drp = dropbox.Dropbox(app_key=self.DROPBOX_API_KEY, self.DROPBOX_APP_SECRET, oauth2_refresh_token=self.DROPBOX_REFRESH_TOKEN)
-            with open(file_name, 'rb') as file:
-                drp.files_upload(file.read(), f"/Backup - {self.date_stamp}/{file_name}")    
-                log(f"File '{file_name}' uploaded to Dropbox as 'Backup - {self.date_stamp}'")
-        except dropbox.exceptions.ApiError as err:
-            log(f"API error: {err}")
-        except Exception as e:
-            log(f"Error: {e}") 
+        drp = dropbox.Dropbox(app_key=self.DROPBOX_APP_KEY, app_secret=self.DROPBOX_APP_SECRET, oauth2_refresh_token=self.DROPBOX_REFRESH_TOKEN)
+        with open(file_name, 'rb') as file:
+            drp.files_upload(file.read(), f"/Backup - {self.date_stamp}/{file_name}")    
+            log(f"File '{file_name}' uploaded to Dropbox as 'Backup - {self.date_stamp}'")
 
     def backup_table(self, table_name):
         connection_pool = pool.SimpleConnectionPool(1, 10, self.connection_string)
