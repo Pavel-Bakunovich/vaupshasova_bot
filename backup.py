@@ -3,6 +3,7 @@ import datetime
 from dotenv import load_dotenv
 import os
 import dropbox
+from dropbox import DropboxOAuth2FlowNoRedirect
 from logger import log, log_error
 from helpers import get_today_minsk_time
 
@@ -10,16 +11,22 @@ class Database_backup:
     def __init__(self):
         load_dotenv()
         self.connection_string = os.getenv('DATABASE_URL')
-        self.DROPBOX_TOKEN = os.environ['DROPBOX_TOKEN']
         self.DROPBOX_API_KEY = os.environ['DROPBOX_API_KEY']
         self.DROPBOX_APP_SECRET = os.environ['DROPBOX_APP_SECRET']
+        self.DROPBOX_REFRESH_TOKEN = os.environ['DROPBOX_REFRESH_TOKEN']
         date = get_today_minsk_time()
         self.time_stamp = date.strftime("%b %d, %Y - %H:%M:%S")
         self.date_stamp = date.strftime("%b %d, %Y")
 
+    def refresh_access_token(self):
+        auth_flow = DropboxOAuth2FlowNoRedirect(self.DROPBOX_API_KEY, self.DROPBOX_APP_SECRET)
+        new_tokens = auth_flow.refresh_access_token(self.DROPBOX_REFRESH_TOKEN)
+        return new_tokens.access_token
+    
     def save_to_dropbox(self, file_name):
         try:
-            drp = dropbox.Dropbox(self.DROPBOX_TOKEN)
+            access_token = refresh_access_token()
+            drp = dropbox.Dropbox(access_token)
             with open(file_name, 'rb') as file:
                 drp.files_upload(file.read(), f"/Backup - {self.date_stamp}/{file_name}")    
                 log(f"File '{file_name}' uploaded to Dropbox as 'Backup - {self.date_stamp}'")
