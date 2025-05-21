@@ -17,16 +17,10 @@ class Database_backup:
         date = get_today_minsk_time()
         self.time_stamp = date.strftime("%b %d, %Y - %H:%M:%S")
         self.date_stamp = date.strftime("%b %d, %Y")
-
-    def refresh_access_token(self):
-        auth_flow = DropboxOAuth2FlowNoRedirect(self.DROPBOX_API_KEY, self.DROPBOX_APP_SECRET)
-        new_tokens = auth_flow.refresh_access_token(self.DROPBOX_REFRESH_TOKEN)
-        return new_tokens.access_token
     
     def save_to_dropbox(self, file_name):
         try:
-            access_token = self.refresh_access_token()
-            drp = dropbox.Dropbox(access_token)
+            drp = dropbox.Dropbox(app_key=self.DROPBOX_API_KEY, self.DROPBOX_APP_SECRET, oauth2_refresh_token=self.DROPBOX_REFRESH_TOKEN)
             with open(file_name, 'rb') as file:
                 drp.files_upload(file.read(), f"/Backup - {self.date_stamp}/{file_name}")    
                 log(f"File '{file_name}' uploaded to Dropbox as 'Backup - {self.date_stamp}'")
