@@ -11,6 +11,8 @@ class Database_backup:
         load_dotenv()
         self.connection_string = os.getenv('DATABASE_URL')
         self.DROPBOX_TOKEN = os.environ['DROPBOX_TOKEN']
+        self.DROPBOX_API_KEY = os.environ['DROPBOX_API_KEY']
+        self.DROPBOX_APP_SECRET = os.environ['DROPBOX_APP_SECRET']
         date = get_today_minsk_time()
         self.time_stamp = date.strftime("%b %d, %Y - %H:%M:%S")
         self.date_stamp = date.strftime("%b %d, %Y")
