@@ -43,8 +43,8 @@ def schedule_alerts():
     
     scheduler.add_job(daily_backup,
                       'cron',
-                      hour=17,
-                      minute=46,
+                      hour=18,
+                      minute=25,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.start()
