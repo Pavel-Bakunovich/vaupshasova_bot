@@ -61,7 +61,7 @@ def execute(message, bot):
             result = f"{get_next_matchday_formatted()}\n{score.get_string()}\n{table.get_string()}" 
             photo = text_to_image(result, image_size=(950, 650))
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
-            log(f"Successfullty printed lineups. Requested by: {get_player_name_formal(current_player)}")
+            log(f"/print_lineups requested by: {get_player_name_formal(current_player)}")
             
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)

@@ -32,7 +32,8 @@ def execute(message, bot):
                 table.add_row([date, score_corn, ":", score_tomato, paid_for_pitch, played])
             photo = text_to_image(table.get_string(), image_size=(650, 1000))
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
-            log(f"Successfullty provided game scores /score. Requested by: {get_player_name_formal(current_player)}")
+            log(f"/score requested by: {get_player_name_formal(current_player)}")
+
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)

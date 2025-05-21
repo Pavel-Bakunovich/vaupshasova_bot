@@ -1,7 +1,7 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
-from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone_no_arguments
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone_no_arguments
 import database
 import constants
 import prettytable as pt
@@ -14,11 +14,11 @@ def execute(message, bot):
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
-        player = add_player_if_not_existant(message.from_user.first_name,
+        current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
+        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             if validate_CEO_zone_no_arguments(message.from_user.id):
                 command_and_argument_split = message.text.split('\n', 1)
                 if len(command_and_argument_split)>1:
@@ -55,7 +55,7 @@ def execute(message, bot):
                                     else:
                                         bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                         log(f"Can't find player to register in a lineup: {lineup_player_params}")
-                                log(f"Game stats successfully registered")
+                                log(f"/register_money requested by: {get_player_name_formal(current_player)}")
                                 bot.reply_to(message, "✅ Бухгалтерия записана! Деньги мутятся, бухгалтерия крутится! Ванька едет в Египет! Красава!")
                                 bot.reply_to(message, output)
                                 bot.set_message_reaction(message.chat.id,

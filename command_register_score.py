@@ -1,7 +1,7 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
-from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 import prettytable as pt
@@ -47,6 +47,7 @@ def execute(message, bot):
                                             message.message_id,
                                             [ReactionTypeEmoji('✍️')],
                                     is_big=True)
+                        log(f"/register_score requested by: {get_player_name_formal(current_player)}")
             else:
                 bot.reply_to(message, "Что-то не то. Укажи дату, потом переход на новую строку и счет вот в таком формате <🌽>:<🍅>")
     except Exception as e:

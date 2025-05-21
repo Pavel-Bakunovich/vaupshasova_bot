@@ -1,7 +1,7 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday
-from common import add_player_if_not_existant, validate_access_no_game_registration_needed, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 import re
@@ -13,11 +13,11 @@ def execute(message, bot):
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
-        player = add_player_if_not_existant(message.from_user.first_name,
+        current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
+        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             command_and_argument_split = message.text.split('\n', 1)
             if len(command_and_argument_split)>1:
                 date_params = command_and_argument_split[0].split(' ', 1)
@@ -49,7 +49,7 @@ def execute(message, bot):
                                 else:
                                     bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                     log(f"Can't find player to register in a lineup: {lineup_player_params}")
-                            log(f"Game stats successfully registered")
+                            log(f"/register_game_stats requested by: {get_player_name_formal(current_player)}")
                             bot.reply_to(message, "✅ Статистика записана! Цифры мутятся, статистика крутится! Красава!")
                             bot.set_message_reaction(message.chat.id,
                                                 message.message_id,

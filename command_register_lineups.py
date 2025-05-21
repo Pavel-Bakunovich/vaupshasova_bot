@@ -1,7 +1,7 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday
-from common import add_player_if_not_existant, validate_access_no_game_registration_needed, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 import re
@@ -12,11 +12,11 @@ def execute(message, bot):
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
-        player = add_player_if_not_existant(message.from_user.first_name,
+        current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, player, bot, message):
+        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             command_and_argument_split = message.text.split('\n', 1)
             if len(command_and_argument_split)>1:
                 parts = command_and_argument_split[1].split('\n')
@@ -39,12 +39,13 @@ def execute(message, bot):
                         database.update_player_squad_for_matchday(squad_player_id, squad, get_next_matchday())
                     else:
                         log(f"Can't find player to register in a lineup: {lineup_player_params}")
-                log(f"Squad successfully registered")
-                bot.reply_to(message, "Результат деления на команды внесен!")
+                
+                bot.reply_to(message, "✅ Результат деления на команды внесен!")
                 bot.set_message_reaction(message.chat.id,
                                     message.message_id,
                                     [ReactionTypeEmoji('✍️')],
                                     is_big=True)
+                log(f"/register_lineups requested by: {get_player_name_formal(current_player)}")
             else:
                 bot.reply_to(message, "Пришли результат дележки! Ты ж ничего не прислал.")
 

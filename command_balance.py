@@ -25,7 +25,7 @@ def execute(message, bot):
                     table.add_row([player_name, balance])
             photo = text_to_image(table.get_string(), image_size=(320, 1200), font_size=11)
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
-            log(f"Successfullty provided players balance /balance. Requested by: {get_player_name_formal(current_player)}")
+            log(f"/balance requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)

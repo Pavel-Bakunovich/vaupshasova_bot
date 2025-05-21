@@ -18,7 +18,7 @@ def execute(message, bot):
             bot.send_photo(message.chat.id, season_stats_photo, reply_to_message_id=message.message_id)
             last_games_photo = last_games(current_player)
             bot.send_photo(message.chat.id, last_games_photo, reply_to_message_id=message.message_id)
-            log(f"Successfullty provided individual stats. Requested by: {get_player_name_formal(current_player)}")
+            log(f"/my_stats requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
