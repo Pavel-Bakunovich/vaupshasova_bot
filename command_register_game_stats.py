@@ -37,15 +37,23 @@ def execute(message, bot):
                                 first_name = lineup_player_params[0]
                                 last_name = lineup_player_params[1]
                                 lineup_player = database.find_player_by_name(first_name, last_name)
+                                is_data_valid = False
                                 if lineup_player is not None:
                                     player_id = lineup_player[7]
-                                    goals = lineup_player_params[2]
-                                    assists = lineup_player_params[3]
-                                    own_goals = lineup_player_params[4]
-                                    if goals.isdigit() is False or assists.isdigit() is False or own_goals.isdigit() is False:
-                                        bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
-                                    else:
-                                        database.add_game_stats(player_id,game_id,goals,assists,own_goals)
+                                    try:
+                                        goals = lineup_player_params[2]
+                                        assists = lineup_player_params[3]
+                                        own_goals = lineup_player_params[4]
+                                        is_data_valid = True
+                                    except:
+                                        bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Скорее всего ты не ввел все цифры. Напротив каждого имени надо вводить 3 цифры через запятую - <голы> <асисты> <автоголы>. Давай исправь там что-нибудь и заново запускивай команду.")
+                                    
+                                    if is_data_valid is True:
+                                        if goals.isdigit() is False or assists.isdigit() is False or own_goals.isdigit() is False:
+                                            bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Скорее всего ты ввел не цифру, а текст какой-то. Давай исправь там что-нибудь и заново запускивай команду.")
+                                        else:
+                                            database.add_game_stats(player_id,game_id,goals,assists,own_goals)
+                                    
                                 else:
                                     bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                     log(f"Can't find player to register in a lineup: {lineup_player_params}")
