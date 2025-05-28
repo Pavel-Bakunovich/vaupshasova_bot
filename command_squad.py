@@ -59,7 +59,7 @@ def execute(message, bot):
                     "{Player " + str(x) + "}", "")
 
             bot.reply_to(message, squad_template_text)
-            log(helpers.fill_template("Squad list requested by {name}",name=get_player_name_formal(current_player)))
+            log(f"/squad requested by {get_player_name_formal(current_player)}")
         else:
             reply_to_unauthorized(bot, message, player)
     except Exception as e:
