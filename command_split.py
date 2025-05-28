@@ -32,7 +32,7 @@ def execute(message, bot):
                 log (squad_list)
 
                 bot.reply_to(message, split_squad)
-                log(helpers.fill_template("Split squad with GenAI command requested by {name}",name=get_player_name_formal(current_player)))
+                log(f"/split requested by {get_player_name_formal(current_player)}")
             else:
                 reply_to_unauthorized(bot, message, player)
         else:
