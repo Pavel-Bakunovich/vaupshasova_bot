@@ -29,7 +29,7 @@ def execute(message, bot):
             response = deepseek.send_request(talk_prompt_template_text, 1)
 
             bot.reply_to(message, response)
-            log(helpers.fill_template("Talk command requested by {name}: \'{player_message}\'",name=get_player_name_formal(player),player_message=str(params)))
+            log(f"/talk requested by {get_player_name_formal(player)}: \'{str(params)}\'")
         else:
             reply_to_unauthorized(bot, message, player)
     except Exception as e:
