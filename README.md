@@ -1,4 +1,5 @@
 <img src="https://github.com/Pavel-Bakunovich/vaupshasova_bot/blob/main/Vaupshasova%20Logo.png?raw=true" width="200"/>
+
 # Бот Ваупшасова
 Это бот, который помогает друзьям собирать состав на игру в футбол - записаться, отписаться, вести список записавшихся на игру.
 
