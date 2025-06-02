@@ -68,15 +68,6 @@ def get_player_name_formal(player):
     else:
         return f"{Friendly_First_Name} {Friendly_Last_Name}"
 
-def send_abusive_comment(bot, message, bot_message):
-    if (random.random() < 0.20):
-        with open(constants.ABUSIVE_COMMENT_PROMPT_FILENAME,"r") as abusive_comment_prompt_file:
-            abusive_comment_prompt = abusive_comment_prompt_file.read()
-
-        abusive_message = deepseek.send_request(fill_template(abusive_comment_prompt, bot_message = bot_message), 1.5)
-        bot.reply_to(message, abusive_message)
-        log(fill_template("Abusive comment sent in response to: \'{bot_message}\'", bot_message=bot_message))
-
 def reply_registration_not_allowed(bot, message, player):
     bot.reply_to(
         message,

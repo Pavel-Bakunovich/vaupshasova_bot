@@ -2,7 +2,7 @@ from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 import helpers
 from helpers import get_arguments
-from common import add_player_if_not_existant_with_params, get_player_name, send_abusive_comment,reply_only_CEO_can_do_it,validate_access,validate_CEO_zone
+from common import add_player_if_not_existant_with_params, get_player_name,reply_only_CEO_can_do_it,validate_access,validate_CEO_zone
 import database
 import constants
 
@@ -36,7 +36,6 @@ def execute(message, bot):
                                         message.message_id,
                                         [ReactionTypeEmoji('😭')],
                                         is_big=True)
-                send_abusive_comment(bot, bot_message, user_message_text)
             else:
                 reply_only_CEO_can_do_it(bot, message)
 

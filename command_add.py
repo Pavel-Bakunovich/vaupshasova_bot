@@ -2,7 +2,7 @@ from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 import helpers
 from helpers import get_arguments
-from common import get_player_name, send_abusive_comment, add_player_if_not_existant_with_params, validate_access, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import get_player_name, add_player_if_not_existant_with_params, validate_access, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 
@@ -59,7 +59,6 @@ def execute(message, bot):
                 matchday_player_count = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
                 if (matchday_player_count <= 3 and matchday_player_count > 0):
                     bot.reply_to(message, helpers.fill_template("⚠️ Внимание, осталось мест: {free_spots_count}",free_spots_count=matchday_player_count))
-                send_abusive_comment(bot, bot_message, user_message_text)
             else:
                 reply_only_CEO_can_do_it(bot, message)
 
