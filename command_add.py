@@ -23,9 +23,9 @@ def execute(message, bot):
             
             if validate_CEO_zone(message.from_user.id,get_arguments(message.text)):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
-                matchday_player_count = database.get_matchday_players_count(helpers.get_next_matchday())
+                matchday_remaining_free_slots = database.get_matchday_players_count(helpers.get_next_matchday())
                 if matchday is None:
-                    if (matchday_player_count < 12):
+                    if (matchday_remaining_free_slots < 12):
                         database.register_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player_id)
                         user_message_text = helpers.fill_template("✍️ {name}, ты добавлен в состав на игру {date}.",
                             name=get_player_name(player),
@@ -41,7 +41,7 @@ def execute(message, bot):
                         user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
                         log(user_message_text)
                     else:
-                        if (matchday_player_count < 12):
+                        if (matchday_remaining_free_slots < 12):
                             user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             log(user_message_text)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player_id)
@@ -56,9 +56,12 @@ def execute(message, bot):
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
                 
-                matchday_player_count = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
-                if (matchday_player_count <= 3 and matchday_player_count > 0):
-                    bot.reply_to(message, helpers.fill_template("⚠️ Внимание, осталось мест: {free_spots_count}",free_spots_count=matchday_player_count))
+                matchday_remaining_free_slots = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
+                if (matchday_remaining_free_slots <= 3 and matchday_remaining_free_slots > 0):
+                    bot.reply_to(message, f"⚠️ Внимание, осталось мест: {matchday_remaining_free_slots}")
+                else:
+                    if matchday_remaining_free_slots == 0:
+                        bot.reply_to(message, "✅ Состав собран, господа присяжные заседатели! Состав собран!")
             else:
                 reply_only_CEO_can_do_it(bot, message)
 
