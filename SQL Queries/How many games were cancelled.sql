@@ -1,2 +1,1 @@
-SELECT * FROM Games WHERE Played = FALSE
-ORDER BY Game_date DESC
+SELECT COUNT(*) FROM Games WHERE Played = FALSE

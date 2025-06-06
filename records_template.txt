@@ -1,0 +1,33 @@
+*Общее количество игр, которое мы сыграли:* {How many games we played.sql}
+
+*Общее количество игр, которое было отменено:* {How many games were cancelled.sql}
+
+Самые длинные победные серии:
+{Win streaks.sql}
+
+Самые длинные серии поражений:
+{Losing streaks.sql}
+
+Наибольшее количество голов за одну игру:
+{Top goals per game.sql}
+
+Наибольшее количество асистов за одну игру:
+{Top assists per game.sql}
+
+Наибольшее количество автоголов за одну игру:
+{Top own goals per game.sql}
+
+Самый высокий процент побед:
+{Who has the higher win rate.sql}
+
+Наибольшее количество денег, которые сдал игрок за всю историю:
+{Who paid the most money.sql}
+
+Кто сыграл больше всего игр за Кукурузу:
+{Who played the most games for Corn.sql}
+
+Кто сыграл больше всего игр за Помидоры:
+{Who played the most games for Tomato.sql}
+
+Кто сидел на стуле наибольшее количество раз:
+{Who sat on a chair the most times.sql}

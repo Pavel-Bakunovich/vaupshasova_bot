@@ -23,6 +23,24 @@ def close_connection_pool(pool):
     pool.putconn(conn)
     pool.closeall()
 
+def execute_sql_query_return_one(sql_query):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(sql_query)
+    result = cursor.fetchone()
+    close_connection_pool(connection_pool)
+    return result[0]
+
+def execute_sql_query_return_many(sql_query):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(sql_query)
+    result = cursor.fetchall()
+    close_connection_pool(connection_pool)
+    return result
+
 def add_game_stats(player_id, game_id, goals, assists, own_goals):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
