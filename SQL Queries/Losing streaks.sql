@@ -46,12 +46,11 @@ streak_lengths AS (
 
 -- Get the longest losing streak for each player
 SELECT 
-    Player_ID,
     player_name,
     MAX(streak_length) AS losing_streak,
     streak_start,
     streak_end
 FROM streak_lengths
 GROUP BY Player_ID, player_name, streak_start, streak_end
-HAVING MAX(streak_length) > 2
+HAVING MAX(streak_length) > 5
 ORDER BY losing_streak DESC, player_name;

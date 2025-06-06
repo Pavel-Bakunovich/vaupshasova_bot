@@ -1,5 +1,5 @@
-SELECT Players.Friendly_First_Name, Players.Friendly_Last_Name, Own_Goals, Game_Date FROM Matchday
+SELECT Friendly_First_Name || ' ' || Friendly_Last_Name AS player_name, Own_Goals, Game_Date FROM Matchday
 INNER JOIN Players ON Players.ID = Matchday.Player_ID
 INNER JOIN Games ON Games.ID = Matchday.Game_ID
-WHERE Own_Goals >= 1
+WHERE Own_Goals >= 2
 ORDER BY Own_Goals DESC
