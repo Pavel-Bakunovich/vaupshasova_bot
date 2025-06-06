@@ -38,4 +38,3 @@ SQL_WHO_PLAYED_THE_MOST_GAMES_FOR_CORN_OR_TOMATO = "Who played the most games fo
 SQL_WHO_SAT_ON_A_CHAIR_THE_MOST_TIMES = "Who sat on a chair the most times.sql"
 SQL_WHO_SCORED_MOST_OWN_GOALS = "Who scored most own goals.sql"
 SQL_WIN_STREAKS = "Win streaks.sql"
-SQL_TOP_AMOUNT_OF_GOALS_PER_GAME = "Top amount of goals per game.sql"
