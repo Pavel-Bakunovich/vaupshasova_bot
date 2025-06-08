@@ -30,8 +30,10 @@ def execute(message, bot):
                     if date is not None:
                         parts = command_and_argument_split[1].split('\n')
                         game_id = database.get_game_id_without_adding_new(date)
-                        
                         if game_id is not None:
+                            corn_scored_goals_counter = 0
+                            tomato_scored_goals_counter = 0
+                            squad = database.get_squad(date)
                             for line in parts:
                                 lineup_player_params = re.split(r'[\s]+', line.strip())
                                 first_name = lineup_player_params[0]
@@ -53,12 +55,20 @@ def execute(message, bot):
                                             bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Скорее всего ты ввел не цифру, а текст какой-то. Давай исправь там что-нибудь и заново запускивай команду.")
                                         else:
                                             database.add_game_stats(player_id,game_id,goals,assists,own_goals)
-                                    
+                                            if get_player_team(player_id, squad) == constants.SQUAD_CORN:
+                                                corn_scored_goals_counter += int(goals)
+                                                if int(own_goals) > 0:
+                                                    tomato_scored_goals_counter += int(own_goals)
+                                            else:
+                                                tomato_scored_goals_counter += int(goals)
+                                                if int(own_goals) > 0:
+                                                    corn_scored_goals_counter += int(own_goals)
                                 else:
                                     bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                     log(f"Can't find player to register in a lineup: {lineup_player_params}")
+                            database.register_game_score(game_id,corn_scored_goals_counter,tomato_scored_goals_counter)
                             log(f"/register_game_stats requested by: {get_player_name_formal(current_player)}")
-                            bot.reply_to(message, "✅ Статистика записана! Цифры мутятся, статистика крутится! Красава!")
+                            bot.reply_to(message, f"✅ Статистика записана! Цифры мутятся, статистика крутится! Красава!\nСчет матча 🌽 {corn_scored_goals_counter}:{tomato_scored_goals_counter} 🍅")
                             bot.set_message_reaction(message.chat.id,
                                                 message.message_id,
                                                 [ReactionTypeEmoji('✍️')],
@@ -73,8 +83,14 @@ def execute(message, bot):
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
 
-        
-        '''
+def get_player_team(player_id, squad):
+    for item in squad:
+        if item[0] == player_id:
+            return item[10]
+
+
+
+'''
 /register_game_stats May 17, 2025
 Ваня Шмарловский 4 5 0
 Костя Ведьгун 3 2 0
