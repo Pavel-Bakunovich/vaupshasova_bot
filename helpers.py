@@ -2,6 +2,7 @@ import datetime
 import calendar
 import constants
 import pytz
+import re
 
 def fill_template(template, **kwargs):
   result = template
@@ -57,3 +58,7 @@ def get_arguments(input):
         return parts[1]
     else:
         return None
+    
+def escape_markdown(text):
+    escape_chars = r'\_*[]()~`>#+-=|{}.!'
+    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)

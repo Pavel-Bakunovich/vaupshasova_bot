@@ -71,7 +71,7 @@ def good_morning():
         weather = Weather()
         weather_forecast = weather.get_forecast()
 
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(weather_forecast), parse_mode='MarkdownV2')
+        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(weather_forecast))
 
         log(f"Good morning message sent out. Weather: {weather_forecast}")
 

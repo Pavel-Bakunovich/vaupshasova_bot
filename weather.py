@@ -4,6 +4,7 @@ import requests
 from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
 import deepseek
 from logger import log, log_error
+import command_records
 
 class Weather:
     def __init__(self):
@@ -59,5 +60,6 @@ class Weather:
                                         moonrise = weather_forecast['forecast']['forecastday'][0]['astro']['moonrise'],
                                         moonset =weather_forecast['forecast']['forecastday'][0]['astro']['moonset'])
         log(f"Weather: {weather_forecast_text}")
-        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast=weather_forecast_text, date=get_today_minsk_time_formatted()), 1.5)
+        stats = command_records.build_records_text()
+        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast=weather_forecast_text, stats = stats, date=get_today_minsk_time_formatted()), 1.5)
         return response
