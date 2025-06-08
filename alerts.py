@@ -8,7 +8,7 @@ from pytz import timezone
 from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
 import database
 from backup import Database_backup
-from weather import Weather
+from good_morning_message import GoodMorningMessage
 
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
 bot = telebot.TeleBot(API_KEY)
@@ -68,12 +68,12 @@ def start_waking_up():
 
 def good_morning():
     try:
-        weather = Weather()
-        weather_forecast = weather.get_forecast()
+        good_morning_message = GoodMorningMessage()
+        good_morning_message_text = good_morning_message.get()
 
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(weather_forecast))
+        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(good_morning_message_text))
 
-        log(f"Good morning message sent out. Weather: {weather_forecast}")
+        log(f"Good morning message sent out. Weather: {good_morning_message_text}")
 
     except Exception as e:
         log_error(e)

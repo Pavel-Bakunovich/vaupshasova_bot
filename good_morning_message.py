@@ -6,10 +6,10 @@ import deepseek
 from logger import log, log_error
 import command_records
 
-class Weather:
+class GoodMorningMessage:
     def __init__(self):
         self.WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
-    def get_forecast(self):
+    def get(self):
         base_URL="http://api.weatherapi.com/v1/forecast.json" 
         PARAMS = {'key':self.WEATHER_API_KEY,
                     'q':"Minsk",
@@ -60,6 +60,9 @@ class Weather:
                                         moonrise = weather_forecast['forecast']['forecastday'][0]['astro']['moonrise'],
                                         moonset =weather_forecast['forecast']['forecastday'][0]['astro']['moonset'])
         log(f"Weather: {weather_forecast_text}")
+
         stats = command_records.build_records_text()
-        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast=weather_forecast_text, stats = stats, date=get_today_minsk_time_formatted()), 1.5)
+        
+        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast = weather_forecast_text, stats = stats, date = get_today_minsk_time_formatted()), 1.5)
+        
         return response
