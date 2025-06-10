@@ -52,5 +52,5 @@ SELECT
     streak_end
 FROM streak_lengths
 GROUP BY Player_ID, player_name, streak_start, streak_end
-HAVING MAX(streak_length) > 5
+HAVING MAX(streak_length) > 6
 ORDER BY losing_streak DESC, player_name;

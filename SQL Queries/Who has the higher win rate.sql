@@ -1,5 +1,5 @@
-SELECT 
-    Players.Friendly_First_Name, Players.Friendly_Last_Name,
+WITH PlayerStats AS (SELECT 
+    Friendly_First_Name || ' ' || Friendly_Last_Name AS player_name,
     COUNT(Matchday.Player_ID) as Games_Played,
     SUM(CASE 
         WHEN (Squad = 'Corn' AND Games.score_corn > Games.score_tomato) OR
@@ -22,7 +22,8 @@ where Matchday.type like 'add'
 	and Games.Played = TRUE
 GROUP BY 
     Players.Id, Player_Id,Players.Friendly_First_Name, Players.Friendly_Last_Name
-HAVING COUNT(*) > 5
 ORDER BY 
-    win_rate_percentage DESC
-LIMIT 5
+    win_rate_percentage DESC)
+SELECT * FROM PlayerStats
+WHERE win_rate_percentage > 51 and Games_Played > 5
+ORDER BY win_rate_percentage DESC

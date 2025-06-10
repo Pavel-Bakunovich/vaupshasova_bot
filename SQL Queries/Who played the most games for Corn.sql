@@ -1,13 +1,8 @@
 SELECT 
-    Players.Friendly_First_Name, Players.Friendly_Last_Name,
-    COUNT(Matchday.Player_ID) as Games_Played,
+    Friendly_First_Name || ' ' || Friendly_Last_Name AS player_name,
     SUM(CASE  
             WHEN Squad = 'Corn'
-            THEN 1 ELSE 0 END) as Games_played_for_Corn,
-
-    SUM(CASE 
-            WHEN Squad = 'Tomato'
-            THEN 1 ELSE 0 END) as Games_played_for_Tomato
+            THEN 1 ELSE 0 END) as Games_played_for_Corn
 FROM 
     Matchday
 	
