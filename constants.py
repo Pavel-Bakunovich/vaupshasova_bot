@@ -39,5 +39,7 @@ SQL_WHO_PLAYED_THE_MOST_GAMES_FOR_TOMATO = "Who played the most games for Tomato
 SQL_WHO_SAT_ON_A_CHAIR_THE_MOST_TIMES = "Who sat on a chair the most times.sql"
 SQL_WHO_SCORED_MOST_OWN_GOALS = "Who scored most own goals.sql"
 SQL_WIN_STREAKS = "Win streaks.sql"
+SQL_TOP_ASSISTS_ALLTIME = "Top assists alltime.sql"
+SQL_TOP_GOALS_ALLTIME = "Top goals alltime.sql"
 
 RECORDS_TEMPLATE_FILE = "records_template.txt"

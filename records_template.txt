@@ -8,10 +8,16 @@
 {Losing streaks.sql}
 *Наибольшее количество голов за одну игру:*
 {Top goals per game.sql}
+*Наибольшее количество голов за всю историю:*
+{Top goals alltime.sql}
 *Наибольшее количество асистов за одну игру:*
 {Top assists per game.sql}
+*Наибольшее количество асистов за всю историю:*
+{Top assists alltime.sql}
 *Наибольшее количество автоголов за одну игру:*
 {Top own goals per game.sql}
+*Наибольшее количество автоголов за всю историю:*
+{Who scored most own goals.sql}
 *Самый высокий процент побед:*
 {Who has the higher win rate.sql}
 *Наибольшее количество денег, которые сдал игрок за всю историю:*
