@@ -28,3 +28,5 @@
 {Who played the most games for Tomato.sql}
 *Кто сидел на стуле наибольшее количество раз:*
 {Who sat on a chair the most times.sql}
+*Пары игроков, которые сыграли больше всего игр вместе:*
+{Top player pairs.sql}

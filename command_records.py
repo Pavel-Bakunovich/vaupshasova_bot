@@ -24,6 +24,7 @@ sql_sat_on_chair_most_times = ""
 sql_scored_most_own_goals = ""
 sql_top_assists_alltime = ""
 sql_top_goals_alltime = ""
+sql_top_player_pairs = ""
 
 text_how_many_games_we_played = ""
 text_how_many_games_were_cancelled = ""
@@ -39,6 +40,7 @@ text_sat_on_chair_most_times = ""
 text_scored_most_own_goals = ""
 text_top_assists_alltime = ""
 text_top_goals_alltime = ""
+text_top_player_pairs = ""
 
 def execute(message, bot):
     try:
@@ -86,6 +88,7 @@ def build_records_text():
     text_scored_most_own_goals = database.execute_sql_query_return_many(sql_scored_most_own_goals)
     text_top_assists_alltime = database.execute_sql_query_return_many(sql_top_assists_alltime)
     text_top_goals_alltime = database.execute_sql_query_return_many(sql_top_goals_alltime)
+    text_top_player_pairs = database.execute_sql_query_return_many(sql_top_player_pairs)
     
 
     records_template = fill_records_template(records_template, constants.SQL_HOW_MANY_GAMES_WE_PLAYED, text_how_many_games_we_played)
@@ -103,6 +106,7 @@ def build_records_text():
     records_template = fill_records_template(records_template, constants.SQL_LOSING_STREAKS, format_win_loose_streaks(text_losing_streaks))
     records_template = fill_records_template(records_template, constants.SQL_TOP_ASSISTS_ALLTIME, format_most_goals(text_top_assists_alltime))
     records_template = fill_records_template(records_template, constants.SQL_TOP_GOALS_ALLTIME, format_most_goals(text_top_goals_alltime))
+    records_template = fill_records_template(records_template, constants.SQL_TOP_PLAYER_PAIRS, format_player_pairs(text_top_player_pairs))
 
     return records_template
 
@@ -167,6 +171,10 @@ def load_sql_queries():
     with open(f"SQL Queries/{constants.SQL_TOP_GOALS_ALLTIME}" , "r") as file:
         sql_top_goals_alltime = file.read()
 
+    global sql_top_player_pairs
+    with open(f"SQL Queries/{constants.SQL_TOP_PLAYER_PAIRS}" , "r") as file:
+        sql_top_player_pairs = file.read()
+
 def format_win_loose_streaks(response_from_database):
     result=""
     for record in response_from_database:
@@ -213,6 +221,18 @@ def format_most_chair(response_from_database):
     result=""
     for record in response_from_database:
         result = result + escape_markdown(f"🪑 {record[0]} - {record[1]}\n")
+    return result
+
+def format_player_pairs(response_from_database):
+    result=""
+    for record in response_from_database:
+        squad = ""
+        if record[6] == constants.SQUAD_TOMATO:
+            squad = constants.SQUAD_TOMATO_EMOJI
+        else:
+            if record[6] == constants.SQUAD_CORN:
+                squad = constants.SQUAD_CORN_EMOJI
+        result = result + escape_markdown(f"{squad} {record[0]} + {record[1]} = {record[2]} игр\n")
     return result
 
 def fill_records_template(template, replace_to, replace_with):

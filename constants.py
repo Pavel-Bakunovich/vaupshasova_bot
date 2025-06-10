@@ -41,5 +41,6 @@ SQL_WHO_SCORED_MOST_OWN_GOALS = "Who scored most own goals.sql"
 SQL_WIN_STREAKS = "Win streaks.sql"
 SQL_TOP_ASSISTS_ALLTIME = "Top assists alltime.sql"
 SQL_TOP_GOALS_ALLTIME = "Top goals alltime.sql"
+SQL_TOP_PLAYER_PAIRS = "Top player pairs.sql"
 
 RECORDS_TEMPLATE_FILE = "records_template.txt"
