@@ -80,3 +80,4 @@ _Обычно эту коменду не нужно выполнять, так �
 
 # Аритектура бота
 <img src="https://github.com/Pavel-Bakunovich/vaupshasova_bot/blob/main/Vaupshasova%20Bot%20Architecture.jpg?raw=true"/>
+
