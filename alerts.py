@@ -71,9 +71,9 @@ def good_morning():
         good_morning_message = GoodMorningMessage()
         good_morning_message_text = good_morning_message.get()
 
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(good_morning_message_text))
+        bot.send_message(constants.CEO_TELEGRAM_ID, str(good_morning_message_text))
 
-        log(f"Good morning message sent out. Weather: {good_morning_message_text}")
+        log(f"Good morning message sent out.")
 
     except Exception as e:
         log_error(e)

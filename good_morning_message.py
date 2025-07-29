@@ -19,7 +19,7 @@ class GoodMorningMessage:
     
         with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
             good_morning_prompt_template_text = good_morning_prompt_template_file.read()
-
+        '''
         with open(constants.WEATHER_FORECSAT_TEMPLATE_FILENAME,"r") as weather_forecsat_template_file:
             weather_forecsat_template_text = weather_forecsat_template_file.read()
 
@@ -60,9 +60,10 @@ class GoodMorningMessage:
                                         moonrise = weather_forecast['forecast']['forecastday'][0]['astro']['moonrise'],
                                         moonset =weather_forecast['forecast']['forecastday'][0]['astro']['moonset'])
         log(f"Weather: {weather_forecast_text}")
-
+        
         stats = command_records.build_records_text()
-        
-        response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast = weather_forecast_text, stats = stats, date = get_today_minsk_time_formatted()), 1.5)
-        
+        '''
+        #response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast = weather_forecast_text, stats = stats, date = get_today_minsk_time_formatted()), 1.5)
+        response = deepseek.send_request(good_morning_prompt_template_text, 1.5)
+
         return response
