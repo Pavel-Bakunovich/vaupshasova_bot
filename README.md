@@ -77,3 +77,7 @@
 **/register_score** May 17, 2025<br/>
 15:16<br/>
 _Обычно эту коменду не нужно выполнять, так как /register_game_stats автоматически определяет счет и заносит в базу данных_
+
+# Аритектура бота
+<img src="https://github.com/Pavel-Bakunovich/vaupshasova_bot/blob/main/Vaupshasova%20Bot%20Architecture.jpg?raw=true"/>
+
