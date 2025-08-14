@@ -32,7 +32,7 @@ def execute(message, bot):
                         if date is not None:
                             parts = command_and_argument_split[1].split('\n')
                             game_id = database.get_game_id_without_adding_new(date)
-                            output = "Изменение балансов:\n"
+                            output = "После внесения денег: сколько списалось со счета / оставшийся баланс\n"
                             if game_id is not None:
                                 for line in parts:
                                     lineup_player_params = re.split(r'[\s]+', line.strip(),3)
@@ -51,12 +51,13 @@ def execute(message, bot):
                                             money_given_float = float(money_given)
                                             balance_change_int = money_given_float - constants.COST_OF_1_GAME_PER_PLAYER
                                             database.add_matchday_money(player_id,game_id,money_given_float,balance_change_int,comment)
-                                            output += f"{first_name} {last_name}: {balance_change_int} р.\n"
+                                            individual_balance = database.get_individual_balance(player_id)[0]
+                                            output += f"💰 {first_name} {last_name}: {balance_change_int} р. / {individual_balance} р.\n"
                                     else:
                                         bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                         log(f"Can't find player to register in a lineup: {lineup_player_params}")
                                 log(f"/register_money requested by: {get_player_name_formal(current_player)}")
-                                bot.reply_to(message, "✅ Бухгалтерия записана! Деньги мутятся, бухгалтерия крутится! Ванька едет в Египет! Красава!")
+                                bot.reply_to(message, "✅ Бухгалтерия записана! Деньги мутятся, бухгалтерия крутится! Ванька едет в Египет! А может и в Дубаи! Красава!")
                                 bot.reply_to(message, output)
                                 bot.set_message_reaction(message.chat.id,
                                                     message.message_id,
