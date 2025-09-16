@@ -34,6 +34,21 @@ def format_date(date):
   }
   return f"{date.day} {MONTHS_RU[date.month]} {date.year}"
 
+def get_day_of_week():
+  date = get_next_matchday()
+  day_of_week = date.weekday()  # Returns 0 (Monday) to 6 (Sunday)
+  # Map weekday numbers to Russian day names
+  russian_days = {
+      0: "понедельник",
+      1: "вторник", 
+      2: "среда",
+      3: "четверг",
+      4: "пятница",
+      5: "суббота",
+      6: "воскресенье"
+  }
+  return russian_days[day_of_week]
+
 def allow_registration():
   today_minsk = get_today_minsk_time()
   if (today_minsk.weekday() == 5) or (today_minsk.weekday() == 6):
