@@ -35,7 +35,7 @@ def format_date(date):
   return f"{date.day} {MONTHS_RU[date.month]} {date.year}"
 
 def get_day_of_week():
-  date = get_next_matchday()
+  date = get_today_minsk_time()
   day_of_week = date.weekday()  # Returns 0 (Monday) to 6 (Sunday)
   # Map weekday numbers to Russian day names
   russian_days = {
