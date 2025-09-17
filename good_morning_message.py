@@ -4,7 +4,7 @@ import requests
 from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
 import deepseek
 from logger import log, log_error
-import command_records
+from numbers_api_client import NumbersAPIClient
 
 class GoodMorningMessage:
     def __init__(self):
@@ -63,7 +63,15 @@ class GoodMorningMessage:
         
         stats = command_records.build_records_text()
         '''
-        #response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast = weather_forecast_text, stats = stats, date = get_today_minsk_time_formatted()), 1.5)
+        random_fact = ""
+        try:
+            numbers_api_client = NumbersAPIClient()
+            random_fact = numbers_api_client.get_random_fact()
+            log(f"Today's random fact: \"{random_fact}\"")
+        except Exception as e:
+            random_fact = "No fact available today because of some freaking error."
+        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, random_fact = random_fact)
+
         response = deepseek.send_request(good_morning_prompt_template_text, 0)
 
         return response

@@ -15,8 +15,9 @@
             "name": "Sanbdox Debugger",
             "type": "debugpy",
             "request": "launch",
-            "program": "Sandbox/sandbox.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "module": "Sandbox.sandbox"
         }
     ]
 }
