@@ -64,6 +64,6 @@ class GoodMorningMessage:
         stats = command_records.build_records_text()
         '''
         #response = deepseek.send_request(fill_template(good_morning_prompt_template_text, weather_forecast = weather_forecast_text, stats = stats, date = get_today_minsk_time_formatted()), 1.5)
-        response = deepseek.send_request(good_morning_prompt_template_text, 1.5)
+        response = deepseek.send_request(good_morning_prompt_template_text, 0)
 
         return response
