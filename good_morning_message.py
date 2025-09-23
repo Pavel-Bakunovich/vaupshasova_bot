@@ -70,6 +70,7 @@ class GoodMorningMessage:
             log(f"Today's random fact: \"{random_fact}\"")
         except Exception as e:
             random_fact = "No fact available today because of some freaking error."
+            log_error(e)
         good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, random_fact = random_fact)
 
         response = deepseek.send_request(good_morning_prompt_template_text, 0)
