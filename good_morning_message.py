@@ -4,7 +4,7 @@ import requests
 from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
 import deepseek
 from logger import log, log_error
-from numbers_api_client import NumbersAPIClient
+from random_facts_client import RandomFactsClient
 
 class GoodMorningMessage:
     def __init__(self):
@@ -65,8 +65,8 @@ class GoodMorningMessage:
         '''
         random_fact = ""
         try:
-            numbers_api_client = NumbersAPIClient()
-            random_fact = numbers_api_client.get_random_fact()
+            random_facts_client = RandomFactsClient()
+            random_fact = random_facts_client.get_random_fact()
             log(f"Today's random fact: \"{random_fact}\"")
         except Exception as e:
             random_fact = "No fact available today because of some freaking error."
