@@ -550,3 +550,16 @@ def get_sleeping_player_count(matchday_date):
     sleeping_player_count = cursor.fetchone()
     close_connection_pool(connection_pool)
     return sleeping_player_count[0]
+
+def get_todays_birthdays():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    today = get_today_minsk_time()
+    cursor.execute(f'''
+        SELECT Friendly_First_Name, Friendly_Last_Name FROM Players
+        WHERE EXTRACT(MONTH FROM Birthday) = {today.month} AND EXTRACT(DAY FROM Birthday) = {today.day}
+                   ''')
+    birthdays = cursor.fetchall()
+    close_connection_pool(connection_pool)
+    return birthdays

@@ -1,25 +1,65 @@
 import constants
 import os
 import requests
-from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
+from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,get_today_minsk_time
 import deepseek
 from logger import log, log_error
 from random_facts_client import RandomFactsClient
+from database import get_todays_birthdays
 
 class GoodMorningMessage:
     def __init__(self):
         self.WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
-    def get(self):
+
+    def get_birthdays(self):
+        birthdays = get_todays_birthdays()
+        birthdays_text = ""
+
+        if len(birthdays) > 0:
+            for player in birthdays:
+                birthdays_text += player[0] + " " + player[1]
+
+        return birthdays_text
+
+    def get(self):    
+        with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
+            good_morning_prompt_template_text = good_morning_prompt_template_file.read()
+
+        random_fact = ""
+        try:
+            random_facts_client = RandomFactsClient()
+            random_fact = random_facts_client.get_random_fact()
+            log(f"Today's random fact: \"{random_fact}\"")
+        except Exception as e:
+            random_fact = "No fact available today because of some freaking error."
+            log_error(e)
+        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, random_fact = random_fact)
+
+        birthdays_text = self.get_birthdays()
+        if birthdays_text != "":
+            birthdays_text = f"Сегодня день рождения у наших игроков: {birthdays_text}. Поздравь! Поздравление свяжи каким-то образом с историческим событием, упомянутым выше." 
+        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, birthdays = birthdays_text)
+
+        squad_split_reminder_text = ""
+        if get_today_minsk_time().weekday() == 4:
+            squad_split_reminder_text = "Сегодня пятница, поэтому напомни всем, что сегодня надо обязательно поделить составы!"
+        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, squad_split_reminder = squad_split_reminder_text)
+
+        response = deepseek.send_request(good_morning_prompt_template_text, 0)
+
+        return response
+
+    
+
+        '''
         base_URL="http://api.weatherapi.com/v1/forecast.json" 
         PARAMS = {'key':self.WEATHER_API_KEY,
                     'q':"Minsk",
                     'days':1,
                     'aqi':"no",
                     'alerts':"no"}
-    
-        with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
-            good_morning_prompt_template_text = good_morning_prompt_template_file.read()
-        '''
+
+        
         with open(constants.WEATHER_FORECSAT_TEMPLATE_FILENAME,"r") as weather_forecsat_template_file:
             weather_forecsat_template_text = weather_forecsat_template_file.read()
 
@@ -63,16 +103,3 @@ class GoodMorningMessage:
         
         stats = command_records.build_records_text()
         '''
-        random_fact = ""
-        try:
-            random_facts_client = RandomFactsClient()
-            random_fact = random_facts_client.get_random_fact()
-            log(f"Today's random fact: \"{random_fact}\"")
-        except Exception as e:
-            random_fact = "No fact available today because of some freaking error."
-            log_error(e)
-        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, random_fact = random_fact)
-
-        response = deepseek.send_request(good_morning_prompt_template_text, 0)
-
-        return response
