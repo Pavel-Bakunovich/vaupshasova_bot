@@ -22,6 +22,7 @@ def get_today_minsk_time_formatted():
 def get_next_matchday():
   today_minsk = get_today_minsk_time()
   saturday = today_minsk + datetime.timedelta((calendar.SATURDAY - today_minsk.weekday()) % 7)
+  saturday = saturday.replace(hour=8, minute=30, second=0, microsecond=0)
   return saturday
 
 def get_next_matchday_formatted():

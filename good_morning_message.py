@@ -1,7 +1,7 @@
 import constants
 import os
 import requests
-from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,get_today_minsk_time
+from helpers import get_next_matchday, get_today_minsk_time_formatted, fill_template,get_today_minsk_time
 import deepseek
 from logger import log, log_error
 from random_facts_client import RandomFactsClient
@@ -45,6 +45,17 @@ class GoodMorningMessage:
             squad_split_reminder_text = "Сегодня пятница, поэтому напомни всем, что сегодня надо обязательно поделить составы!"
         good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, squad_split_reminder = squad_split_reminder_text)
 
+        days_before_next_game_number = (get_next_matchday() - get_today_minsk_time()).days
+        if days_before_next_game_number == 1:
+            days_before_next_game_text = "До следующей игры остался 1 полный день."
+        else:
+            if days_before_next_game_number == 0:
+                days_before_next_game_text = "До следующей игры сталось меньше суток. Игра уже завтра!"
+            else:
+                days_before_next_game_text = f"До следующей игры осталось {days_before_next_game_number} полных дней."
+            
+        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, days_before_next_game = days_before_next_game_text)
+        
         response = deepseek.send_request(good_morning_prompt_template_text, 0)
 
         return response
