@@ -50,7 +50,7 @@ class GoodMorningMessage:
             days_before_next_game_text = "До следующей игры остался 1 полный день."
         else:
             if days_before_next_game_number == 0:
-                days_before_next_game_text = "До следующей игры сталось меньше суток. Игра уже завтра!"
+                days_before_next_game_text = "До следующей игры сталось меньше суток! Сегодня день игры! Жду всех на поле!"
             else:
                 days_before_next_game_text = f"До следующей игры осталось {days_before_next_game_number} полных дней."
             
