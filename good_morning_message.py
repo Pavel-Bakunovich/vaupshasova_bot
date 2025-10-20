@@ -4,12 +4,13 @@ import requests
 from helpers import get_next_matchday, get_today_minsk_time_formatted, fill_template,get_today_minsk_time
 import deepseek
 from logger import log, log_error
-from random_facts_client import RandomFactsClient
 from database import get_todays_birthdays
+from newsapi import NewsApiClient
 
 class GoodMorningMessage:
     def __init__(self):
         self.WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
+        self.NEWS_API_KEY = os.environ['NEWS_API_KEY']
 
     def get_birthdays(self):
         birthdays = get_todays_birthdays()
@@ -25,15 +26,20 @@ class GoodMorningMessage:
         with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
             good_morning_prompt_template_text = good_morning_prompt_template_file.read()
 
-        random_fact = ""
+        top_headline = ""
         try:
-            random_facts_client = RandomFactsClient()
-            random_fact = random_facts_client.get_random_fact()
-            log(f"Today's random fact: \"{random_fact}\"")
+            newsapi = NewsApiClient(api_key=self.NEWS_API_KEY)
+            top_headlines = newsapi.get_top_headlines(sources='football-italia')
+            if top_headlines != None and top_headlines['status'] == 'ok' and len(top_headlines['articles']) > 0:
+                top_headline = f"{top_headlines['articles'][0]['title']}. {top_headlines['articles'][0]['description']}"
+                log(f"Today's top headlines: \"{top_headline}\"")
+            else:
+                top_headline = "No news today for unknown reason."
+
         except Exception as e:
-            random_fact = "No fact available today because of some freaking error."
+            top_headlines = "No news today because of some freaking error."
             log_error(e)
-        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, random_fact = random_fact)
+        good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, top_headline = top_headline)
 
         birthdays_text = self.get_birthdays()
         if birthdays_text != "":
