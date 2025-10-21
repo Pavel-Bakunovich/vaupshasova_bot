@@ -29,7 +29,7 @@ class GoodMorningMessage:
         top_headline = ""
         try:
             newsapi = NewsApiClient(api_key=self.NEWS_API_KEY)
-            top_headlines = newsapi.get_top_headlines(sources='football-italia')
+            top_headlines = newsapi.get_top_headlines(sources='bbc-sport')
             if top_headlines != None and top_headlines['status'] == 'ok' and len(top_headlines['articles']) > 0:
                 top_headline = f"{top_headlines['articles'][0]['title']}. {top_headlines['articles'][0]['description']}"
                 log(f"Today's top headlines: \"{top_headline}\"")
