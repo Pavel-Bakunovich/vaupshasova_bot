@@ -69,10 +69,14 @@ def start_waking_up():
 def good_morning():
     try:
         good_morning_message = GoodMorningMessage()
-        good_morning_message_text = good_morning_message.get()
+        good_morning_message_text = good_morning_message.get_message()
 
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(good_morning_message_text))
 
+        photo = good_morning_message.get_photo()
+        if photo is not None:
+            bot.send_photo(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, photo=photo)
+        
         log(f"Good morning message sent out.")
 
     except Exception as e:

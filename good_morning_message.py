@@ -6,11 +6,14 @@ import deepseek
 from logger import log, log_error
 from database import get_todays_birthdays
 from newsapi import NewsApiClient
+import requests
+import io
 
 class GoodMorningMessage:
     def __init__(self):
         self.WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
         self.NEWS_API_KEY = os.environ['NEWS_API_KEY']
+        self.photo = None
 
     def get_birthdays(self):
         birthdays = get_todays_birthdays()
@@ -22,7 +25,7 @@ class GoodMorningMessage:
 
         return birthdays_text
 
-    def get(self):    
+    def get_message(self):    
         with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
             good_morning_prompt_template_text = good_morning_prompt_template_file.read()
 
@@ -33,6 +36,13 @@ class GoodMorningMessage:
             if top_headlines != None and top_headlines['status'] == 'ok' and len(top_headlines['articles']) > 0:
                 top_headline = f"{top_headlines['articles'][0]['title']}. {top_headlines['articles'][0]['description']}"
                 log(f"Today's top headlines: \"{top_headline}\"")
+                url_to_image = top_headlines['articles'][0]['urlToImage']
+                if url_to_image is not None:
+                    resp = requests.get(url_to_image)
+                    resp.raise_for_status()
+                    photo_response = io.BytesIO(resp.content)
+                    photo_response.seek(0)
+                    self.photo = photo_response
             else:
                 top_headline = "No news today for unknown reason."
 
@@ -48,7 +58,7 @@ class GoodMorningMessage:
 
         squad_split_reminder_text = ""
         if get_today_minsk_time().weekday() == 4:
-            squad_split_reminder_text = "Сегодня пятница, поэтому напомни всем, что сегодня надо обязательно поделить составы!"
+            squad_split_reminder_text = "Сегодня пятница, поэтому напомни капитанам, что сегодня надо обязательно поделить составы!"
         good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, squad_split_reminder = squad_split_reminder_text)
 
         days_before_next_game_number = (get_next_matchday() - get_today_minsk_time()).days
@@ -56,7 +66,7 @@ class GoodMorningMessage:
             days_before_next_game_text = "До следующей игры остался 1 полный день."
         else:
             if days_before_next_game_number == 0:
-                days_before_next_game_text = "До следующей игры сталось меньше суток! Сегодня день игры! Жду всех на поле!"
+                days_before_next_game_text = "До следующей игры сталось совсем немного! Сегодня день игры! Жду всех на поле!"
             else:
                 days_before_next_game_text = f"До следующей игры осталось {days_before_next_game_number} полных дней."
             
@@ -67,6 +77,8 @@ class GoodMorningMessage:
         return response
 
     
+    def get_photo(self):  
+        return self.photo
 
         '''
         base_URL="http://api.weatherapi.com/v1/forecast.json" 
