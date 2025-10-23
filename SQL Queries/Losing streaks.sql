@@ -13,7 +13,7 @@ WITH game_outcomes AS (
     FROM Matchday m
     JOIN Games g ON m.Game_ID = g.id
     JOIN Players p ON m.Player_ID = p.id
-    WHERE g.Played = TRUE
+    WHERE g.Played = TRUE AND type='add'
     ORDER BY m.Player_ID, g.Game_Date
 ),
 
