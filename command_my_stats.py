@@ -17,8 +17,13 @@ def execute(message, bot):
         if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             season_stats_photo = season_stats(current_player)
             bot.send_photo(message.chat.id, season_stats_photo, reply_to_message_id=message.message_id)
+            
+            alltime_personal_stats_photo = alltime_personal_stats(current_player)
+            bot.send_photo(message.chat.id, alltime_personal_stats_photo, reply_to_message_id=message.message_id)
+            
             last_games_photo = last_games(current_player)
             bot.send_photo(message.chat.id, last_games_photo, reply_to_message_id=message.message_id)
+            
             log(f"/my_stats requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
@@ -45,8 +50,6 @@ def season_stats(current_player):
     output = f"{get_player_name_formal(current_player)}\n{table.get_string()}"
     photo = text_to_image(output,image_size=(550, 400))
     return photo
-
-
 
 def last_games(current_player):
     table = pt.PrettyTable(['Дата', 'К', ':', 'П', 'Команда', 'Результат', 'Голы', 'Асисты', 'Автоголы'])
@@ -84,7 +87,34 @@ def last_games(current_player):
 
         table.add_row([date, score_corn, ":", score_tomato, "К" if stat[6] == constants.SQUAD_CORN else "П", result, goals, assists, own_goals])
     
-    win_rate = database.get_win_rate(current_player[7])
-    output = f"{get_player_name_formal(current_player)}\nПроцент побед: {win_rate[5]}% ({win_rate[3]} игр, из них {win_rate[4]} побед)\nПоследние 25 игр:\n{table.get_string()}"
+    output = f"{get_player_name_formal(current_player)}\n{table.get_string()}"
     photo = text_to_image(output,image_size=(600, 900),font_size=12)
+    return photo
+
+def alltime_personal_stats(current_player):
+    player_id = current_player[7]
+
+    win_rate = database.get_win_rate(player_id)
+
+    output = f'''{get_player_name_formal(current_player)}\n
+    Максимальная серия побед подряд: {'<еще не работает>'}\n
+    Максимальная серия без поражений подряд: {'<еще не работает>'}\n
+    Максимальная серия поражений подряд: {'<еще не работает>'}\n
+    Текущая серия побед подряд: {'<еще не работает>'}\n
+    Текущая серия без поражений подряд: {'<еще не работает>'}\n
+    Текущая серия поражений подряд: {'<еще не работает>'}\n
+    Максимальное количество голов в одном матче: {'<еще не работает>'}\n
+    Максимальное количество ассистов в одном матче: {'<еще не работает>'}\n
+    Максимальное количество автоголов в одном матче: {'<еще не работает>'}\n
+    Всего голов: {'<еще не работает>'}\n
+    Всего ассистов: {'<еще не работает>'}\n
+    Всего автоголов: {'<еще не работает>'}\n
+    Игр сыграно за Кукурузу: {'<еще не работает>'}\n
+    Игр сыграно за Помидор: {'<еще не работает>'}\n
+    Всего побед: {win_rate[4]}\n
+    Процент побед: {win_rate[5]}%\n
+    Всего игр сыграно: {win_rate[3]}\n
+    '''
+
+    photo = text_to_image(output,image_size=(550, 600),font_size=12)
     return photo
