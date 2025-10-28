@@ -37,7 +37,7 @@ def season_stats(current_player):
     table.align['Асисты'] = 'c'
     table.align['Автоголы'] = 'c'
     table.hrules = True
-    individual_stats = database.get_individual_stats(current_player[7])
+    individual_stats = database.get_individual_stats_by_season(current_player[7])
 
     for season_stats in individual_stats:
         season = season_stats[0] if season_stats[0] is not None else "-"
@@ -74,18 +74,29 @@ def last_games(current_player):
         own_goals = stat[5]
         squad = stat[6]
         result = ""
-        if score_corn > score_tomato and squad == constants.SQUAD_CORN:
-            result = "Победа"
-        if score_corn < score_tomato and squad == constants.SQUAD_CORN:
-            result = "Поражение"
-        if score_corn > score_tomato and squad == constants.SQUAD_TOMATO:
-            result = "Поражение"
-        if score_corn < score_tomato and squad == constants.SQUAD_TOMATO:
-            result = "Победа"
-        if score_corn == score_tomato:
-            result = "Ничья"
-
-        table.add_row([date, score_corn, ":", score_tomato, "К" if stat[6] == constants.SQUAD_CORN else "П", result, goals, assists, own_goals])
+        squad_short = ""
+        if squad is None: #for cases with legacy stats when we didn't document split into 2 teams.
+            result = "-"
+            squad = "-"
+            squad_short = "-"
+            score_corn = "-"
+            score_tomato = "-"
+            goals = "-"
+            assists = "-"
+            own_goals = "-"
+        else:
+            if score_corn > score_tomato and squad == constants.SQUAD_CORN:
+                result = "Победа"
+            if score_corn < score_tomato and squad == constants.SQUAD_CORN:
+                result = "Поражение"
+            if score_corn > score_tomato and squad == constants.SQUAD_TOMATO:
+                result = "Поражение"
+            if score_corn < score_tomato and squad == constants.SQUAD_TOMATO:
+                result = "Победа"
+            if score_corn == score_tomato:
+                result = "Ничья"
+            squad_short = "К" if squad == constants.SQUAD_CORN else "П"
+        table.add_row([date, score_corn, ":", score_tomato, squad_short, result, goals, assists, own_goals])
     
     output = f"{get_player_name_formal(current_player)}\n{table.get_string()}"
     photo = text_to_image(output,image_size=(600, 900),font_size=12)
@@ -95,6 +106,8 @@ def alltime_personal_stats(current_player):
     player_id = current_player[7]
 
     win_rate = database.get_win_rate(player_id)
+
+    individual_stats = database.get_individual_stats(player_id)
 
     output = f'''{get_player_name_formal(current_player)}\n
     Максимальная серия побед подряд: {'<еще не работает>'}\n
@@ -106,14 +119,14 @@ def alltime_personal_stats(current_player):
     Максимальное количество голов в одном матче: {'<еще не работает>'}\n
     Максимальное количество ассистов в одном матче: {'<еще не работает>'}\n
     Максимальное количество автоголов в одном матче: {'<еще не работает>'}\n
-    Всего голов: {'<еще не работает>'}\n
-    Всего ассистов: {'<еще не работает>'}\n
-    Всего автоголов: {'<еще не работает>'}\n
-    Игр сыграно за Кукурузу: {'<еще не работает>'}\n
-    Игр сыграно за Помидор: {'<еще не работает>'}\n
-    Всего побед: {win_rate[4]}\n
-    Процент побед: {win_rate[5]}%\n
-    Всего игр сыграно: {win_rate[3]}\n
+    Всего голов: {individual_stats[1] if individual_stats[1] is not None else "-"}\n 
+    Всего ассистов: {individual_stats[2] if individual_stats[2] is not None else "-"}\n
+    Всего автоголов: {individual_stats[3] if individual_stats[3] is not None else "-"}\n
+    Игр сыграно за Кукурузу: {individual_stats[4] if individual_stats[4] is not None else "-"}\n
+    Игр сыграно за Помидор: {individual_stats[5] if individual_stats[5] is not None else "-"}\n
+    Всего побед: {win_rate[4] if win_rate[4] is not None else "-"}\n
+    Процент побед: {win_rate[5] if win_rate[5] is not None else "-"}%\n
+    Всего игр сыграно: {win_rate[3] if win_rate[3] is not None else "-"}\n
     '''
 
     photo = text_to_image(output,image_size=(550, 600),font_size=12)

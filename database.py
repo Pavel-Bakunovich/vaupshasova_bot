@@ -76,7 +76,7 @@ LIMIT 20;
     connection.commit()
     return stats
 
-def get_individual_stats(player_id):
+def get_individual_stats_by_season(player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
@@ -97,6 +97,33 @@ def get_individual_stats(player_id):
             ORDER BY Season DESC
     ''')
     stats = cursor.fetchall()
+    connection.commit()
+    return stats
+
+def get_individual_stats(player_id):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+            SELECT
+                COUNT(Matchday.Player_ID) as Games_Played,
+                SUM(Goals) as Goals_Sum,
+                SUM(Assists) as Assists_Sum,
+                SUM(Own_Goals) as Own_Goals_Sum,
+                SUM(CASE  
+                    WHEN Squad = 'Corn'
+                    THEN 1 ELSE 0 END) as Games_played_for_Corn,
+                SUM(CASE  
+                    WHEN Squad = 'Tomato'
+                    THEN 1 ELSE 0 END) as Games_played_for_Tomato
+            FROM Matchday INNER JOIN Players ON Players.id = Matchday.Player_ID
+                            INNER JOIN Games on Games.id = Matchday.Game_ID
+            WHERE Matchday.type like 'add'
+                    and Games.game_date <= current_date
+                    and Games.Played = TRUE
+                    and Players.id = {player_id}
+    ''')
+    stats = cursor.fetchone()
     connection.commit()
     return stats
 
@@ -140,9 +167,10 @@ FROM
     Matchday
 INNER JOIN Games ON Games.id = Matchday.Game_ID
 INNER JOIN Players ON Players.id = Matchday.Player_Id
+WHERE squad is not NULL
 GROUP BY 
     Players.Id, Player_Id,Players.Friendly_First_Name, Players.Friendly_Last_Name,Matchday.type
-HAVING COUNT(*) > 5 and Matchday.type = 'add' and Players.Id = {player_id}
+HAVING Matchday.type = 'add' and Players.Id = {player_id}
 ORDER BY 
     win_rate_percentage DESC;
     ''')
