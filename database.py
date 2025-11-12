@@ -144,6 +144,39 @@ def get_last_individual_games(player_id):
     connection.commit()
     return stats
 
+def get_max_goals_per_game_by_player(player_id):
+    with open(f"SQL Queries/{constants.SQL_MAX_GOALS_PER_GAME_BY_PLAYER}" , "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(sql_file, Player_ID = player_id))
+    result = cursor.fetchall()
+    connection.commit()
+    return result
+
+def get_max_assists_per_game_by_player(player_id):
+    with open(f"SQL Queries/{constants.SQL_MAX_ASSISTS_PER_GAME_BY_PLAYER}" , "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(sql_file, Player_ID = player_id))
+    result = cursor.fetchall()
+    connection.commit()
+    return result
+
+def get_max_own_goals_per_game_by_player(player_id):
+    with open(f"SQL Queries/{constants.SQL_MAX_OWN_GOALS_PER_GAME_BY_PLAYER}" , "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(sql_file, Player_ID = player_id))
+    result = cursor.fetchall()
+    connection.commit()
+    return result
+
 def get_win_rate(player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()

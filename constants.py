@@ -42,5 +42,8 @@ SQL_WIN_STREAKS = "Win streaks.sql"
 SQL_TOP_ASSISTS_ALLTIME = "Top assists alltime.sql"
 SQL_TOP_GOALS_ALLTIME = "Top goals alltime.sql"
 SQL_TOP_PLAYER_PAIRS = "Top player pairs.sql"
+SQL_MAX_ASSISTS_PER_GAME_BY_PLAYER = "Max assists given per game by player.sql"
+SQL_MAX_GOALS_PER_GAME_BY_PLAYER = "Max goals scored per game by player.sql"
+SQL_MAX_OWN_GOALS_PER_GAME_BY_PLAYER = "Max own goals scored per game by player.sql"
 
 RECORDS_TEMPLATE_FILE = "records_template.txt"

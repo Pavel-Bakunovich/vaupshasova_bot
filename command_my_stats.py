@@ -1,6 +1,6 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
-from helpers import get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
+from helpers import format_date
 from common import add_player_if_not_existant_with_params, validate_access_no_game_registration_needed, text_to_image, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
@@ -109,6 +109,10 @@ def alltime_personal_stats(current_player):
 
     individual_stats = database.get_individual_stats(player_id)
 
+    max_goals_per_game = database.get_max_goals_per_game_by_player(player_id)
+    max_assists_per_game = database.get_max_assists_per_game_by_player(player_id)
+    max_own_goals_per_game = database.get_max_own_goals_per_game_by_player(player_id)
+
     output = f'''{get_player_name_formal(current_player)}\n
     Максимальная серия побед подряд: {'<еще не работает>'}\n
     Максимальная серия без поражений подряд: {'<еще не работает>'}\n
@@ -116,9 +120,9 @@ def alltime_personal_stats(current_player):
     Текущая серия побед подряд: {'<еще не работает>'}\n
     Текущая серия без поражений подряд: {'<еще не работает>'}\n
     Текущая серия поражений подряд: {'<еще не работает>'}\n
-    Максимальное количество голов в одном матче: {'<еще не работает>'}\n
-    Максимальное количество ассистов в одном матче: {'<еще не работает>'}\n
-    Максимальное количество автоголов в одном матче: {'<еще не работает>'}\n
+    Максимальное количество голов в одном матче: {max_goals_per_game[0][4] if max_goals_per_game[0][4] is not None else "-"} ({format_date(max_goals_per_game[0][3] if max_goals_per_game[0][3] is not None else "-")})\n
+    Максимальное количество ассистов в одном матче: {max_assists_per_game[0][4] if max_assists_per_game[0][4] is not None else "-"} ({format_date(max_assists_per_game[0][3] if max_assists_per_game[0][3] is not None else "-")})\n
+    Максимальное количество автоголов в одном матче: {max_own_goals_per_game[0][4] if max_own_goals_per_game[0][4] is not None else "-"} ({format_date(max_own_goals_per_game[0][3] if max_own_goals_per_game[0][3] is not None else "-")})\n
     Всего голов: {individual_stats[1] if individual_stats[1] is not None else "-"}\n 
     Всего ассистов: {individual_stats[2] if individual_stats[2] is not None else "-"}\n
     Всего автоголов: {individual_stats[3] if individual_stats[3] is not None else "-"}\n
