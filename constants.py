@@ -1,6 +1,7 @@
 TYPE_ADD = "add"
 TYPE_REMOVE = "remove"
 TYPE_CHAIR = "chair"
+TYPE_MAYBE="maybe"
 TYPE_JUST_MONEY="money"
 
 CEO_TELEGRAM_ID=343151297

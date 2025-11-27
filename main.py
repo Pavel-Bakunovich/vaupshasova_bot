@@ -3,6 +3,7 @@ import telebot
 import command_add
 import command_remove
 import command_chair
+import command_maybe
 import command_squad
 import command_split
 import command_talk
@@ -42,6 +43,10 @@ def remove(message):
 @bot.message_handler(commands=['chair'])
 def chair(message):
     command_chair.execute(message, bot)
+
+@bot.message_handler(commands=['maybe'])
+def chair(message):
+    command_maybe.execute(message, bot)
 
 @bot.message_handler(commands=['squad'])
 def squad(message):

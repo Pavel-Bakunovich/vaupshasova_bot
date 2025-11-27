@@ -48,6 +48,12 @@ def execute(message, bot):
                         squad_template_text += "\n🪑 " + get_player_name_extended(player)
 
             for player in matchday_roster:
+                player_registration_type_for_chair = player[1]
+                if (player_registration_type_for_chair == constants.TYPE_MAYBE):
+                    if today.weekday() != 5:
+                        squad_template_text += "\n❓ " + get_player_name_extended(player)
+
+            for player in matchday_roster:
                 player_registration_type_for_remove = player[1]
                 if (player_registration_type_for_remove == constants.TYPE_REMOVE):
                     if today.weekday() != 5:

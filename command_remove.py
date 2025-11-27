@@ -22,7 +22,8 @@ def execute(message, bot):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
 
                 if matchday is None:
-                    user_message_text = helpers.fill_template("{name}, тебя и так нету в составе на {date}!", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                    user_message_text = helpers.fill_template("❌ {name}, тебя и так нету в составе на {date}! Но я тебя все равно помечу ❌, чтобы все знали, что ты не будешь играть.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                    database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_REMOVE, player_id)
                 else:
                     player_registration_type = matchday[1]
                     if player_registration_type == constants.TYPE_REMOVE:
