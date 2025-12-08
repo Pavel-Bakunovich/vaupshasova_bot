@@ -52,7 +52,8 @@ def get_day_of_week():
 
 def allow_registration():
   today_minsk = get_today_minsk_time()
-  if (today_minsk.weekday() == 5) or (today_minsk.weekday() == 6):
+  # Registration  is not allowed on Saturdays, Sundays, and before 8 AM on Mondays
+  if (today_minsk.weekday() == 5) or (today_minsk.weekday() == 6) or ((today_minsk.weekday() == 0) and (today_minsk.hour < 8)):
     return False
   else:
     return True
