@@ -23,6 +23,7 @@ def execute(message, bot):
             
             if validate_CEO_zone(message.from_user.id,get_arguments(message.text)):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
+                #Fix this - this variable is not matchday_remaining_free_slots, it's matchday_regstered_players_count
                 matchday_remaining_free_slots = database.get_matchday_players_count(helpers.get_next_matchday())
                 if matchday is None:
                     if (matchday_remaining_free_slots < 12):
