@@ -27,9 +27,9 @@ def execute(message, bot):
                 else:
                     player_registration_type = matchday[1]
                     if player_registration_type == constants.TYPE_ADD:
-                        user_message_text = f"🪑 {get_player_name(player)}, окей, снимаем тебя с состава и записываем на стул на игру {get_next_matchday_formatted()}!"
+                        user_message_text = f"🪑 {get_player_name(player)}, окей, снимаем тебя с состава на игру {get_next_matchday_formatted()} и записываем в может-бытьчики, а не на стул. Стул для тех, кто готов играть, но нет мест."
                         log(user_message_text)
-                        database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player_id)
+                        database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_MAYBE, player_id)
                     if player_registration_type == constants.TYPE_CHAIR:
                         user_message_text = f"🪑 {get_player_name(player)}, так ты и так уже на стуле сидишь!"
                         log(user_message_text)

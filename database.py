@@ -543,6 +543,19 @@ def get_matchday_chair_count(matchday_date):
     close_connection_pool(connection_pool)
     return matchday_players_count[0]
 
+def get_matchday_players_on_chair(matchday_date):
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    game_id = get_game_id(matchday_date)
+    cursor.execute(f'''
+                   SELECT Player_ID, friendly_first_name, friendly_last_name, informal_friendly_first_name, telegram_login, time_stamp FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Game_ID = {game_id} AND Matchday.Type=\'chair\'
+                   ORDER BY time_stamp ASC
+                   ''')
+    matchday_players_on_chair = cursor.fetchall()
+    close_connection_pool(connection_pool)
+    return matchday_players_on_chair
+
 def get_squad(matchday_date):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
