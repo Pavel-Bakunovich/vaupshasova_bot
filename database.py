@@ -647,3 +647,22 @@ def get_todays_birthdays():
     birthdays = cursor.fetchall()
     close_connection_pool(connection_pool)
     return birthdays
+
+
+
+def get_random_player():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(f'''
+        SELECT Players.ID, friendly_first_name, friendly_last_name, informal_friendly_first_name, height, birthday, COUNT(Matchday.ID) 
+        FROM Players
+        INNER JOIN matchday ON Players.ID = matchday.player_id
+        WHERE matchday.type = 'add'
+        GROUP BY Players.ID, friendly_first_name, friendly_last_name
+        ORDER BY RANDOM()
+        LIMIT 1
+                   ''')
+    result = cursor.fetchone()
+    close_connection_pool(connection_pool)
+    return result
