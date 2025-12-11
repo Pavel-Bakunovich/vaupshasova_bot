@@ -1,7 +1,7 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 import helpers
-from helpers import get_arguments
+from helpers import get_arguments, get_next_matchday_formatted
 from common import get_player_name, add_player_if_not_existant_with_params, validate_access, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
@@ -24,16 +24,15 @@ def execute(message, bot):
             if validate_CEO_zone(message.from_user.id,get_arguments(message.text)):
                 matchday = database.find_registraion_player_matchday(helpers.get_next_matchday(), player_telegram_id)
                 #Fix this - this variable is not matchday_remaining_free_slots, it's matchday_regstered_players_count
-                matchday_remaining_free_slots = database.get_matchday_players_count(helpers.get_next_matchday())
+                registered_players_count = database.get_matchday_players_count(helpers.get_next_matchday())
                 if matchday is None:
-                    if (matchday_remaining_free_slots < 12):
+                    if (registered_players_count < 12):
                         database.register_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player_id)
-                        user_message_text = helpers.fill_template("✍️ {name}, ты добавлен в состав на игру {date}.",
-                            name=get_player_name(player),
-                            date=helpers.get_next_matchday_formatted())
+                        user_message_text = f"✍️ {get_player_name(player)}, ты добавлен в состав на игру {get_next_matchday_formatted()}."
+                        check_eligibility_for_adding_to_squad(bot, message, registered_players_count, get_player_name(player))
                         log(user_message_text)
                     else:
-                        user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест. Садим тебя в очередь на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                        user_message_text = f"🪑 {get_player_name(player)}, на игру {get_next_matchday_formatted()} больше нет мест. Садим тебя в очередь на стульчик."
                         log(user_message_text)
                         database.register_player_matchday(helpers.get_next_matchday(), constants.TYPE_CHAIR, player_id)
                 else:
@@ -42,10 +41,11 @@ def execute(message, bot):
                         user_message_text = helpers.fill_template("{name}, ты ж уже записался!",name=get_player_name(player))
                         log(user_message_text)
                     else:
-                        if (matchday_remaining_free_slots < 12):
-                            user_message_text = helpers.fill_template("✍️ {name}, окей, переносим тебя в основной состав на игру {date}.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
+                        if (registered_players_count < 12):
+                            user_message_text = f"✍️ {get_player_name(player)}, окей, переносим тебя в основной состав на игру {get_next_matchday_formatted()}."
                             log(user_message_text)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player_id)
+                            check_eligibility_for_adding_to_squad(bot, message, registered_players_count, get_player_name(player))
                         else:
                             user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест! Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             log(user_message_text)
@@ -57,11 +57,11 @@ def execute(message, bot):
                                         [ReactionTypeEmoji('✍️')],
                                         is_big=True)
                 
-                matchday_remaining_free_slots = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
-                if (matchday_remaining_free_slots <= 3 and matchday_remaining_free_slots > 0):
-                    bot.reply_to(message, f"⚠️ Внимание, осталось мест: {matchday_remaining_free_slots}")
+                registered_players_count = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
+                if (registered_players_count <= 3 and registered_players_count > 0):
+                    bot.reply_to(message, f"⚠️ Внимание, осталось мест: {registered_players_count}")
                 else:
-                    if matchday_remaining_free_slots == 0:
+                    if registered_players_count == 0:
                         bot.reply_to(message, "✅ Состав собран, господа присяжные заседатели! Состав собран!")
             else:
                 reply_only_CEO_can_do_it(bot, message)
@@ -69,3 +69,20 @@ def execute(message, bot):
     except Exception as e:
         bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
+
+#In case if player adds himself to the squad, we need to check if there are players on chair to be moved to squad first
+def check_eligibility_for_adding_to_squad(bot, message, registered_players_count, name_of_player_to_add):
+    if registered_players_count < 12:
+        matchday_players_on_chair = database.get_matchday_players_on_chair(helpers.get_next_matchday())
+        if len(matchday_players_on_chair) > 0:
+            next_up_player = matchday_players_on_chair[0]
+            player_name = next_up_player[3]
+            telegram_login = next_up_player[4]
+            if telegram_login == None:
+                telegram_login = ""
+            else:
+                telegram_login = f" @{telegram_login}"
+            message_to_player = f"🚨🚨🚨 Внимание! Фол! {name_of_player_to_add} добавился в состав вне очереди! {player_name}{telegram_login}, твоя очередь залетать в состав на игру {get_next_matchday_formatted()}, так как ты ждал очереди на стуле! Вызывайте милицию! Или звоните директору @pavel_bakunovich!"
+            bot_message = bot.reply_to(message, message_to_player)
+            log(message_to_player)
+                

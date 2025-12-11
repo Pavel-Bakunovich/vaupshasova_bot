@@ -59,5 +59,7 @@ def player_signed_off_from_squad(registration_type, bot, message):
                     telegram_login = ""
                 else:
                     telegram_login = f" @{telegram_login}"
-                bot_message = bot.reply_to(message, f"{player_name}{telegram_login}, твоя очередь залетать в состав на игру {get_next_matchday_formatted()}! Жми /add если готов заскакивать. Или /remove, /maybe если не готов. И давай скорее!")
+                message_to_player = f"{player_name}{telegram_login}, твоя очередь залетать в состав на игру {get_next_matchday_formatted()}! Жми /add если готов заскакивать. Или /remove, /maybe если не готов. И давай скорее!"
+                bot_message = bot.reply_to(message, message_to_player)
+                log(message_to_player)
                 
