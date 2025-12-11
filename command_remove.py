@@ -48,7 +48,7 @@ def execute(message, bot):
 def player_signed_off_from_squad(registration_type, bot, message):
     if registration_type == constants.TYPE_ADD:
         matchday_remaining_free_slots = 12 - database.get_matchday_players_count(helpers.get_next_matchday())
-        if matchday_remaining_free_slots == 1:
+        if matchday_remaining_free_slots > 0:
             # If there is only one free slot left after removing the player, we need to reassign "on chair" players to "in squad"
             matchday_players_on_chair = database.get_matchday_players_on_chair(helpers.get_next_matchday())
             if len(matchday_players_on_chair) > 0:

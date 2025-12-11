@@ -5,6 +5,7 @@ from helpers import get_arguments
 from common import add_player_if_not_existant_with_params, get_player_name, validate_access, validate_CEO_zone,reply_only_CEO_can_do_it
 import database
 import constants
+import command_remove
 
 def execute(message, bot):
     user_message_text = ""
@@ -32,6 +33,7 @@ def execute(message, bot):
                         user_message_text = f"❓ {get_player_name(player)}, окей, снимаем тебя с состава и записываем в список может-бытьчиков на игру {helpers.get_next_matchday_formatted()}!"
                         log(user_message_text)
                         database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_MAYBE, player_id)
+                        command_remove.player_signed_off_from_squad(player_registration_type, bot, message)
                     if player_registration_type == constants.TYPE_MAYBE:
                         user_message_text = f"❓ {get_player_name(player)}, так ты и так уже в списке может-бытчиков!"
                         log(user_message_text)
