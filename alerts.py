@@ -9,6 +9,7 @@ from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted,
 import database
 from backup import Database_backup
 from good_morning_message import GoodMorningMessage
+from hot_stats_generator import HotStatsGenerator
 
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
 bot = telebot.TeleBot(API_KEY)
@@ -22,16 +23,24 @@ def schedule_alerts():
                       hour=8,
                       minute=0,
                       timezone=timezone('Europe/Minsk'))
+    
     scheduler.add_job(start_waking_up, 
                       'cron',
                       day_of_week='sat',
                       hour=6,
                       minute=0,
                       timezone=timezone('Europe/Minsk'))
+    
     scheduler.add_job(good_morning,
                       'cron',
                       hour=7,
                       minute=0,
+                      timezone=timezone('Europe/Minsk'))
+
+    scheduler.add_job(hot_stats,
+                      'cron',
+                      hour=7,
+                      minute=30,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.add_job(pitch_payment_reminder, 
@@ -57,14 +66,12 @@ def start_registration():
     except Exception as e:
         log_error(e)
 
-
 def start_waking_up():
     try:
         bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, "💤 Просыпаемся! /wakeup", message_thread_id=constants.TELEGRAM_GAMEDAY_TOPIC_ID)
         log("[Automated message] 💤 Start of waking message sent out.")
     except Exception as e:
         log_error(e)
-
 
 def good_morning():
     try:
@@ -79,6 +86,15 @@ def good_morning():
         
         log(f"Good morning message sent out.")
 
+    except Exception as e:
+        log_error(e)
+
+def hot_stats():
+    try:
+        hot_stats_generator = HotStatsGenerator()
+        hot_stats_text = hot_stats_generator.get_message()
+        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(hot_stats_text))
+        log(f"Hot stats sent out.")
     except Exception as e:
         log_error(e)
 

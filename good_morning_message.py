@@ -1,6 +1,5 @@
 import constants
 import os
-import requests
 from helpers import get_next_matchday, get_today_minsk_time_formatted, fill_template,get_today_minsk_time
 import deepseek
 from logger import log, log_error
