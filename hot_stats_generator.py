@@ -40,29 +40,26 @@ class HotStatsGenerator:
         individual_balance = get_individual_balance[0]
         total_money_given = get_individual_balance[1]
 
-        stats = f'''
-        Игрок: {friendly_first_name} {friendly_last_name}{" ("+informal_friendly_first_name+")" if informal_friendly_first_name is not None else ""}
-        Рост: {height if height is not None else "-"} см
-        День рождения: {format_date(birthday) if birthday is not None else "-"}
-
-        Сыграно игр: {games_played}
-        Сыграно игр за Кукурузу: {games_played_for_corn}
-        Сыграно игр за Помидор: {games_played_for_tomato}
-        Всего побед: {total_wins}
-        Процент побед: {win_rate_percentage}%
-
-        Всего голов: {goals_sum}
-        Всего ассистов: {assists_sum}
-        Всего автоголов: {own_goals_sum}
-        Максимальное количество голов в одном матче: {max_goals_per_game[0][4] if max_goals_per_game[0][4] is not None else "-"} ({format_date(max_goals_per_game[0][3] if max_goals_per_game[0][3] is not None else "-")})
-        Максимальное количество ассистов в одном матче: {max_assists_per_game[0][4] if max_assists_per_game[0][4] is not None else "-"} ({format_date(max_assists_per_game[0][3] if max_assists_per_game[0][3] is not None else "-")})
-        Максимальное количество автоголов в одном матче: {max_own_goals_per_game[0][4] if max_own_goals_per_game[0][4] is not None else "-"} ({format_date(max_own_goals_per_game[0][3] if max_own_goals_per_game[0][3] is not None else "-")})
+        stats = f'''Рубрика "Статистика дня".
         
-        Общий баланс на сегодняшний день: {individual_balance} р.
-        Всего сдал денег за все время: {total_money_given} р.
-        '''
-        response = deepseek.send_request(f"Вот индивидуальная статистика игрока. Перескажи всю эту статистику с приколами. Упомяни имя игрока и передай в точности все цифры. Не используй разметку. \n{stats}", 0)
+Игрок дня: {friendly_first_name} {friendly_last_name}{" ("+informal_friendly_first_name+")" if informal_friendly_first_name is not None else ""}
+Рост: {height if height is not None else "-"} см
+День рождения: {format_date(birthday) if birthday is not None else "-"}
+Сыграно игр: {games_played}
+Сыграно игр за Кукурузу: {games_played_for_corn}
+Сыграно игр за Помидор: {games_played_for_tomato}
+Всего побед: {total_wins}
+Процент побед: {win_rate_percentage}%
+Всего голов: {goals_sum}
+Всего ассистов: {assists_sum}
+Всего автоголов: {own_goals_sum}
+Максимальное количество голов в одном матче: {max_goals_per_game[0][4] if max_goals_per_game[0][4] is not None else "-"} ({format_date(max_goals_per_game[0][3] if max_goals_per_game[0][3] is not None else "-")})
+Максимальное количество ассистов в одном матче: {max_assists_per_game[0][4] if max_assists_per_game[0][4] is not None else "-"} ({format_date(max_assists_per_game[0][3] if max_assists_per_game[0][3] is not None else "-")})
+Максимальное количество автоголов в одном матче: {max_own_goals_per_game[0][4] if max_own_goals_per_game[0][4] is not None else "-"} ({format_date(max_own_goals_per_game[0][3] if max_own_goals_per_game[0][3] is not None else "-")})
+Общий баланс на сегодняшний день: {individual_balance} р.
+Всего сдал денег за все время: {total_money_given} р.'''
+        #response = deepseek.send_request(f"Вот индивидуальная статистика игрока. Перескажи всю эту статистику с приколами. Упомяни имя игрока и передай в точности все цифры. Не используй разметку. \n{stats}", 0)
 
-        return response
+        return stats
 
     

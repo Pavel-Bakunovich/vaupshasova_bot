@@ -8,7 +8,7 @@ from pytz import timezone
 from helpers import get_next_matchday_formatted, get_today_minsk_time_formatted, fill_template,format_date
 import database
 from backup import Database_backup
-from good_morning_message import GoodMorningMessage
+#from good_morning_message import GoodMorningMessage
 from hot_stats_generator import HotStatsGenerator
 
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
@@ -31,16 +31,16 @@ def schedule_alerts():
                       minute=0,
                       timezone=timezone('Europe/Minsk'))
     
-    scheduler.add_job(good_morning,
+    '''scheduler.add_job(good_morning,
                       'cron',
                       hour=7,
                       minute=0,
-                      timezone=timezone('Europe/Minsk'))
+                      timezone=timezone('Europe/Minsk'))'''
 
     scheduler.add_job(hot_stats,
                       'cron',
                       hour=7,
-                      minute=30,
+                      minute=0,
                       timezone=timezone('Europe/Minsk'))
 
     scheduler.add_job(pitch_payment_reminder, 
@@ -73,7 +73,7 @@ def start_waking_up():
     except Exception as e:
         log_error(e)
 
-def good_morning():
+'''def good_morning():
     try:
         good_morning_message = GoodMorningMessage()
         good_morning_message_text = good_morning_message.get_message()
@@ -87,7 +87,7 @@ def good_morning():
         log(f"Good morning message sent out.")
 
     except Exception as e:
-        log_error(e)
+        log_error(e)'''
 
 def hot_stats():
     try:

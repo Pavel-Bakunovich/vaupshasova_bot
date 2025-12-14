@@ -1,10 +1,11 @@
 import constants
 import deepseek
 import random
+import datetime, calendar
 import database
 from telebot.types import ReactionTypeEmoji
 from logger import log, log_error
-from helpers import fill_template,get_next_matchday_formatted,allow_registration,authorized,is_CEO,get_arguments
+from helpers import fill_template, get_next_matchday_formatted, get_next_matchday,get_today_minsk_time, allow_registration,authorized,is_CEO,get_arguments
 from PIL import Image, ImageDraw, ImageFont
   
 def add_player_if_not_existant(first_name, last_name, username, telegram_id):
@@ -68,11 +69,27 @@ def get_player_name_formal(player):
     else:
         return f"{Friendly_First_Name} {Friendly_Last_Name}"
 
+def get_next_monday(hour=8, minute=0):
+    now = get_today_minsk_time()
+    days_ahead = (calendar.MONDAY - now.weekday()) % 7
+    next_monday = now + datetime.timedelta(days=days_ahead)
+    next_monday = next_monday.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    if next_monday <= now:
+        next_monday += datetime.timedelta(days=7)
+    return next_monday
+
 def reply_registration_not_allowed(bot, message, player):
-    bot.reply_to(
-        message,
-        fill_template("{player_name}, eще рано. Регистрация на следующую игру открывается в понедельник.",
-            player_name=get_player_name(player)))
+    date_now = get_today_minsk_time()
+    date_next_monday = get_next_monday()
+    # Calculate time difference in days, hours and minutes
+    delta = date_next_monday - date_now
+    total_seconds = int(delta.total_seconds())
+    days = total_seconds // 86400
+    hours = (total_seconds % 86400) // 3600
+    minutes = (total_seconds % 3600) // 60
+    remaining = f"{days} дней, {hours} часов, {minutes} минут"
+
+    bot.reply_to(message, f"{get_player_name(player)}, еще рано. Регистрация на следующую игру ({get_next_matchday_formatted()}) открывается в понедельник в 8:00 по минскому времени.\nДо открытия регистрации осталось {remaining}.")
     bot.set_message_reaction(message.chat.id,
                              message.message_id, [ReactionTypeEmoji('🤬')],
                              is_big=True)

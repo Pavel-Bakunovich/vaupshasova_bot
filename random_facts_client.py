@@ -4,14 +4,14 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-API_NINJAS_API_TOKEN = os.environ['API_NINJAS_API_TOKEN']
+#API_NINJAS_API_TOKEN = os.environ['API_NINJAS_API_TOKEN']
 
 class RandomFactsClient:
-    def __init__(self):
-        self.BASE_URL = "https://api.api-ninjas.com/v1/historicalevents?month={month}&day={day}"
+    #def __init__(self):
+        #self.BASE_URL = "https://api.api-ninjas.com/v1/historicalevents?month={month}&day={day}"
         
     def get_random_fact(self):
-        PARAMS = {'key':self.BASE_URL}
+        '''PARAMS = {'key':self.BASE_URL}
 
         date = get_today_minsk_time()
         
@@ -21,6 +21,6 @@ class RandomFactsClient:
         latest_id = len(response) - 1
         year = response[latest_id]["year"]
         event = response[latest_id]["event"]
-        random_event = f"{year} year: {event}"
+        random_event = f"{year} year: {event}"'''
 
-        return random_event
+        return ""

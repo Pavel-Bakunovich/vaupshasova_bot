@@ -4,14 +4,14 @@ from helpers import get_next_matchday, get_today_minsk_time_formatted, fill_temp
 import deepseek
 from logger import log, log_error
 from database import get_todays_birthdays
-from newsapi import NewsApiClient
+#from newsapi import NewsApiClient
 import requests
 import io
 
 class GoodMorningMessage:
     def __init__(self):
-        self.WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
-        self.NEWS_API_KEY = os.environ['NEWS_API_KEY']
+        #self.WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
+        #self.NEWS_API_KEY = os.environ['NEWS_API_KEY']
         self.photo = None
 
     def get_birthdays(self):
@@ -25,7 +25,7 @@ class GoodMorningMessage:
         return birthdays_text
 
     def get_message(self):    
-        with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
+        '''with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
             good_morning_prompt_template_text = good_morning_prompt_template_file.read()
 
         top_headline = ""
@@ -71,9 +71,9 @@ class GoodMorningMessage:
             
         good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, days_before_next_game = days_before_next_game_text)
         
-        response = deepseek.send_request(good_morning_prompt_template_text, 0)
+        response = deepseek.send_request(good_morning_prompt_template_text, 0)'''
 
-        return response
+        return ""
 
     
     def get_photo(self):  
