@@ -42,9 +42,7 @@ class HotStatsGenerator:
 
         stats = f'''Рубрика "Статистика дня".
         
-Игрок дня: {friendly_first_name} {friendly_last_name}{" ("+informal_friendly_first_name+")" if informal_friendly_first_name is not None else ""}
-Рост: {height if height is not None else "-"} см
-День рождения: {format_date(birthday) if birthday is not None else "-"}
+Игрок дня: {friendly_first_name} {friendly_last_name}
 Сыграно игр: {games_played}
 Сыграно игр за Кукурузу: {games_played_for_corn}
 Сыграно игр за Помидор: {games_played_for_tomato}
