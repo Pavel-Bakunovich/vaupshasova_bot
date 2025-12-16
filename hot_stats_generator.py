@@ -15,9 +15,7 @@ class HotStatsGenerator:
         player_id = random_player[0]
         friendly_first_name = random_player[1]
         friendly_last_name = random_player[2]
-        informal_friendly_first_name = random_player[3]
-        height = random_player[4]
-        birthday = random_player[5]
+        log(f"Hot stats player: {player_id}, {friendly_first_name} {friendly_last_name}")
         games_played = random_player[6]
 
         individual_stats = database.get_individual_stats(player_id)

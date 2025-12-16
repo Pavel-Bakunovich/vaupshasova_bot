@@ -660,6 +660,7 @@ def get_random_player():
         INNER JOIN matchday ON Players.ID = matchday.player_id
         WHERE matchday.type = 'add'
         GROUP BY Players.ID, friendly_first_name, friendly_last_name
+        HAVING COUNT(Matchday.ID) > 6
         ORDER BY RANDOM()
         LIMIT 1
                    ''')
