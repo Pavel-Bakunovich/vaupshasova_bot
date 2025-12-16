@@ -68,7 +68,7 @@ def get_season_stats(year):
           and Games.game_date <= current_date
           and Games.Played = TRUE
 GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name
-ORDER BY Goals_Sum DESC
+ORDER BY Games_Played DESC
 LIMIT 20;
     ''')
     stats = cursor.fetchall()

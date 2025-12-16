@@ -14,6 +14,14 @@ def execute(message, bot):
                                             message.from_user.username,
                                             message.from_user.id)
         if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
+            command_and_argument_split = message.text.split(' ', 1)
+            year = get_today_minsk_time().year
+            if len(command_and_argument_split)>1:
+                if command_and_argument_split[1].strip().isdigit():
+                    year = int(command_and_argument_split[1].strip())
+                else:
+                    bot.reply_to(message, "Сезоном может быть только год в формате ГГГГ, например: 2023. Ой, все, показываю результаты за текущий сезон, короче.")
+                    
             table = pt.PrettyTable(['N','Игрок', 'Игры', 'Голы', 'Асисты', 'Автоголы'])
             table.align['N'] = 'c'
             table.align['Игрок'] = 'l'
@@ -22,7 +30,7 @@ def execute(message, bot):
             table.align['Асисты'] = 'c'
             table.align['Автоголы'] = 'c'
             table.hrules = True
-            season_stats = database.get_season_stats(get_today_minsk_time().year)
+            season_stats = database.get_season_stats(year)
             i = 1
             
             for player in season_stats:
@@ -34,13 +42,13 @@ def execute(message, bot):
                 own_goals = player[5]
                 table.add_row([i, f"{first_name} {last_name}", games_played, goals, assists, own_goals])
                 i+=1
-            header_current_season = f'Сезон {get_today_minsk_time().year}'
+            header_current_season = f'Сезон {year}'
             score = pt.PrettyTable([header_current_season, 'К ', ':', 'П'])
             score.align[header_current_season] = 'c'
             score.align['K'] = 'c'
             score.align[':'] = 'c'
             score.align['П'] = 'c'
-            season_score = database.get_season_score(get_today_minsk_time().year)
+            season_score = database.get_season_score(year)
             score.add_row(["Общий счет", season_score[1], season_score[2], season_score[0]])
 
             photo = text_to_image(f"{score.get_string()}\n{table.get_string()}",image_size=(600, 1000))
