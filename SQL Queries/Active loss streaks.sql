@@ -87,13 +87,11 @@ current_loss_streaks AS (
       AND ls.result = 'loss'    -- That was a loss
 )
 SELECT 
-    p.id as player_id,
-    COALESCE(p.Friendly_First_Name, p.Telegram_First_Name) as first_name,
-    COALESCE(p.Friendly_Last_Name, p.Telegram_Last_Name) as last_name,
+    COALESCE(p.Friendly_First_Name, p.Telegram_First_Name) || ' ' || COALESCE(p.Friendly_Last_Name, p.Telegram_Last_Name) AS player_name,
     COALESCE(cls.loss_streak, 0) as active_loss_streak,
     cls.streak_start_date,
     cls.most_recent_loss_date
 FROM Players p
 LEFT JOIN current_loss_streaks cls ON p.id = cls.Player_ID
-WHERE COALESCE(cls.loss_streak, 0) > 1
-ORDER BY active_loss_streak DESC, first_name, last_name;
+WHERE COALESCE(cls.loss_streak, 0) > 2
+ORDER BY active_loss_streak DESC, player_name;

@@ -6,6 +6,10 @@
 {Win streaks.sql}
 *Самые длинные серии поражений:*
 {Losing streaks.sql}
+*Активные победные серии:*
+{Active win streaks.sql}
+*Активные серии поражений:*
+{Active loss streaks.sql}
 *Наибольшее количество голов за одну игру:*
 {Top goals per game.sql}
 *Наибольшее количество голов за всю историю:*

@@ -89,7 +89,8 @@ def build_records_text():
     text_top_assists_alltime = database.execute_sql_query_return_many(sql_top_assists_alltime)
     text_top_goals_alltime = database.execute_sql_query_return_many(sql_top_goals_alltime)
     text_top_player_pairs = database.execute_sql_query_return_many(sql_top_player_pairs)
-    
+    text_active_win_streaks = database.execute_sql_query_return_many(sql_active_win_streaks)
+    text_active_loss_streaks = database.execute_sql_query_return_many(sql_active_loss_streaks)
 
     records_template = fill_records_template(records_template, constants.SQL_HOW_MANY_GAMES_WE_PLAYED, text_how_many_games_we_played)
     records_template = fill_records_template(records_template, constants.SQL_HOW_MANY_GAMES_WERE_CANCELLED, text_how_many_games_were_cancelled)
@@ -104,10 +105,12 @@ def build_records_text():
     records_template = fill_records_template(records_template, constants.SQL_WHO_SCORED_MOST_OWN_GOALS, format_most_goals(text_scored_most_own_goals))
     records_template = fill_records_template(records_template, constants.SQL_WIN_STREAKS, format_win_loose_streaks(text_win_streaks))
     records_template = fill_records_template(records_template, constants.SQL_LOSING_STREAKS, format_win_loose_streaks(text_losing_streaks))
+    records_template = fill_records_template(records_template, constants.SQL_ACTIVE_WIN_STREAKS, format_win_loose_streaks(text_active_win_streaks))
+    records_template = fill_records_template(records_template, constants.SQL_ACTIVE_LOSS_STREAKS, format_win_loose_streaks(text_active_loss_streaks))
     records_template = fill_records_template(records_template, constants.SQL_TOP_ASSISTS_ALLTIME, format_most_goals(text_top_assists_alltime))
     records_template = fill_records_template(records_template, constants.SQL_TOP_GOALS_ALLTIME, format_most_goals(text_top_goals_alltime))
     records_template = fill_records_template(records_template, constants.SQL_TOP_PLAYER_PAIRS, format_player_pairs(text_top_player_pairs))
-
+    
     return records_template
 
 def load_sql_queries():
@@ -174,6 +177,14 @@ def load_sql_queries():
     global sql_top_player_pairs
     with open(f"SQL Queries/{constants.SQL_TOP_PLAYER_PAIRS}" , "r") as file:
         sql_top_player_pairs = file.read()
+
+    global sql_active_win_streaks
+    with open(f"SQL Queries/{constants.SQL_ACTIVE_WIN_STREAKS}" , "r") as file:
+        sql_active_win_streaks = file.read()
+
+    global sql_active_loss_streaks
+    with open(f"SQL Queries/{constants.SQL_ACTIVE_LOSS_STREAKS}" , "r") as file:
+        sql_active_loss_streaks = file.read()
 
 def format_win_loose_streaks(response_from_database):
     result=""

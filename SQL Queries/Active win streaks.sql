@@ -87,13 +87,11 @@ current_streaks AS (
     AND ws.result = 'win'       -- That was a win
 )
 SELECT 
-    p.id as player_id,
-    COALESCE(p.Friendly_First_Name, p.Telegram_First_Name) as first_name,
-    COALESCE(p.Friendly_Last_Name, p.Telegram_Last_Name) as last_name,
+    COALESCE(p.Friendly_First_Name, p.Telegram_First_Name) || ' ' || COALESCE(p.Friendly_Last_Name, p.Telegram_Last_Name) AS player_name,
     COALESCE(cs.win_streak, 0) as active_win_streak,
     cs.streak_start_date,
     cs.most_recent_win_date
 FROM Players p
 LEFT JOIN current_streaks cs ON p.id = cs.Player_ID
-WHERE COALESCE(cs.win_streak, 0) > 1
-ORDER BY active_win_streak DESC, first_name, last_name;
+WHERE COALESCE(cs.win_streak, 0) > 2
+ORDER BY active_win_streak DESC, player_name;
