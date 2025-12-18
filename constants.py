@@ -46,5 +46,7 @@ SQL_TOP_PLAYER_PAIRS = "Top player pairs.sql"
 SQL_MAX_ASSISTS_PER_GAME_BY_PLAYER = "Max assists given per game by player.sql"
 SQL_MAX_GOALS_PER_GAME_BY_PLAYER = "Max goals scored per game by player.sql"
 SQL_MAX_OWN_GOALS_PER_GAME_BY_PLAYER = "Max own goals scored per game by player.sql"
+SQL_ACTIVE_WIN_STREAK_INDIVIDUAL = "Active win streak - Individual.sql"
+SQL_ACTIVE_LOSS_STREAK_INDIVIDUAL = "Active loss streak - Individual.sql"
 
 RECORDS_TEMPLATE_FILE = "records_template.txt"

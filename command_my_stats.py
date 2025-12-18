@@ -109,6 +109,9 @@ def alltime_personal_stats(current_player):
 
     individual_stats = database.get_individual_stats(player_id)
 
+    active_win_streak = database.get_active_win_streak_by_player(player_id)
+    active_loss_streak = database.get_active_loss_streak_by_player(player_id)
+
     max_goals_per_game = database.get_max_goals_per_game_by_player(player_id)
     max_assists_per_game = database.get_max_assists_per_game_by_player(player_id)
     max_own_goals_per_game = database.get_max_own_goals_per_game_by_player(player_id)
@@ -117,9 +120,9 @@ def alltime_personal_stats(current_player):
     Максимальная серия побед подряд: {'<еще не работает>'}\n
     Максимальная серия без поражений подряд: {'<еще не работает>'}\n
     Максимальная серия поражений подряд: {'<еще не работает>'}\n
-    Текущая серия побед подряд: {'<еще не работает>'}\n
+    Текущая серия побед подряд: {active_win_streak[1]} ({active_win_streak[2]} - {active_win_streak[3]})\n
     Текущая серия без поражений подряд: {'<еще не работает>'}\n
-    Текущая серия поражений подряд: {'<еще не работает>'}\n
+    Текущая серия поражений подряд: {active_loss_streak[1]} ({active_loss_streak[2]} - {active_loss_streak[3]})\n
     Максимальное количество голов в одном матче: {max_goals_per_game[0][4] if max_goals_per_game[0][4] is not None else "-"} ({format_date(max_goals_per_game[0][3] if max_goals_per_game[0][3] is not None else "-")})\n
     Максимальное количество ассистов в одном матче: {max_assists_per_game[0][4] if max_assists_per_game[0][4] is not None else "-"} ({format_date(max_assists_per_game[0][3] if max_assists_per_game[0][3] is not None else "-")})\n
     Максимальное количество автоголов в одном матче: {max_own_goals_per_game[0][4] if max_own_goals_per_game[0][4] is not None else "-"} ({format_date(max_own_goals_per_game[0][3] if max_own_goals_per_game[0][3] is not None else "-")})\n

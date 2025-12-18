@@ -13,8 +13,8 @@ WITH player_game_results AS (
     FROM Matchday m
     JOIN Games g ON m.Game_ID = g.id
     WHERE g.Played = TRUE
-    AND m.Type = 'add'  -- Only include games where player actually played
-    AND g.Game_Date <= CURRENT_DATE
+      AND m.Type = 'add'  -- Only include games where player actually played
+      AND g.Game_Date <= CURRENT_DATE
 ),
 -- Get chronological sequence of games where player actually played
 player_games_sequence AS (
@@ -27,7 +27,7 @@ player_games_sequence AS (
         ROW_NUMBER() OVER (PARTITION BY pgr.Player_ID ORDER BY pgr.Game_Date ASC, pgr.game_id ASC) as forward_order
     FROM player_game_results pgr
 ),
--- Identify streak-breaking games (non-wins)
+-- Identify streak-breaking games (non-losses break a loss streak)
 streak_breakers AS (
     SELECT 
         pgs.Player_ID,
@@ -36,7 +36,7 @@ streak_breakers AS (
         pgs.reverse_order,
         pgs.forward_order
     FROM player_games_sequence pgs
-    WHERE pgs.result != 'win'
+    WHERE pgs.result != 'loss'
 ),
 -- For each player's game, find the most recent streak breaker
 recent_streak_breakers AS (
@@ -57,8 +57,8 @@ recent_streak_breakers AS (
         ON pgs.Player_ID = sb.Player_ID 
         AND pgs.forward_order >= sb.forward_order
 ),
--- Calculate win streaks
-win_streaks AS (
+-- Calculate loss streaks
+loss_streaks AS (
     SELECT 
         rsb.Player_ID,
         rsb.Game_Date,
@@ -73,27 +73,27 @@ win_streaks AS (
             PARTITION BY rsb.Player_ID, rsb.last_breaker_order
         ) as streak_end_date
     FROM recent_streak_breakers rsb
-    WHERE rsb.result = 'win'
+    WHERE rsb.result = 'loss'
 ),
--- Get current active win streak for each player
-current_streaks AS (
+-- Get current active loss streak for each player
+current_loss_streaks AS (
     SELECT DISTINCT
-        ws.Player_ID,
-        ws.streak_length as win_streak,
-        ws.streak_start_date,
-        ws.streak_end_date as most_recent_win_date
-    FROM win_streaks ws
-    WHERE ws.reverse_order = 1  -- Most recent game
-    AND ws.result = 'win'       -- That was a win
+        ls.Player_ID,
+        ls.streak_length as loss_streak,
+        ls.streak_start_date,
+        ls.streak_end_date as most_recent_loss_date
+    FROM loss_streaks ls
+    WHERE ls.reverse_order = 1  -- Most recent game
+      AND ls.result = 'loss'    -- That was a loss
 )
 SELECT 
     p.id as player_id,
     COALESCE(p.Friendly_First_Name, p.Telegram_First_Name) as first_name,
     COALESCE(p.Friendly_Last_Name, p.Telegram_Last_Name) as last_name,
-    COALESCE(cs.win_streak, 0) as active_win_streak,
-    cs.streak_start_date,
-    cs.most_recent_win_date
+    COALESCE(cls.loss_streak, 0) as active_loss_streak,
+    cls.streak_start_date,
+    cls.most_recent_loss_date
 FROM Players p
-LEFT JOIN current_streaks cs ON p.id = cs.Player_ID
-WHERE COALESCE(cs.win_streak, 0) > 1
-ORDER BY active_win_streak DESC, first_name, last_name;
+LEFT JOIN current_loss_streaks cls ON p.id = cls.Player_ID
+WHERE COALESCE(cls.loss_streak, 0) > 1
+ORDER BY active_loss_streak DESC, first_name, last_name;
