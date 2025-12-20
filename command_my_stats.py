@@ -111,18 +111,22 @@ def alltime_personal_stats(current_player):
 
     active_win_streak = database.get_active_win_streak_by_player(player_id)
     active_loss_streak = database.get_active_loss_streak_by_player(player_id)
+    active_no_loss_streak = database.get_active_no_loss_streak_by_player(player_id)
+    top_win_streak = database.get_top_win_streak_by_player(player_id)
+    top_loss_streak = database.get_top_loss_streak_by_player(player_id)
+    top_no_loss_streak = database.get_top_no_loss_streak_by_player(player_id)
 
     max_goals_per_game = database.get_max_goals_per_game_by_player(player_id)
     max_assists_per_game = database.get_max_assists_per_game_by_player(player_id)
     max_own_goals_per_game = database.get_max_own_goals_per_game_by_player(player_id)
 
     output = f'''{get_player_name_formal(current_player)}\n
-    Максимальная серия побед подряд: {'<еще не работает>'}\n
-    Максимальная серия без поражений подряд: {'<еще не работает>'}\n
-    Максимальная серия поражений подряд: {'<еще не работает>'}\n
-    Текущая серия побед подряд: {active_win_streak[1]} ({active_win_streak[2]} - {active_win_streak[3]})\n
-    Текущая серия без поражений подряд: {'<еще не работает>'}\n
-    Текущая серия поражений подряд: {active_loss_streak[1]} ({active_loss_streak[2]} - {active_loss_streak[3]})\n
+    Максимальная серия побед подряд: {top_win_streak[1]} ({format_date(top_win_streak[2]) if top_win_streak[2] is not None else ""} - {format_date(top_win_streak[3]) if top_win_streak[3] is not None else ""})\n
+    Максимальная серия без поражений подряд: {top_no_loss_streak[1]} ({format_date(top_no_loss_streak[2]) if top_no_loss_streak[2] is not None else ""} - {format_date(top_no_loss_streak[3]) if top_no_loss_streak[3] is not None else ""})\n
+    Максимальная серия поражений подряд: {top_loss_streak[1]} ({format_date(top_loss_streak[2]) if top_loss_streak[2] is not None else ""} - {format_date(top_loss_streak[3]) if top_loss_streak[3] is not None else ""})\n
+    Текущая серия побед подряд: {active_win_streak[1]} ({format_date(active_win_streak[2]) if active_win_streak[2] is not None else ""} - {format_date(active_win_streak[3]) if active_win_streak[3] is not None else ""})\n
+    Текущая серия без поражений подряд: {active_no_loss_streak[1]} ({format_date(active_no_loss_streak[2]) if active_no_loss_streak[2] is not None else ""} - {format_date(active_no_loss_streak[3]) if active_no_loss_streak[3] is not None else ""})\n
+    Текущая серия поражений подряд: {active_loss_streak[1]} ({format_date(active_loss_streak[2]) if active_loss_streak[2] is not None else ""} - {format_date(active_loss_streak[3]) if active_loss_streak[3] is not None else ""})\n
     Максимальное количество голов в одном матче: {max_goals_per_game[0][4] if max_goals_per_game[0][4] is not None else "-"} ({format_date(max_goals_per_game[0][3] if max_goals_per_game[0][3] is not None else "-")})\n
     Максимальное количество ассистов в одном матче: {max_assists_per_game[0][4] if max_assists_per_game[0][4] is not None else "-"} ({format_date(max_assists_per_game[0][3] if max_assists_per_game[0][3] is not None else "-")})\n
     Максимальное количество автоголов в одном матче: {max_own_goals_per_game[0][4] if max_own_goals_per_game[0][4] is not None else "-"} ({format_date(max_own_goals_per_game[0][3] if max_own_goals_per_game[0][3] is not None else "-")})\n

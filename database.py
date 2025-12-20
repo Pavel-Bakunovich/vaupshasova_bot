@@ -149,6 +149,50 @@ def get_active_loss_streak_by_player(player_id):
     connection.commit()
     return stats
 
+def get_active_no_loss_streak_by_player(player_id):
+    with open(f"SQL Queries/{constants.SQL_ACTIVE_NO_LOSS_STREAKS_INDIVIDUAL}" , "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(sql_file, player_id = player_id))
+    stats = cursor.fetchone()
+    connection.commit()
+    return stats
+
+def get_top_win_streak_by_player(player_id):
+    with open(f"SQL Queries/{constants.SQL_WIN_STREAKS_INDIVIDUAL}" , "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(sql_file, player_id = player_id))
+    stats = cursor.fetchone()
+    connection.commit()
+    return stats
+
+def get_top_loss_streak_by_player(player_id):
+    with open(f"SQL Queries/{constants.SQL_LOSING_STREAKS_INDIVIDUAL}" , "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(sql_file, player_id = player_id))
+    stats = cursor.fetchone()
+    connection.commit()
+    return stats
+
+def get_top_no_loss_streak_by_player(player_id):
+    with open(f"SQL Queries/{constants.SQL_NO_LOSS_STREAKS_INDIVIDUAL}" , "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(fill_template(sql_file, player_id = player_id))
+    stats = cursor.fetchone()
+    connection.commit()
+    return stats
+
 def get_last_individual_games(player_id):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()

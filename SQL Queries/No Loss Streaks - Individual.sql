@@ -14,7 +14,7 @@ WITH player_games AS (
     FROM Players p
     JOIN Matchday m ON p.id = m.Player_ID
     JOIN Games g ON m.Game_ID = g.id
-    WHERE g.Played = TRUE AND type='add' AND g.Game_Date <= CURRENT_DATE
+    WHERE g.Played = TRUE AND type='add' AND g.Game_Date <= CURRENT_DATE AND m.Player_ID = {player_id}
     ORDER BY p.id, g.Game_Date
 ),
 
@@ -55,5 +55,5 @@ SELECT
         ELSE streak_end 
     END AS "Date when streak ended"
 FROM streaks
-WHERE streak_duration > 6 --AND is_current_streak is TRUE-- Only include actual streaks
-ORDER BY streak_duration DESC, player_name;
+ORDER BY streak_duration DESC, player_name
+LIMIT 1;

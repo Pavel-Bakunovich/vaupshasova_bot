@@ -13,7 +13,7 @@ WITH game_outcomes AS (
     FROM Matchday m
     JOIN Games g ON m.Game_ID = g.id
     JOIN Players p ON m.Player_ID = p.id
-    WHERE g.Played = TRUE AND type='add' AND g.Game_Date <= CURRENT_DATE
+    WHERE g.Played = TRUE AND type='add' AND g.Game_Date <= CURRENT_DATE AND m.Player_ID = {player_id}
     ORDER BY m.Player_ID, g.Game_Date
 ),
 
@@ -52,5 +52,5 @@ SELECT
     streak_end
 FROM streak_lengths
 GROUP BY Player_ID, player_name, streak_start, streak_end
-HAVING MAX(streak_length) > 6
-ORDER BY losing_streak DESC, player_name;
+ORDER BY losing_streak DESC, player_name
+LIMIT 1;
