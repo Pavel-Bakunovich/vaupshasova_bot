@@ -185,3 +185,6 @@ def text_to_image(text, font_size=15, image_size=(900, 600),
     draw.text((x, y), text, font=font, fill=text_color)
 
     return image
+
+def fill_records_template(template, replace_to, replace_with):
+    return template.replace("{"+replace_to+"}", str(replace_with))

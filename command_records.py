@@ -1,7 +1,7 @@
 from logger import log, log_error
 from telebot.types import ReactionTypeEmoji
 from helpers import get_next_matchday, get_next_matchday_formatted, get_today_minsk_time, format_date, escape_markdown
-from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone, fill_records_template
 import database
 import constants
 import prettytable as pt
@@ -56,7 +56,7 @@ def execute(message, bot):
        
         if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             build_records_text()
-            bot.reply_to(message, records_template, parse_mode='MarkdownV2')
+            bot.reply_to(message, records_template)
             bot.set_message_reaction(message.chat.id,
                                                 message.message_id,
                                                 [ReactionTypeEmoji('✍️')],
@@ -110,7 +110,9 @@ def build_records_text():
     records_template = fill_records_template(records_template, constants.SQL_TOP_ASSISTS_ALLTIME, format_most_goals(text_top_assists_alltime))
     records_template = fill_records_template(records_template, constants.SQL_TOP_GOALS_ALLTIME, format_most_goals(text_top_goals_alltime))
     records_template = fill_records_template(records_template, constants.SQL_TOP_PLAYER_PAIRS, format_player_pairs(text_top_player_pairs))
-    
+
+    records_template = records_template.replace("[!]", "")
+
     return records_template
 
 def load_sql_queries():
@@ -189,49 +191,49 @@ def load_sql_queries():
 def format_win_loose_streaks(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"🙌 {record[0]} - {record[1]} ({format_date(record[2])} - {format_date(record[3])})\n")
+        result = result + f"🙌 {record[0]} - {record[1]} ({format_date(record[2])} - {format_date(record[3])})\n"
     return result
 
 def format_top_goals(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"⚽️ {record[0]} - {record[1]} ({format_date(record[2])})\n")
+        result = result + f"⚽️ {record[0]} - {record[1]} ({format_date(record[2])})\n"
     return result
 
 def format_win_rate(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"🔥 {record[0]} - {record[3]}%\n")
+        result = result + f"🔥 {record[0]} - {record[3]}%\n"
     return result
 
 def format_who_paid_most_money(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"💲 {record[0]} - {record[1]} р.\n")
+        result = result + f"💲 {record[0]} - {record[1]} р.\n"
     return result
 
 def format_who_player_most_games_corn(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"🌽 {record[0]} - {record[1]}\n")
+        result = result + f"🌽 {record[0]} - {record[1]}\n"
     return result
 
 def format_who_player_most_games_tomato(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"🍅 {record[0]} - {record[1]}\n")
+        result = result + f"🍅 {record[0]} - {record[1]}\n"
     return result
 
 def format_most_goals(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"⚽️ {record[0]} - {record[1]}\n")
+        result = result + f"⚽️ {record[0]} - {record[1]}\n"
     return result
 
 def format_most_chair(response_from_database):
     result=""
     for record in response_from_database:
-        result = result + escape_markdown(f"🪑 {record[0]} - {record[1]}\n")
+        result = result + f"🪑 {record[0]} - {record[1]}\n"
     return result
 
 def format_player_pairs(response_from_database):
@@ -243,8 +245,5 @@ def format_player_pairs(response_from_database):
         else:
             if record[6] == constants.SQUAD_CORN:
                 squad = constants.SQUAD_CORN_EMOJI
-        result = result + escape_markdown(f"{squad} {record[0]} + {record[1]} = {record[2]} игр\n")
+        result = result + f"{squad} {record[0]} + {record[1]} = {record[2]} игр\n"
     return result
-
-def fill_records_template(template, replace_to, replace_with):
-    return template.replace("{"+replace_to+"}", str(replace_with))
