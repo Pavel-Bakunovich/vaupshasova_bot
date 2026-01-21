@@ -54,5 +54,6 @@ SQL_ACTIVE_NO_LOSS_STREAKS_INDIVIDUAL = "Active No Loss Streaks - Individual.sql
 SQL_LOSING_STREAKS_INDIVIDUAL = "Losing streaks - Individual.sql"
 SQL_WIN_STREAKS_INDIVIDUAL = "Win streaks - Individual.sql"
 SQL_NO_LOSS_STREAKS_INDIVIDUAL = "No Loss Streaks - Individual.sql"
+SQL_AVERAGE_AGE_AND_HEIGHT = "Average age and height.sql"
 
 RECORDS_TEMPLATE_FILE = "records_template.txt"

@@ -247,3 +247,6 @@ def format_player_pairs(response_from_database):
                 squad = constants.SQUAD_CORN_EMOJI
         result = result + f"{squad} {record[0]} + {record[1]} = {record[2]} игр\n"
     return result
+
+def format_average_age_and_height(average_age_and_height_from_db):
+    return f"👢 Средний рост: {average_age_and_height_from_db[0]:.2f} см\n👴 Средний возраст: {average_age_and_height_from_db[1]:.2f} лет."

@@ -32,3 +32,5 @@
 {Who sat on a chair the most times.sql}
 [!]Пары игроков, которые сыграли больше всего игр вместе:
 {Top player pairs.sql}
+[!]Средние показатели лиги:
+{Average age and height.sql}

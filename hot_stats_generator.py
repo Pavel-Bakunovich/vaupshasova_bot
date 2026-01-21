@@ -14,7 +14,7 @@ class HotStatsGenerator:
         pass
 
     def get_message(self):
-        random_number = random.randint(0, 18)
+        random_number = random.randint(0, 19)
         match random_number:
             case 0:
                 return self.how_many_games_we_played(random_number)
@@ -53,6 +53,8 @@ class HotStatsGenerator:
             case 17:
                 return self.top_player_pairs(random_number)
             case 18: 
+                return self.average_age_and_height(random_number)
+            case 19: 
                 return self.individual_stats_random_player()
             case _:
                 return "Нет сегодня никакой статистики"
@@ -243,6 +245,19 @@ class HotStatsGenerator:
         top_player_pairs_from_db = database.execute_sql_query_return_many(sql_top_player_pairs)
         text_top_player_pairs = command_records.format_player_pairs(top_player_pairs_from_db)
         records_template = fill_records_template(records_template, constants.SQL_TOP_PLAYER_PAIRS, text_top_player_pairs)
+        return records_template
+    
+    def average_age_and_height(self, random_number):
+        records_template = self.get_records_template(random_number)
+        sql_average_age_and_height = ""
+        with open(f"SQL Queries/{constants.SQL_AVERAGE_AGE_AND_HEIGHT}" , "r") as file:
+            sql_average_age_and_height = file.read()
+        average_age_and_height_from_db = database.execute_sql_query_return_many(sql_average_age_and_height)
+        if len(average_age_and_height_from_db) > 0:
+            text_average_age_and_height = command_records.format_average_age_and_height(average_age_and_height_from_db[0])
+        else:
+            text_average_age_and_height = "Нет данных сегодня. Что-то ляснулось."
+        records_template = fill_records_template(records_template, constants.SQL_AVERAGE_AGE_AND_HEIGHT, text_average_age_and_height)
         return records_template
 
     def individual_stats_random_player(self):    
