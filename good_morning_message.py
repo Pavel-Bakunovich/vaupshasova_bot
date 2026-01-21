@@ -9,10 +9,11 @@ import requests
 import io
 
 class GoodMorningMessage:
-    def __init__(self):
+    #def __init__(self):
+        #pass
         #self.WEATHER_API_KEY = os.environ['WEATHER_API_TOKEN']
         #self.NEWS_API_KEY = os.environ['NEWS_API_KEY']
-        self.photo = None
+        #self.photo = None
 
     def get_birthdays(self):
         birthdays = get_todays_birthdays()
@@ -20,12 +21,25 @@ class GoodMorningMessage:
 
         if len(birthdays) > 0:
             for player in birthdays:
-                birthdays_text += player[0] + " " + player[1]
+                birthdays_text += f"{player[0]} {player[1]}\n"
 
         return birthdays_text
 
-    def get_message(self):    
-        '''with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
+    def any_birthdays_today(self):
+        birthdays = get_todays_birthdays()
+        if len(birthdays) > 0:
+            return True
+        return False
+
+    def get_birthday_wishes(self):
+        birthdays = self.get_birthdays()
+        if birthdays != "":
+            response = deepseek.send_request(f"Сегодня День Рождения у наших игроков (или игрока): {birthdays}. Поздравь их прикольным образом.", 1)
+            return response
+        return ""
+
+    '''def get_message(self):    
+        with open(constants.GOOD_MORNING_PROMPT_TEMPLATE_FILENAME,"r") as good_morning_prompt_template_file:
             good_morning_prompt_template_text = good_morning_prompt_template_file.read()
 
         top_headline = ""
@@ -71,15 +85,11 @@ class GoodMorningMessage:
             
         good_morning_prompt_template_text = fill_template(good_morning_prompt_template_text, days_before_next_game = days_before_next_game_text)
         
-        response = deepseek.send_request(good_morning_prompt_template_text, 0)'''
+        response = deepseek.send_request(good_morning_prompt_template_text, 0)
 
         return ""
 
-    
-    def get_photo(self):  
-        return self.photo
-
-        '''
+        
         base_URL="http://api.weatherapi.com/v1/forecast.json" 
         PARAMS = {'key':self.WEATHER_API_KEY,
                     'q':"Minsk",
