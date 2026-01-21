@@ -250,3 +250,9 @@ def format_player_pairs(response_from_database):
 
 def format_average_age_and_height(average_age_and_height_from_db):
     return f"👢 Средний рост: {average_age_and_height_from_db[0]:.2f} см\n👴 Средний возраст: {average_age_and_height_from_db[1]:.2f} лет."
+
+def format_attendance_streaks(response_from_database):
+    result=""
+    for record in response_from_database:
+        result = result + f"🔁 {record[0]} - {record[1]} ({format_date(record[2])} - {format_date(record[3])})\n"
+    return result

@@ -34,3 +34,5 @@
 {Top player pairs.sql}
 [!]Средние показатели лиги:
 {Average age and height.sql}
+[!]Наибольшее количество сыгранных игр подряд без пропусков:
+{Attandance streaks.sql}

@@ -14,7 +14,7 @@ class HotStatsGenerator:
         pass
 
     def get_message(self):
-        random_number = random.randint(0, 19)
+        random_number = random.randint(0, 20)
         match random_number:
             case 0:
                 return self.how_many_games_we_played(random_number)
@@ -55,6 +55,8 @@ class HotStatsGenerator:
             case 18: 
                 return self.average_age_and_height(random_number)
             case 19: 
+                return self.attendance_streaks(random_number)
+            case 20: 
                 return self.individual_stats_random_player()
             case _:
                 return "Нет сегодня никакой статистики"
@@ -258,6 +260,16 @@ class HotStatsGenerator:
         else:
             text_average_age_and_height = "Нет данных сегодня. Что-то ляснулось."
         records_template = fill_records_template(records_template, constants.SQL_AVERAGE_AGE_AND_HEIGHT, text_average_age_and_height)
+        return records_template
+
+    def attendance_streaks(self, random_number):
+        records_template = self.get_records_template(random_number)
+        sql_attendance_streaks = ""
+        with open(f"SQL Queries/{constants.SQL_ATTENDANCE_STREAKS}" , "r") as file:
+            sql_attendance_streaks = file.read()
+        attendance_streaks_from_db = database.execute_sql_query_return_many(sql_attendance_streaks)
+        text_attendance_streaks = command_records.format_attendance_streaks(attendance_streaks_from_db)
+        records_template = fill_records_template(records_template, constants.SQL_ATTENDANCE_STREAKS, text_attendance_streaks)
         return records_template
 
     def individual_stats_random_player(self):    
