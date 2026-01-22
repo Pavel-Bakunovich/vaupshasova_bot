@@ -51,5 +51,5 @@ SELECT
     streak_start AS "Date Streak Started",
     streak_end AS "Date Streak Ended"
 FROM streak_counts
-WHERE rank = 1 and games_at_row > 10
+WHERE rank = 1 and games_at_row > 20
 ORDER BY games_at_row DESC
