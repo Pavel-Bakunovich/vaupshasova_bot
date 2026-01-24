@@ -30,6 +30,7 @@ sql_attendance_streaks = ""
 sql_max_goal_difference = ""
 sql_most_goals_scored_per_game_by_corn = ""
 sql_most_goals_scored_per_game_by_tomato = ""
+sql_max_total_goals_per_game_by_two_teams = ""
 
 text_how_many_games_we_played = ""
 text_how_many_games_were_cancelled = ""
@@ -51,6 +52,7 @@ text_attandance_streaks = ""
 text_max_goal_difference = ""
 text_most_goals_scored_per_game_by_corn = ""
 text_most_goals_scored_per_game_by_tomato = ""
+text_max_total_goals_per_game_by_two_teams = ""
 
 def execute(message, bot):
     try:
@@ -105,6 +107,7 @@ def build_records_text():
     text_average_age_and_height = database.execute_sql_query_return_many(sql_average_age_and_height)
     text_attandance_streaks = database.execute_sql_query_return_many(sql_attendance_streaks)
     text_max_goal_difference = database.execute_sql_query_return_many(sql_max_goal_difference)
+    text_max_total_goals_per_game_by_two_teams = database.execute_sql_query_return_many(sql_max_total_goals_per_game_by_two_teams)
     text_most_goals_scored_per_game_by_corn = database.execute_sql_query_return_many(sql_most_goals_scored_per_game_by_corn)
     text_most_goals_scored_per_game_by_tomato = database.execute_sql_query_return_many(sql_most_goals_scored_per_game_by_tomato)
 
@@ -129,6 +132,7 @@ def build_records_text():
     records_template = fill_records_template(records_template, constants.SQL_AVERAGE_AGE_AND_HEIGHT, format_average_age_and_height(text_average_age_and_height))
     records_template = fill_records_template(records_template, constants.SQL_ATTENDANCE_STREAKS, format_attendance_streaks(text_attandance_streaks))
     records_template = fill_records_template(records_template, constants.SQL_MAX_GOAL_DIFFERENCE, format_max_goal_difference(text_max_goal_difference))
+    records_template = fill_records_template(records_template, constants.SQL_MAX_TOTAL_GOALS_PER_GAME_BY_TWO_TEAMS, format_max_total_goals_per_game_by_two_teams(text_max_total_goals_per_game_by_two_teams))
     records_template = fill_records_template(records_template, constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_CORN, format_most_goals_scored_per_game_by_team(text_most_goals_scored_per_game_by_corn))
     records_template = fill_records_template(records_template, constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_TOMATO, format_most_goals_scored_per_game_by_team(text_most_goals_scored_per_game_by_tomato))
     records_template = records_template.replace("[!]", "")
@@ -221,6 +225,10 @@ def load_sql_queries():
     global sql_max_goal_difference
     with open(f"SQL Queries/{constants.SQL_MAX_GOAL_DIFFERENCE}" , "r") as file:
         sql_max_goal_difference = file.read()
+
+    global sql_max_total_goals_per_game_by_two_teams
+    with open(f"SQL Queries/{constants.SQL_MAX_TOTAL_GOALS_PER_GAME_BY_TWO_TEAMS}" , "r") as file:
+        sql_max_total_goals_per_game_by_two_teams = file.read()
 
     global sql_most_goals_scored_per_game_by_corn
     with open(f"SQL Queries/{constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_CORN}" , "r") as file:
