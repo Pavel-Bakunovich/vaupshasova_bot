@@ -56,5 +56,8 @@ SQL_WIN_STREAKS_INDIVIDUAL = "Win streaks - Individual.sql"
 SQL_NO_LOSS_STREAKS_INDIVIDUAL = "No Loss Streaks - Individual.sql"
 SQL_AVERAGE_AGE_AND_HEIGHT = "Average age and height.sql"
 SQL_ATTENDANCE_STREAKS = "Attandance streaks.sql"
+SQL_MAX_GOAL_DIFFERENCE = "Max goal difference.sql"
+SQL_MOST_GOALS_SCORED_PER_GAME_BY_CORN = "Most goals scored per game by Corn.sql"
+SQL_MOST_GOALS_SCORED_PER_GAME_BY_TOMATO = "Most goals scored per game by Tomato.sql"
 
 RECORDS_TEMPLATE_FILE = "records_template.txt"

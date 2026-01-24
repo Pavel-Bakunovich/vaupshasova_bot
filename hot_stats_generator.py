@@ -1,3 +1,4 @@
+from sqlalchemy import case
 import constants
 import os
 from helpers import format_date
@@ -14,7 +15,7 @@ class HotStatsGenerator:
         pass
 
     def get_message(self):
-        random_number = random.randint(0, 20)
+        random_number = random.randint(0, 23)
         match random_number:
             case 0:
                 return self.how_many_games_we_played(random_number)
@@ -57,6 +58,12 @@ class HotStatsGenerator:
             case 19: 
                 return self.attendance_streaks(random_number)
             case 20: 
+                return self.games_with_max_goal_difference(random_number)
+            case 21: 
+                return self.most_goals_scored_per_game_by_corn(random_number)
+            case 22: 
+                return self.most_goals_scored_per_game_by_tomato(random_number)
+            case 23: 
                 return self.individual_stats_random_player()
             case _:
                 return "Нет сегодня никакой статистики"
@@ -270,6 +277,36 @@ class HotStatsGenerator:
         attendance_streaks_from_db = database.execute_sql_query_return_many(sql_attendance_streaks)
         text_attendance_streaks = command_records.format_attendance_streaks(attendance_streaks_from_db)
         records_template = fill_records_template(records_template, constants.SQL_ATTENDANCE_STREAKS, text_attendance_streaks)
+        return records_template
+
+    def games_with_max_goal_difference(self, random_number):
+        records_template = self.get_records_template(random_number)
+        sql_max_goal_difference = ""
+        with open(f"SQL Queries/{constants.SQL_MAX_GOAL_DIFFERENCE}" , "r") as file:
+            sql_max_goal_difference = file.read()
+        max_goal_difference_from_db = database.execute_sql_query_return_many(sql_max_goal_difference)
+        text_max_goal_difference = command_records.format_max_goal_difference(max_goal_difference_from_db)
+        records_template = fill_records_template(records_template, constants.SQL_MAX_GOAL_DIFFERENCE, text_max_goal_difference)
+        return records_template
+
+    def most_goals_scored_per_game_by_corn(self, random_number):
+        records_template = self.get_records_template(random_number)
+        sql_most_goals_scored_per_game_by_corn = ""
+        with open(f"SQL Queries/{constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_CORN}" , "r") as file:
+            sql_most_goals_scored_per_game_by_corn = file.read()
+        most_goals_scored_per_game_by_corn_from_db = database.execute_sql_query_return_many(sql_most_goals_scored_per_game_by_corn)
+        text_most_goals_scored_per_game_by_corn = command_records.format_most_goals_scored_per_game_by_team(most_goals_scored_per_game_by_corn_from_db)
+        records_template = fill_records_template(records_template, constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_CORN, text_most_goals_scored_per_game_by_corn)
+        return records_template
+    
+    def most_goals_scored_per_game_by_tomato(self, random_number):
+        records_template = self.get_records_template(random_number)
+        sql_most_goals_scored_per_game_by_tomato = ""
+        with open(f"SQL Queries/{constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_TOMATO}" , "r") as file:
+            sql_most_goals_scored_per_game_by_tomato = file.read()
+        most_goals_scored_per_game_by_tomato_from_db = database.execute_sql_query_return_many(sql_most_goals_scored_per_game_by_tomato)
+        text_most_goals_scored_per_game_by_tomato = command_records.format_most_goals_scored_per_game_by_team(most_goals_scored_per_game_by_tomato_from_db)
+        records_template = fill_records_template(records_template, constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_TOMATO, text_most_goals_scored_per_game_by_tomato)
         return records_template
 
     def individual_stats_random_player(self):    

@@ -256,3 +256,15 @@ def format_attendance_streaks(response_from_database):
     for record in response_from_database:
         result = result + f"🔁 {record[0]} - {record[1]} ({format_date(record[2])} - {format_date(record[3])})\n"
     return result
+
+def format_max_goal_difference(response_from_database):
+    result=""
+    for record in response_from_database:
+        result = result + f"🔝 {format_date(record[0])}: 🌽 {record[1]}:{record[2]} 🍅 (разница {record[3]})\n"
+    return result
+
+def format_most_goals_scored_per_game_by_team(response_from_database):
+    result=""
+    for record in response_from_database:
+        result = result + f"🔝 {format_date(record[0])}: 🌽 {record[1]}:{record[2]} 🍅\n"
+    return result
