@@ -1,4 +1,3 @@
-from sqlalchemy import case
 import constants
 import os
 from helpers import format_date
