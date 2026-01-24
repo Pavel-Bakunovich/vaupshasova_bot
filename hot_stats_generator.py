@@ -307,6 +307,16 @@ class HotStatsGenerator:
         text_most_goals_scored_per_game_by_tomato = command_records.format_most_goals_scored_per_game_by_team(most_goals_scored_per_game_by_tomato_from_db)
         records_template = fill_records_template(records_template, constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_TOMATO, text_most_goals_scored_per_game_by_tomato)
         return records_template
+    
+    def max_total_goals_per_game_by_two_teams(self, random_number):
+        records_template = self.get_records_template(random_number)
+        sql_max_total_goals_per_game_by_two_teams = ""
+        with open(f"SQL Queries/{constants.SQL_MAX_TOTAL_GOALS_PER_GAME_BY_TWO_TEAMS}" , "r") as file:
+            sql_max_total_goals_per_game_by_two_teams = file.read()
+        max_total_goals_per_game_by_two_teams_from_db = database.execute_sql_query_return_many(sql_max_total_goals_per_game_by_two_teams)
+        text_max_total_goals_per_game_by_two_teams = command_records.format_max_total_goals_per_game_by_two_teams(max_total_goals_per_game_by_two_teams_from_db)
+        records_template = fill_records_template(records_template, constants.SQL_MAX_TOTAL_GOALS_PER_GAME_BY_TWO_TEAMS, text_max_total_goals_per_game_by_two_teams)
+        return records_template
 
     def individual_stats_random_player(self):    
         random_player = database.get_random_player()

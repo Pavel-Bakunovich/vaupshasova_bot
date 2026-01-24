@@ -40,6 +40,8 @@
 {Attandance streaks.sql}
 [!]Топ игр с наиболее разгромным счетом:
 {Max goal difference.sql}
+[!]Топ игр с наибольшим количеством голов:
+{Max total goals per game by two teams.sql}
 [!]Топ игр, где Кукурузы забили наибольшее количество голов за игру:
 {Most goals scored per game by Corn.sql}
 [!]Топ игр, где Помидоры забили наибольшее количество голов за игру:

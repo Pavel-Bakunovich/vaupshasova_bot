@@ -59,5 +59,6 @@ SQL_ATTENDANCE_STREAKS = "Attandance streaks.sql"
 SQL_MAX_GOAL_DIFFERENCE = "Max goal difference.sql"
 SQL_MOST_GOALS_SCORED_PER_GAME_BY_CORN = "Most goals scored per game by Corn.sql"
 SQL_MOST_GOALS_SCORED_PER_GAME_BY_TOMATO = "Most goals scored per game by Tomato.sql"
+SQL_MAX_TOTAL_GOALS_PER_GAME_BY_TWO_TEAMS = "Max total goals per game by two teams.sql"
 
 RECORDS_TEMPLATE_FILE = "records_template.txt"
