@@ -262,7 +262,7 @@ class HotStatsGenerator:
             sql_average_age_and_height = file.read()
         average_age_and_height_from_db = database.execute_sql_query_return_many(sql_average_age_and_height)
         if len(average_age_and_height_from_db) > 0:
-            text_average_age_and_height = command_records.format_average_age_and_height(average_age_and_height_from_db[0])
+            text_average_age_and_height = command_records.format_average_age_and_height(average_age_and_height_from_db)
         else:
             text_average_age_and_height = "Нет данных сегодня. Что-то ляснулось."
         records_template = fill_records_template(records_template, constants.SQL_AVERAGE_AGE_AND_HEIGHT, text_average_age_and_height)
