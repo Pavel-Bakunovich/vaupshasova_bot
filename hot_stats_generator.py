@@ -14,7 +14,7 @@ class HotStatsGenerator:
         pass
 
     def get_message(self):
-        random_number = random.randint(0, 23)
+        random_number = random.randint(0, 24)
         match random_number:
             case 0:
                 return self.how_many_games_we_played(random_number)
@@ -59,10 +59,12 @@ class HotStatsGenerator:
             case 20: 
                 return self.games_with_max_goal_difference(random_number)
             case 21: 
-                return self.most_goals_scored_per_game_by_corn(random_number)
+                return self.max_total_goals_per_game_by_two_teams(random_number)
             case 22: 
-                return self.most_goals_scored_per_game_by_tomato(random_number)
+                return self.most_goals_scored_per_game_by_corn(random_number)
             case 23: 
+                return self.most_goals_scored_per_game_by_tomato(random_number)
+            case 24: 
                 return self.individual_stats_random_player()
             case _:
                 return "Нет сегодня никакой статистики"
