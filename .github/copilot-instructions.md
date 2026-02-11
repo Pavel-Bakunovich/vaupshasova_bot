@@ -57,7 +57,3 @@ should follow to be productive quickly.
 - Which env vars (besides `TELEGRAM_API_TOKEN` and `DATABASE_URL`) should be set in production?
 - Any preferred testing or staging workflow for the bot (a separate test DB,
   sanitized `.env`, or mocked Telegram token)?
-
-If you want, I can run a quick pass to: (a) add this file to the repo, (b)
-run static checks for obvious syntax errors, or (c) open any of the command
-modules and extract more precise examples. Which would you like next?
