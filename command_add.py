@@ -29,7 +29,7 @@ def execute(message, bot):
                     if (registered_players_count < 12):
                         database.register_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player_id)
                         user_message_text = f"✍️ {get_player_name(player)}, ты добавлен в состав на игру {get_next_matchday_formatted()}."
-                        check_eligibility_for_adding_to_squad(bot, message, registered_players_count, get_player_name(player))
+                        check_eligibility_for_adding_to_squad(bot, message, registered_players_count, get_player_name(player), player_id)
                         log(user_message_text)
                     else:
                         user_message_text = f"🪑 {get_player_name(player)}, на игру {get_next_matchday_formatted()} больше нет мест. Садим тебя в очередь на стульчик."
@@ -44,8 +44,8 @@ def execute(message, bot):
                         if (registered_players_count < 12):
                             user_message_text = f"✍️ {get_player_name(player)}, окей, переносим тебя в основной состав на игру {get_next_matchday_formatted()}."
                             log(user_message_text)
+                            check_eligibility_for_adding_to_squad(bot, message, registered_players_count, get_player_name(player), player_id)
                             database.update_registraion_player_matchday(helpers.get_next_matchday(), constants.TYPE_ADD, player_id)
-                            check_eligibility_for_adding_to_squad(bot, message, registered_players_count, get_player_name(player))
                         else:
                             user_message_text = helpers.fill_template("🪑 {name}, на игру {date} больше нет мест! Садим тебя на стульчик.", name=get_player_name(player),date=helpers.get_next_matchday_formatted())
                             log(user_message_text)
@@ -71,18 +71,23 @@ def execute(message, bot):
         log_error(e)
 
 #In case if player adds himself to the squad, we need to check if there are players on chair to be moved to squad first
-def check_eligibility_for_adding_to_squad(bot, message, registered_players_count, name_of_player_to_add):
+def check_eligibility_for_adding_to_squad(bot, message, registered_players_count, name_of_player_to_add, player_id_to_add):
     if registered_players_count < 12:
         matchday_players_on_chair = database.get_matchday_players_on_chair(helpers.get_next_matchday())
         if len(matchday_players_on_chair) > 0:
             next_up_player = matchday_players_on_chair[0]
             player_name = next_up_player[3]
+            player_id = next_up_player[0]
             telegram_login = next_up_player[4]
             if telegram_login == None:
                 telegram_login = ""
             else:
                 telegram_login = f" @{telegram_login}"
-            message_to_player = f"🚨🚨🚨 Внимание! Фол! {name_of_player_to_add} добавился в состав вне очереди! {player_name}{telegram_login}, твоя очередь залетать в состав на игру {get_next_matchday_formatted()}, так как ты ждал очереди на стуле! Вызывайте милицию! Или звоните директору @pavel_bakunovich!"
-            bot_message = bot.reply_to(message, message_to_player)
-            log(message_to_player)
+            if (player_id != player_id_to_add):
+                message_to_player = f"🚨🚨🚨 Внимание! Фол! {name_of_player_to_add} добавился в состав вне очереди! {player_name}{telegram_login}, твоя очередь залетать в состав на игру {get_next_matchday_formatted()}, так как ты ждал очереди на стуле! Вызывайте милицию! Или звоните директору @pavel_bakunovich!"
+                bot.reply_to(message, message_to_player)
+                log(message_to_player)
+            else:
+                log(f"Player {name_of_player_to_add} was added to the squad, as per order. No faul committed.")
+            
                 
