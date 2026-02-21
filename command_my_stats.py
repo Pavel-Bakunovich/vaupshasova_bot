@@ -85,16 +85,19 @@ def last_games(current_player):
             assists = "-"
             own_goals = "-"
         else:
-            if score_corn > score_tomato and squad == constants.SQUAD_CORN:
-                result = "Победа"
-            if score_corn < score_tomato and squad == constants.SQUAD_CORN:
-                result = "Поражение"
-            if score_corn > score_tomato and squad == constants.SQUAD_TOMATO:
-                result = "Поражение"
-            if score_corn < score_tomato and squad == constants.SQUAD_TOMATO:
-                result = "Победа"
-            if score_corn == score_tomato:
-                result = "Ничья"
+            if score_corn is None or score_tomato is None:
+                result = "-"
+            else:
+                if score_corn > score_tomato and squad == constants.SQUAD_CORN:
+                    result = "Победа"
+                if score_corn < score_tomato and squad == constants.SQUAD_CORN:
+                    result = "Поражение"
+                if score_corn > score_tomato and squad == constants.SQUAD_TOMATO:
+                    result = "Поражение"
+                if score_corn < score_tomato and squad == constants.SQUAD_TOMATO:
+                    result = "Победа"
+                if score_corn == score_tomato:
+                    result = "Ничья"
             squad_short = "К" if squad == constants.SQUAD_CORN else "П"
         table.add_row([date, score_corn, ":", score_tomato, squad_short, result, goals, assists, own_goals])
     
