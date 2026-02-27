@@ -15,7 +15,7 @@ SQUAD_CORN="Corn"
 SQUAD_TOMATO_EMOJI="🍅"
 SQUAD_CORN_EMOJI="🌽"
 
-COST_OF_1_GAME_PER_PLAYER = 7.0
+COST_OF_1_GAME_PER_PLAYER = 10.0
 COST_OF_1_GAME = 69.0
 
 UNHANDLED_EXCEPTION_MESSAGE="🙈 Что-то ляснулось. Паламался я. Давай по-новой."
