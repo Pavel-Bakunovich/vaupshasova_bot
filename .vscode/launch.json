@@ -12,6 +12,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Web App Debugger",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "telegram_mini_app.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Sanbdox Debugger",
             "type": "debugpy",
             "request": "launch",
