@@ -15,7 +15,7 @@ CREATE TABLE Players (
 
 CREATE TABLE Games (
   id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  Game_Date date,
+  Game_Date date UNIQUE,
   Score_Tomato smallint,
   Score_Corn smallint,
   Paid_for_Pitch decimal,

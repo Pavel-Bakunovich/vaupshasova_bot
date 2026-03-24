@@ -437,16 +437,14 @@ def get_game_id(matchday_date):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
-
-    select = f"SELECT id FROM Games WHERE Game_Date = '{matchday_date}'"
-    cursor.execute(select)
+    try:
+        cursor.execute(f"INSERT INTO Games (Game_Date) VALUES ('{matchday_date}') ON CONFLICT (Game_Date) DO NOTHING")
+        connection.commit()
+    except Exception:
+        connection.rollback()
+    cursor.execute(f"SELECT id FROM Games WHERE Game_Date = '{matchday_date}'")
     game_day = cursor.fetchone()
-    if game_day is None:
-        cursor.execute(f"INSERT INTO Games (Game_Date) VALUES ('{matchday_date}')")
-        cursor.execute(select)
-        game_day = cursor.fetchone()
-    
-    connection.commit()
+    close_connection_pool(connection_pool)
     return game_day[0]
 
 def get_game_id_without_adding_new(matchday_date):
