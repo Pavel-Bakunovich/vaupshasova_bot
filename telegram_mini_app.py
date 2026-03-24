@@ -2,7 +2,11 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
 from datetime import datetime, timedelta
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='mini-app/templates', static_folder='mini-app/static')
+
+# Define the new relative or absolute paths for your folders
+custom_template_dir = 'web/templates'
+custom_static_dir = 'web/static'
 
 # Mock data for demo purposes
 MOCK_PLAYERS = {
