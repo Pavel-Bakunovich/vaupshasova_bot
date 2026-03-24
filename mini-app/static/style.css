@@ -41,7 +41,7 @@ body {
 /* Header */
 .header {
     padding: 16px 16px;
-    background: linear-gradient(135deg, var(--tg-theme-accent-text-color, #31a24c) 0%, #2a8a3e 100%);
+    background: linear-gradient(135deg, var(--tg-theme-accent-text-color, #e29a1d) 30%, #fd1818 100%);
     color: white;
     position: sticky;
     top: 0;

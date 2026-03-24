@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
 from datetime import datetime, timedelta
+import database
 
 app = Flask(__name__, template_folder='mini-app/templates', static_folder='mini-app/static')
 
@@ -10,14 +11,14 @@ custom_static_dir = 'web/static'
 
 # Mock data for demo purposes
 MOCK_PLAYERS = {
-    123456789: {
+    343151297: {
         'id': 1,
-        'telegram_id': 123456789,
+        'telegram_id': 343151297,
         'first_name': 'Иван',
-        'last_name': 'Петров',
+        'last_name': 'Шмарловский',
         'username': 'ivan_petrov',
         'friendly_first_name': 'Иван',
-        'friendly_last_name': 'Петров',
+        'friendly_last_name': 'Шмарловский',
         'informal_first_name': 'Ваня',
     },
     987654321: {
@@ -35,12 +36,12 @@ MOCK_PLAYERS = {
 MOCK_SQUAD = [
     {
         'id': 1,
-        'telegram_id': 123456789,
+        'telegram_id': 343151297,
         'first_name': 'Иван',
-        'last_name': 'Петров',
+        'last_name': 'Шмарловский',
         'username': 'ivan_petrov',
         'friendly_first_name': 'Иван',
-        'friendly_last_name': 'Петров',
+        'friendly_last_name': 'Шмарловский',
         'informal_first_name': 'Ваня',
         'squad': '🌽',
         'registration_type': 'add',
@@ -122,24 +123,38 @@ def index():
 def get_player(telegram_id):
     """Get player info by Telegram ID (mock data)"""
     # Default to first player if not found
-    player_data = MOCK_PLAYERS.get(telegram_id, MOCK_PLAYERS.get(123456789))
+    player_data = MOCK_PLAYERS.get(telegram_id, MOCK_PLAYERS.get(343151297))
     
+    player = database.find_player(telegram_id)
+    player_id = player[7] if player else None
+
+    individual_stats = database.get_individual_stats(player_id)
+
     if not player_data:
         return jsonify({'success': False, 'error': 'Player not found'}), 404
     
-    player_id = player_data['id']
-    stats = MOCK_STATS.get(player_id, {
-        'games_played': 0,
-        'goals': 0,
-        'assists': 0,
-        'own_goals': 0,
-        'games_for_corn': 0,
-        'games_for_tomato': 0,
-    })
+    stats =  {
+        'games_played': individual_stats[0] if individual_stats[1] is not None else 0,
+        'goals': individual_stats[1] if individual_stats[1] is not None else 0,
+        'assists': individual_stats[2] if individual_stats[2] is not None else 0,
+        'own_goals': individual_stats[3] if individual_stats[3] is not None else 0,
+        'games_for_corn': individual_stats[4] if individual_stats[4] is not None else 0,
+        'games_for_tomato': individual_stats[5] if individual_stats[5] is not None else 0,
+    }
     
     return jsonify({
         'success': True,
-        'player': player_data,
+        'player':
+            {
+                'id': player[7] if player else None,
+                'telegram_id': player [3] if player else None,
+                'first_name': player[0] if player else None,
+                'last_name': player[1] if player else None,
+                'username': player[2] if player else None,
+                'friendly_first_name': player[4] if player else None,
+                'friendly_last_name': player[5] if player else None,
+                'informal_first_name': player[6] if player else None
+            },
         'stats': stats
     })
 
