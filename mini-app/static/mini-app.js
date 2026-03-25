@@ -45,9 +45,7 @@ function updatePlayerDisplay(player, stats) {
     // Get display name (prefer friendly name)
     const displayName = `${player.friendly_first_name || player.first_name} ${player.friendly_last_name || player.last_name}`;
     
-    document.getElementById('player-greeting').textContent = `Привет, ${player.friendly_first_name || player.first_name}!`;
-    document.getElementById('player-name').textContent = displayName;
-    
+    document.getElementById('player-greeting').textContent = `Привет, ${displayName}`;
     document.getElementById('stat-games').textContent = stats.games_played;
     document.getElementById('stat-goals').textContent = stats.goals;
     document.getElementById('stat-assists').textContent = stats.assists;
@@ -74,33 +72,116 @@ async function loadSquadList() {
         
         const data = await response.json();
         if (data.success) {
-            displaySquadList(data.squad);
+            displaySquadList(data.squad_add, data.squad_chair, data.squad_maybe, data.squad_remove);
+            document.getElementById('next-matchday-date').textContent = `📋 Регистрация на следующий матч 🗓️ ${data.next_matchday_date}`;
         }
     } catch (error) {
         console.error('Error loading squad:', error);
     }
 }
 
-function displaySquadList(squad) {
+function displaySquadList(squadAdd, squadChair, squadMaybe, squadRemove) {
     const squadList = document.getElementById('squad-list');
+    let html = '';
     
-    if (!squad || squad.length === 0) {
-        squadList.innerHTML = '<div class="loading">На данный момент никто не зарегистрирован</div>';
-        return;
+    // Display 12 numbered slots for "add" registration type
+    const slotCount = 12;
+    const numberEmojis = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
+    
+    function getNumberDisplay(num) {
+        // num is 1-12, display as 01-12 with emojis
+        const firstDigit = Math.floor(num / 10);
+        const secondDigit = num % 10;
+        return numberEmojis[firstDigit] + numberEmojis[secondDigit];
     }
     
-    squadList.innerHTML = squad.map(player => {
-        const squadIcon = player.squad === '🌽' ? '🌽' : player.squad === 'Corn' ? '🌽' : 
-                            player.squad === '🍅' ? '🍅' : player.squad === 'Tomato' ? '🍅' : '';
-        return `
-            <div class="player-item">
-                <div class="player-info">
-                    <div class="player-info-name">${player.friendly_first_name} ${player.friendly_last_name}</div>
-                    <div class="player-info-squad">${squadIcon} ${player.squad || 'Не определена'}</div>
+    for (let i = 0; i < slotCount; i++) {
+        const player = squadAdd[i];
+        const slotNumber = getNumberDisplay(i + 1);
+        
+        const isCurrentUser = player && player.is_current_user;
+        const borderClass = isCurrentUser ? 'current-user' : '';
+        
+        if (player) {
+            const displayName = `${player.friendly_first_name} ${player.friendly_last_name}`;
+            const squadEmoji = player.squad_emoji || '';
+            html += `
+                <div class="squad-slot ${borderClass}">
+                    <div class="slot-number">${slotNumber}</div>
+                    <div class="slot-content">
+                        ${squadEmoji ? '<span class="squad-emoji">' + squadEmoji + '</span>' : ''}
+                        <span class="player-name">${displayName}</span>
+                    </div>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        } else {
+            html += `
+                <div class="squad-slot empty">
+                    <div class="slot-number">${slotNumber}</div>
+                    <div class="slot-content">
+                        <span class="player-name">—</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // Display chair players if any
+    if (squadChair && squadChair.length > 0) {
+        for (const player of squadChair) {
+            const displayName = `${player.friendly_first_name} ${player.friendly_last_name}`;
+            const isCurrentUser = player.is_current_user;
+            const borderClass = isCurrentUser ? 'current-user' : '';
+            html += `
+                <div class="squad-slot other-category ${borderClass}">
+                    <div class="slot-emoji">🪑</div>
+                    <div class="slot-content">
+                        <span class="player-name">${displayName}</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // Display maybe players if any
+    if (squadMaybe && squadMaybe.length > 0) {
+        for (const player of squadMaybe) {
+            const displayName = `${player.friendly_first_name} ${player.friendly_last_name}`;
+            const isCurrentUser = player.is_current_user;
+            const borderClass = isCurrentUser ? 'current-user' : '';
+            html += `
+                <div class="squad-slot other-category ${borderClass}">
+                    <div class="slot-emoji">❓</div>
+                    <div class="slot-content">
+                        <span class="player-name">${displayName}</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    // Display remove players if any
+    if (squadRemove && squadRemove.length > 0) {
+        for (const player of squadRemove) {
+            const displayName = `${player.friendly_first_name} ${player.friendly_last_name}`;
+            const isCurrentUser = player.is_current_user;
+            const borderClass = isCurrentUser ? 'current-user' : '';
+            html += `
+                <div class="squad-slot other-category ${borderClass}">
+                    <div class="slot-emoji">❌</div>
+                    <div class="slot-content">
+                        <span class="player-name">${displayName}</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    if (!squadAdd || squadAdd.length === 0) {
+        html = '<div class="loading">На данный момент никто не зарегистрирован</div>';
+    }
+    
+    squadList.innerHTML = html;
 }
 
 async function loadAlltimeStats() {

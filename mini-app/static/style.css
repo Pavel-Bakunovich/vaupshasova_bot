@@ -49,10 +49,27 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.header-text {
+    flex: 1;
+}
+
 .header h1 {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .header p {
@@ -92,12 +109,6 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.player-name {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 12px;
-}
-
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -135,8 +146,73 @@ body {
 .squad-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 16px;
+}
+
+.squad-slot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.squad-slot:not(.empty):not(.other-category) {
+    background: var(--tg-theme-bg-color, #ffffff);
+    border: 2px solid var(--tg-theme-hint-color, #e0e0e0);
+}
+
+.squad-slot.empty {
+    opacity: 0.6;
+}
+
+.squad-slot.other-category {
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    gap: 8px;
+}
+
+.squad-slot.current-user {
+    border: 3px solid var(--tg-theme-text-color, #000000);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.slot-number {
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.slot-emoji {
+    font-size: 16px;
+    min-width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.slot-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.squad-emoji {
+    font-size: 18px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.player-name {
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .player-item {

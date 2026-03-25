@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
 from datetime import datetime, timedelta
 import database
+import helpers
+import constants
 
 app = Flask(__name__, template_folder='mini-app/templates', static_folder='mini-app/static')
 
@@ -160,14 +162,65 @@ def get_player(telegram_id):
 
 @app.route('/api/next-matchday-squad/<int:telegram_id>')
 def get_next_matchday_squad(telegram_id):
-    """Get list of players registered for next matchday (mock data)"""
-    next_matchday = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
-    
-    return jsonify({
-        'success': True,
-        'squad': MOCK_SQUAD,
-        'next_matchday_date': next_matchday
-    })
+    """Get list of players registered for next matchday with proper staging"""
+    try:
+        # Get squad data from database
+        next_matchday_date = helpers.get_next_matchday()
+        squad_data = database.get_squad(next_matchday_date)
+        
+        # Format squad data
+        formatted_squad = {
+            'add': [],
+            'chair': [],
+            'maybe': [],
+            'remove': []
+        }
+        
+        current_player_id = telegram_id
+        
+        for player in squad_data:
+            registration_type = player[1]  # Matchday.Type
+            squad = player[10]  # Matchday.Squad
+            
+            player_info = {
+                'id': player[0],
+                'telegram_id': player[6],
+                'first_name': player[3],
+                'last_name': player[4],
+                'username': player[5],
+                'friendly_first_name': player[7],
+                'friendly_last_name': player[8],
+                'informal_first_name': player[9],
+                'squad': squad,
+                'registration_type': registration_type,
+                'is_current_user': player[6] == current_player_id  # Check if this is current user
+            }
+            
+            # Convert squad to emoji
+            if squad == constants.SQUAD_CORN:
+                player_info['squad_emoji'] = constants.SQUAD_CORN_EMOJI
+            elif squad == constants.SQUAD_TOMATO:
+                player_info['squad_emoji'] = constants.SQUAD_TOMATO_EMOJI
+            else:
+                player_info['squad_emoji'] = None
+            
+            if registration_type in formatted_squad:
+                formatted_squad[registration_type].append(player_info)
+        
+        return jsonify({
+            'success': True,
+            'squad_add': formatted_squad['add'],
+            'squad_chair': formatted_squad['chair'],
+            'squad_maybe': formatted_squad['maybe'],
+            'squad_remove': formatted_squad['remove'],
+            'next_matchday_date': helpers.get_next_matchday_formatted()
+        })
+    except Exception as e:
+        print(f"Error in get_next_matchday_squad: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/api/player/<int:player_id>/season-stats')
 def get_player_season_stats(player_id):

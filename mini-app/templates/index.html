@@ -14,14 +14,18 @@
         <!-- Home Screen -->
         <div id="home-screen" class="screen active">
             <div class="header">
-                <h1>⚽ Лига Ваупшасова</h1>
-                <p id="player-greeting">Загрузка...</p>
+                <div class="header-content">
+                    <img src="{{ url_for('static', filename='Vaupshasova Logo 256x256.png') }}" alt="Лига Ваупшасова" class="header-logo">
+                    <div class="header-text">
+                        <h1>Лига Ваупшасова</h1>
+                        <p id="player-greeting">Загрузка...</p>
+                    </div>
+                </div>
             </div>
 
             <div class="home-content">
                 <!-- Player Card -->
                 <div class="player-card">
-                    <div class="player-name" id="player-name">-</div>
                     <div class="stats-grid">
                         <div class="stat-item">
                             <div class="stat-label">Игры</div>
@@ -52,7 +56,7 @@
 
                 <!-- Next Matchday Squad -->
                 <div>
-                    <h2 class="section-title">📋 Регистрация на следующий матч</h2>
+                    <h2 class="section-title" id="next-matchday-date">📋 Регистрация на следующий матч</h2>
                     <div class="squad-list" id="squad-list">
                         <div class="player-item">
                             <div class="loading">Загрузка команды...</div>
