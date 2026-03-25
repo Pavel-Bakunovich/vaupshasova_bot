@@ -179,7 +179,7 @@ body {
 
 .squad-slot.current-user {
     border: 3px solid var(--tg-theme-text-color, #ffda08);
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 12px rgba(247, 219, 5, 0.15);
 }
 
 .slot-number {
