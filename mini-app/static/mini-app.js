@@ -73,7 +73,7 @@ async function loadSquadList() {
         const data = await response.json();
         if (data.success) {
             displaySquadList(data.squad_add, data.squad_chair, data.squad_maybe, data.squad_remove);
-            document.getElementById('next-matchday-date').textContent = `📋 Регистрация на следующий матч 🗓️ ${data.next_matchday_date}`;
+            document.getElementById('next-matchday-date').textContent = `📋 Следующая игра 🗓️ ${data.next_matchday_date}`;
         }
     } catch (error) {
         console.error('Error loading squad:', error);
