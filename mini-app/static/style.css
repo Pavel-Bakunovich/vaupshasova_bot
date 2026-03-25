@@ -41,7 +41,7 @@ body {
 /* Header */
 .header {
     padding: 16px 16px;
-    background: linear-gradient(135deg, var(--tg-theme-accent-text-color, #e29a1d) 30%, #fd1818 100%);
+    background:#e1930c;
     color: white;
     position: sticky;
     top: 0;
@@ -147,14 +147,14 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 5cqh;
 }
 
 .squad-slot {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px;
+    padding: 5px;
     background: var(--tg-theme-secondary-bg-color, #f5f5f5);
     border-radius: 8px;
     border: 2px solid transparent;
@@ -171,9 +171,9 @@ body {
 }
 
 .squad-slot.other-category {
-    padding: 8px 12px;
+    padding: 5px 5px;
     background: transparent;
-    border: none;
+    border: 2px solid var(--tg-theme-hint-color, #e0e0e0);
     gap: 8px;
 }
 
