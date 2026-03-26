@@ -40,7 +40,7 @@ body {
 
 /* Header */
 .header {
-    padding: 16px 16px;
+    padding: 10px 10px;
     background:#e1930c;
     color: white;
     position: sticky;
@@ -56,8 +56,8 @@ body {
 }
 
 .header-logo {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     object-fit: contain;
     flex-shrink: 0;
 }
@@ -173,12 +173,12 @@ body {
 .squad-slot.other-category {
     padding: 5px 5px;
     background: transparent;
-    border: 2px solid var(--tg-theme-hint-color, #e0e0e0);
+    border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
     gap: 8px;
 }
 
 .squad-slot.current-user {
-    border: 3px solid var(--tg-theme-text-color, #ffda08);
+    border: 3px solid var(--tg-theme-hint-color, #ffda08);
     box-shadow: 0 0 12px rgba(247, 219, 5, 0.15);
 }
 
@@ -321,7 +321,7 @@ body {
     padding: 14px;
     border: none;
     border-radius: 8px;
-    background: var(--tg-theme-accent-text-color, #31a24c);
+    background: var(--tg-theme-accent-hint-color, #31a24c);
     color: white;
     font-weight: 600;
     cursor: pointer;
