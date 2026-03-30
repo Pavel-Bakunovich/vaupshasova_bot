@@ -257,6 +257,54 @@ def get_player_balance(player_id):
         'total_paid': balance_data['total_paid'],
     })
 
+@app.route('/api/player/<int:player_id>/last-games-performance')
+def get_player_last_games_performance(player_id):
+    """Get player's last 10 games performance as W/D/L string"""
+    try:
+        # Get last individual games
+        last_games = database.get_last_individual_games(player_id)
+        
+        # Take last 10 games
+        recent_games = last_games[:10]
+        
+        performance = []
+        for stat in recent_games:
+            squad = stat[6]
+            score_corn = stat[1]
+            score_tomato = stat[2]
+            
+            if squad is None or score_corn is None or score_tomato is None:
+                continue  # Skip invalid games
+            
+            if squad == constants.SQUAD_CORN:
+                if score_corn > score_tomato:
+                    performance.append('W')
+                elif score_corn < score_tomato:
+                    performance.append('L')
+                else:
+                    performance.append('D')
+            elif squad == constants.SQUAD_TOMATO:
+                if score_corn < score_tomato:
+                    performance.append('W')
+                elif score_corn > score_tomato:
+                    performance.append('L')
+                else:
+                    performance.append('D')
+        
+        # Join into string
+        performance_str = ''.join(performance)
+        
+        return jsonify({
+            'success': True,
+            'performance': performance_str
+        })
+    except Exception as e:
+        print(f"Error in get_player_last_games_performance: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/register-player-action', methods=['POST'])
 def register_player_action():
     """Register player action (mock implementation)"""

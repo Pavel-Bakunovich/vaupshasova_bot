@@ -34,10 +34,48 @@ async function loadPlayerData() {
         if (data.success) {
             currentPlayerData = data.player;
             updatePlayerDisplay(data.player, data.stats);
+            await loadPerformance();
         }
     } catch (error) {
         console.error('Error loading player data:', error);
         document.getElementById('player-greeting').textContent = 'Ошибка загрузки';
+    }
+}
+
+async function loadPerformance() {
+    if (!currentPlayerData) return;
+    
+    try {
+        const response = await fetch(`/api/player/${currentPlayerData.id}/last-games-performance`);
+        if (!response.ok) throw new Error('Failed to load performance');
+        
+        const data = await response.json();
+        if (data.success) {
+            displayPerformance(data.performance);
+        }
+    } catch (error) {
+        console.error('Error loading performance:', error);
+    }
+}
+
+function displayPerformance(performance) {
+    const container = document.getElementById('performance-squares');
+    container.innerHTML = '';
+    
+    for (const result of performance) {
+        const square = document.createElement('div');
+        square.className = 'performance-square';
+        square.textContent = result;
+        
+        if (result === 'W') {
+            square.classList.add('win');
+        } else if (result === 'D') {
+            square.classList.add('draw');
+        } else if (result === 'L') {
+            square.classList.add('loss');
+        }
+        
+        container.appendChild(square);
     }
 }
 
