@@ -264,8 +264,8 @@ def get_player_last_games_performance(player_id):
         # Get last individual games
         last_games = database.get_last_individual_games(player_id)
         
-        # Take last 10 games
-        recent_games = last_games[:10]
+        # Take last 10 games, reverse to show oldest first
+        recent_games = last_games[:10][::-1]
         
         performance = []
         for stat in recent_games:
