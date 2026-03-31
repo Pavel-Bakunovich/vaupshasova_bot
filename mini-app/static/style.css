@@ -166,17 +166,24 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.season-header {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+    color: var(--tg-theme-text-color, #000);
+}
+
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 8px;
 }
 
 .stat-item {
     background: var(--tg-theme-bg-color, #ffffff);
     border-radius: 8px;
-    padding: 12px;
+    padding: 8px;
     text-align: center;
     border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
 }
@@ -188,7 +195,7 @@ body {
 }
 
 .stat-value {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     color: var(--tg-theme-text-color, #000);
 }

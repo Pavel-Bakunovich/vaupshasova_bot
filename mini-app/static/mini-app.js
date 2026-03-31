@@ -33,7 +33,7 @@ async function loadPlayerData() {
         const data = await response.json();
         if (data.success) {
             currentPlayerData = data.player;
-            updatePlayerDisplay(data.player, data.stats);
+            updatePlayerDisplay(data.player, data.stats, data.season_stats, data.current_year);
             updateBalance(data.balance);
             await loadPerformance();
         }
@@ -80,17 +80,16 @@ function displayPerformance(performance) {
     }
 }
 
-function updatePlayerDisplay(player, stats) {
+function updatePlayerDisplay(player, stats, season_stats, current_year) {
     // Get display name (prefer friendly name)
     const displayName = `${player.friendly_first_name || player.first_name} ${player.friendly_last_name || player.last_name}`;
     
     document.getElementById('player-greeting').textContent = `Привет, ${displayName}`;
-    document.getElementById('stat-games').textContent = stats.games_played;
-    document.getElementById('stat-goals').textContent = stats.goals;
-    document.getElementById('stat-assists').textContent = stats.assists;
-    document.getElementById('stat-own-goals').textContent = stats.own_goals;
-    document.getElementById('total-games-for-corn').textContent = stats.games_for_corn;
-    document.getElementById('total-games-for-tomato').textContent = stats.games_for_tomato;
+    document.getElementById('season-header').textContent = `Сезон ${current_year}`;
+    document.getElementById('season-games').textContent = season_stats.games_played;
+    document.getElementById('season-goals').textContent = season_stats.goals;
+    document.getElementById('season-assists').textContent = season_stats.assists;
+    document.getElementById('season-own-goals').textContent = season_stats.own_goals;
     
     // Update other screens with player name
     document.getElementById('personal-stats-name').textContent = displayName;

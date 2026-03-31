@@ -131,6 +131,29 @@ def get_player(telegram_id):
     player_id = player[7] if player else None
 
     individual_stats = database.get_individual_stats(player_id)
+    season_stats_all = database.get_individual_stats_by_season(player_id)
+    current_year = datetime.now().year
+
+    season_stats = None
+    for stat in season_stats_all:
+        if stat[0] == current_year:
+            season_stats = stat
+            break
+
+    if season_stats:
+        season_stats_dict = {
+            'games_played': season_stats[1] if season_stats[1] is not None else 0,
+            'goals': season_stats[2] if season_stats[2] is not None else 0,
+            'assists': season_stats[3] if season_stats[3] is not None else 0,
+            'own_goals': season_stats[4] if season_stats[4] is not None else 0,
+        }
+    else:
+        season_stats_dict = {
+            'games_played': 0,
+            'goals': 0,
+            'assists': 0,
+            'own_goals': 0,
+        }
 
     individual_balance = database.get_individual_balance(player_id)
 
@@ -160,6 +183,8 @@ def get_player(telegram_id):
                 'informal_first_name': player[6] if player else None
             },
         'stats': stats,
+        'season_stats': season_stats_dict,
+        'current_year': current_year,
         'balance': individual_balance[0] if individual_balance else 0
     })
 
