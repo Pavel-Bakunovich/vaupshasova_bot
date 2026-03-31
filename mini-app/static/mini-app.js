@@ -34,6 +34,7 @@ async function loadPlayerData() {
         if (data.success) {
             currentPlayerData = data.player;
             updatePlayerDisplay(data.player, data.stats);
+            updateBalance(data.balance);
             await loadPerformance();
         }
     } catch (error) {
@@ -101,6 +102,13 @@ function updatePlayerDisplay(player, stats) {
     loadAlltimeStats();
     loadSeasonStats();
     loadPersonalStats();
+}
+
+function updateBalance(balance) {
+    const balanceElement = document.getElementById('balance-value');
+    let sign = balance >= 0 ? '+' : '';
+    let colorClass = balance >= 0 ? 'positive' : 'negative';
+    balanceElement.innerHTML = `<span class="${colorClass}">${sign}${balance} р.</span>`;
 }
 
 async function loadSquadList() {

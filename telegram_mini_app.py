@@ -132,6 +132,8 @@ def get_player(telegram_id):
 
     individual_stats = database.get_individual_stats(player_id)
 
+    individual_balance = database.get_individual_balance(player_id)
+
     if not player_data:
         return jsonify({'success': False, 'error': 'Player not found'}), 404
     
@@ -157,7 +159,8 @@ def get_player(telegram_id):
                 'friendly_last_name': player[5] if player else None,
                 'informal_first_name': player[6] if player else None
             },
-        'stats': stats
+        'stats': stats,
+        'balance': individual_balance[0] if individual_balance else 0
     })
 
 @app.route('/api/next-matchday-squad/<int:telegram_id>')

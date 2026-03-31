@@ -139,6 +139,25 @@ body {
     color: #721c24;
 }
 
+.balance-section {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.balance-value {
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.positive {
+    color: #31a24c;
+}
+
+.negative {
+    color: #f44336;
+}
+
 .player-card {
     background: var(--tg-theme-secondary-bg-color, #f5f5f5);
     border-radius: 12px;
@@ -177,7 +196,7 @@ body {
 .section-title {
     font-size: 16px;
     font-weight: 600;
-    margin: 20px 0 12px 0;
+    margin: 0 0 12px 0;
     color: var(--tg-theme-text-color, #000);
 }
 
@@ -195,13 +214,13 @@ body {
     padding: 5px;
     background: var(--tg-theme-secondary-bg-color, #f5f5f5);
     border-radius: 8px;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     transition: all 0.2s ease;
 }
 
 .squad-slot:not(.empty):not(.other-category) {
     background: var(--tg-theme-bg-color, #ffffff);
-    border: 2px solid var(--tg-theme-hint-color, #e0e0e0);
+    border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
 }
 
 .squad-slot.empty {
