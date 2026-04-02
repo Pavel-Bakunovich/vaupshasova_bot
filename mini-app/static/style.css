@@ -404,6 +404,7 @@ body {
 /* Details Screen */
 .details-content {
     padding: 16px;
+    overflow-y: auto;
 }
 
 .stat-table {
@@ -432,10 +433,7 @@ body {
 }
 
 .table-responsive {
-    max-height: 60vh;
     overflow-y: auto;
-    border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
-    border-radius: 8px;
 }
 
 .table-responsive .stat-table {
