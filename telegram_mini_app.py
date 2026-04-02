@@ -123,10 +123,6 @@ def index():
 
 @app.route('/api/player/<int:telegram_id>')
 def get_player(telegram_id):
-    """Get player info by Telegram ID (mock data)"""
-    # Default to first player if not found
-    player_data = MOCK_PLAYERS.get(telegram_id, MOCK_PLAYERS.get(343151297))
-    
     player = database.find_player(telegram_id)
     player_id = player[7] if player else None
 
@@ -156,9 +152,6 @@ def get_player(telegram_id):
         }
 
     individual_balance = database.get_individual_balance(player_id)
-
-    if not player_data:
-        return jsonify({'success': False, 'error': 'Player not found'}), 404
     
     stats =  {
         'games_played': individual_stats[0] if individual_stats[1] is not None else 0,
@@ -419,4 +412,4 @@ def register_player_action():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    {app.run(host='0.0.0.0', port=5000, debug=True)}
+    app.run(host='0.0.0.0', port=5000, debug=True)

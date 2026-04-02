@@ -92,8 +92,8 @@ function updatePlayerDisplay(player, stats, season_stats, current_year) {
     document.getElementById('season-own-goals').textContent = season_stats.own_goals;
     
     // Update other screens with player name
-    document.getElementById('personal-stats-name').textContent = displayName;
-    document.getElementById('season-stats-name').textContent = displayName;
+    document.getElementById('alltime-stats-header').textContent = displayName;
+    document.getElementById('season-stats-player-name').textContent = displayName;
     document.getElementById('balance-name').textContent = displayName;
     
     // Load detailed stats
