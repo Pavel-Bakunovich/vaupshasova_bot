@@ -49,7 +49,7 @@ def add_game_stats(player_id, game_id, goals, assists, own_goals):
     connection.commit()
     close_connection_pool(connection_pool)
 
-def get_season_stats(year):
+def get_season_stats(year, limit = 20):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
@@ -69,7 +69,7 @@ def get_season_stats(year):
           and Games.Played = TRUE
 GROUP BY Players.Friendly_First_Name, Players.Friendly_Last_Name
 ORDER BY Goals_Sum DESC, Assists_Sum DESC
-LIMIT 20;
+LIMIT {limit};
     ''')
     stats = cursor.fetchall()
     

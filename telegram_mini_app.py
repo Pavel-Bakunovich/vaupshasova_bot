@@ -333,6 +333,44 @@ def get_player_last_games_performance(player_id):
             'error': str(e)
         }), 500
 
+@app.route('/api/current-season-stats')
+def get_current_season_stats():
+    """Get current season stats overview"""
+    try:
+        current_year = datetime.now().year
+        season_score = database.get_season_score(current_year)
+        season_stats = database.get_season_stats(current_year, 100)
+        
+        # Format season stats
+        players = []
+        for i, player in enumerate(season_stats, 1):
+            players.append({
+                'rank': i,
+                'first_name': player[0],
+                'last_name': player[1],
+                'games_played': player[2],
+                'goals': player[3],
+                'assists': player[4],
+                'own_goals': player[5]
+            })
+        
+        return jsonify({
+            'success': True,
+            'season_score': {
+                'corn_wins': season_score[1],
+                'draws': season_score[2],
+                'tomato_wins': season_score[0]
+            },
+            'players': players,
+            'year': current_year
+        })
+    except Exception as e:
+        print(f"Error in get_current_season_stats: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/register-player-action', methods=['POST'])
 def register_player_action():
     """Register player action (mock implementation)"""

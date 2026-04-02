@@ -94,7 +94,6 @@ function updatePlayerDisplay(player, stats, season_stats, current_year) {
     // Update other screens with player name
     document.getElementById('personal-stats-name').textContent = displayName;
     document.getElementById('season-stats-name').textContent = displayName;
-    document.getElementById('alltime-stats-name').textContent = displayName;
     document.getElementById('balance-name').textContent = displayName;
     
     // Load detailed stats
@@ -260,21 +259,29 @@ async function loadAlltimeStats() {
 }
 
 async function loadSeasonStats() {
-    if (!currentPlayerData) return;
-    
     try {
-        const response = await fetch(`/api/player/${currentPlayerData.id}/season-stats`);
+        const response = await fetch('/api/current-season-stats');
         const data = await response.json();
         
-        if (data.success && data.season_stats) {
+        if (data.success) {
+            // Update season score
+            document.getElementById('corn-wins').textContent = data.season_score.corn_wins;
+            document.getElementById('draws').textContent = data.season_score.draws;
+            document.getElementById('tomato-wins').textContent = data.season_score.tomato_wins;
+            
+            // Update header with current year
+            document.getElementById('season-stats-name').textContent = `📈 Статистика сезона ${data.year}`;
+            
+            // Update player stats table
             const tbody = document.getElementById('season-stats-body');
-            tbody.innerHTML = data.season_stats.map(stat => `
+            tbody.innerHTML = data.players.map(player => `
                 <tr>
-                    <td>${stat.season}</td>
-                    <td>${stat.games_played}</td>
-                    <td>${stat.goals}</td>
-                    <td>${stat.assists}</td>
-                    <td>${stat.own_goals}</td>
+                    <td>${player.rank}</td>
+                    <td>${player.first_name} ${player.last_name}</td>
+                    <td>${player.games_played}</td>
+                    <td>${player.goals}</td>
+                    <td>${player.assists}</td>
+                    <td>${player.own_goals}</td>
                 </tr>
             `).join('');
         }
@@ -392,5 +399,7 @@ function showScreen(screenId) {
     // Load data for specific screens
     if (screenId === 'balance-screen') {
         loadBalanceData();
+    } else if (screenId === 'season-stats-screen') {
+        loadSeasonStats();
     }
 }

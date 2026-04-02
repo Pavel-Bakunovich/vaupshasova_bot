@@ -71,7 +71,7 @@
 
                 <!-- Registration Actions -->
                 <div>
-                    <h2 class="section-title">🎯 Ваша регистрация</h2>
+                    <h2 class="section-title">🎯 Регистрация</h2>
                     <div class="action-buttons">
                         <button class="action-btn add" onclick="registerAction('add')">
                             <span class="btn-icon">✅</span>
@@ -94,11 +94,10 @@
 
                 <!-- Navigation -->
                 <div class="nav-links">
+                    <button class="nav-btn" onclick="showScreen('season-stats-screen')">📈 Статистика сезона</button>
                     <button class="nav-btn" onclick="showScreen('personal-stats-screen')">📊 Полная статистика</button>
                     <button class="nav-btn" onclick="showScreen('records-screen')">🏅 Рекорды</button>
-                    <button class="nav-btn" onclick="showScreen('season-stats-screen')">📈 По сезонам</button>
-                    <button class="nav-btn" onclick="showScreen('alltime-stats-screen')">🌟 Всё время</button>
-                    <button class="nav-btn" onclick="showScreen('balance-screen')">💰 Баланс</button>
+                    <button class="nav-btn" onclick="showScreen('balance-screen')">💰 Финансовый баланс</button>
                 </div>
             </div>
         </div>
@@ -131,14 +130,33 @@
         <div id="season-stats-screen" class="screen">
             <div class="header">
                 <button class="back-button" onclick="showScreen('home-screen')">← Назад</button>
-                <h1>📈 Статистика по сезонам</h1>
-                <p id="season-stats-name">-</p>
+                <h1 id="season-stats-name">📈 Статистика сезона</h1>
             </div>
             <div class="details-content">
+                <!-- Season Score -->
+                <div class="season-score" id="season-score">
+                    <div class="score-display">
+                        <div class="score-item">
+                            <div class="score-label">🌽 Кукуруза</div>
+                            <div class="score-value" id="corn-wins">-</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Ничьи</div>
+                            <div class="score-value" id="draws">-</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">🍅 Помидоры</div>
+                            <div class="score-value" id="tomato-wins">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Stats Table -->
                 <table class="stat-table" id="season-stats-table">
                     <thead>
                         <tr>
-                            <th>Сезон</th>
+                            <th>N</th>
+                            <th>Игрок</th>
                             <th>Игры</th>
                             <th>Голы</th>
                             <th>Асисты</th>
@@ -147,63 +165,6 @@
                     </thead>
                     <tbody id="season-stats-body"></tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- All-time Stats Screen -->
-        <div id="alltime-stats-screen" class="screen">
-            <div class="header">
-                <button class="back-button" onclick="showScreen('home-screen')">← Назад</button>
-                <h1>🌟 Статистика всё время</h1>
-                <p id="alltime-stats-name">-</p>
-            </div>
-            <div class="details-content">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-label">Всего игр</div>
-                        <div class="stat-value" id="alltime-games">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Всего голов</div>
-                        <div class="stat-value" id="alltime-goals">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Всего асистов</div>
-                        <div class="stat-value" id="alltime-assists">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Автоголы</div>
-                        <div class="stat-value" id="alltime-own-goals">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Всего игр за Кукурузу</div>
-                        <div class="stat-value" id="total-games-for-corn">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Всего игр за Помидоры</div>
-                        <div class="stat-value" id="total-games-for-tomato">0</div>
-                    </div>
-                </div>
-
-                <h2 class="section-title">🎯 Серии</h2>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-label">Текущая серия побед</div>
-                        <div class="stat-value" id="win-streak">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Текущая серия поражений</div>
-                        <div class="stat-value" id="loss-streak">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">За Кукурузу</div>
-                        <div class="stat-value" id="alltime-corn">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">За Помидор</div>
-                        <div class="stat-value" id="alltime-tomato">0</div>
-                    </div>
-                </div>
             </div>
         </div>
 
