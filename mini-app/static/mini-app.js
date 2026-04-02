@@ -401,5 +401,43 @@ function showScreen(screenId) {
         loadBalanceData();
     } else if (screenId === 'season-stats-screen') {
         loadSeasonStats();
+    } else if (screenId === 'alltime-stats-screen') {
+        loadAlltimeStatsTable();
+    }
+}
+
+async function loadAlltimeStatsTable() {
+    try {
+        const response = await fetch('/api/alltime-stats');
+        const data = await response.json();
+        if (data.success) {
+            // Header
+            document.getElementById('alltime-stats-header').textContent =
+                `Всего игр сыграно: ${data.stats_goals_games[0]}. Всего голов забито: ${data.stats_goals_games[1]}. Всего автоголов забито: ${data.stats_goals_games[2]}`;
+
+            // Table
+            const content = document.getElementById('alltime-stats-content');
+            let html = `<div class="table-responsive"><table class="stat-table"><thead><tr>
+                <th>N</th><th>Игрок</th><th>Игры</th><th>Голы</th><th>Асисты</th><th>Автоголы</th><th>Гол/Игра</th><th>Побед</th><th>% Побед</th>
+            </tr></thead><tbody>`;
+            data.stats.forEach((player, i) => {
+                html += `<tr>
+                    <td>${i+1}</td>
+                    <td>${player.first_name} ${player.last_name}</td>
+                    <td>${player.games_played}</td>
+                    <td>${player.goals}</td>
+                    <td>${player.assists}</td>
+                    <td>${player.own_goals}</td>
+                    <td>${player.avg_goals}</td>
+                    <td>${player.wins}</td>
+                    <td>${player.win_rate}%</td>
+                </tr>`;
+            });
+            html += '</tbody></table></div>';
+            content.innerHTML = html;
+        }
+    } catch (error) {
+        console.error('Error loading alltime stats:', error);
+        document.getElementById('alltime-stats-content').innerHTML = '<div class="error">Ошибка при загрузке статистики</div>';
     }
 }

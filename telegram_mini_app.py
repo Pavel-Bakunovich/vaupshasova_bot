@@ -371,6 +371,34 @@ def get_current_season_stats():
             'error': str(e)
         }), 500
 
+@app.route('/api/alltime-stats')
+def get_alltime_stats():
+    """Get alltime stats and header info for alltime stats screen"""
+    try:
+        stats = database.get_alltime_stats(1000)
+        stats_goals_games = database.get_alltime_stats_games_goal()
+        players = []
+        for player in stats:
+            players.append({
+                'first_name': player[0],
+                'last_name': player[1],
+                'games_played': player[2],
+                'goals': player[3],
+                'assists': player[4],
+                'own_goals': player[5],
+                'avg_goals': player[6],
+                'wins': player[7],
+                'win_rate': player[8],
+            })
+        return jsonify({
+            'success': True,
+            'stats': players,
+            'stats_goals_games': stats_goals_games
+        })
+    except Exception as e:
+        print(f"Error in get_alltime_stats: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/register-player-action', methods=['POST'])
 def register_player_action():
     """Register player action (mock implementation)"""
@@ -391,4 +419,4 @@ def register_player_action():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    {app.run(host='0.0.0.0', port=5000, debug=True)}

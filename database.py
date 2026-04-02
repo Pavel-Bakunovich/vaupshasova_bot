@@ -277,7 +277,7 @@ ORDER BY
     connection.commit()
     return stats
 
-def get_alltime_stats():
+def get_alltime_stats(limit = 35):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
@@ -310,10 +310,9 @@ where Matchday.type like 'add'
 	and Games.Played = TRUE
 GROUP BY 
     Players.Id, Player_Id,Players.Friendly_First_Name, Players.Friendly_Last_Name--, Matchday.type
-HAVING COUNT(*) > 5
 ORDER BY 
     Games_Played DESC
-LIMIT 35
+LIMIT {limit};
     ''')
     stats = cursor.fetchall()
     connection.commit()
