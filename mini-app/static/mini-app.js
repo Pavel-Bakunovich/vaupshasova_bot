@@ -147,7 +147,7 @@ function displaySquadList(squadAdd, squadChair, squadMaybe, squadRemove) {
         }
 
         const day = String(parsed.getDate()).padStart(2, '0');
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthNames = ['Янв', 'Фев', 'Мар', 'Апр', 'Мая', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
         const month = monthNames[parsed.getMonth()];
         const hours = String(parsed.getHours()).padStart(2, '0');
         const minutes = String(parsed.getMinutes()).padStart(2, '0');
