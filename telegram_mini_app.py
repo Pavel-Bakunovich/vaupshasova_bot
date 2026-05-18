@@ -214,7 +214,8 @@ def get_next_matchday_squad(telegram_id):
                 'informal_first_name': player[9],
                 'squad': squad,
                 'registration_type': registration_type,
-                'is_current_user': player[6] == current_player_id  # Check if this is current user
+                'is_current_user': player[6] == current_player_id,  # Check if this is current user
+                'time_stamp': player[11]
             }
             
             # Convert squad to emoji

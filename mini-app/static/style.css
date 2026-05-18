@@ -279,6 +279,13 @@ body {
     font-weight: 500;
 }
 
+.timestamp {
+    margin-left: auto;
+    color: var(--tg-theme-hint-color, #8f9bb3);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
 .player-item {
     display: flex;
     justify-content: space-between;

@@ -624,7 +624,7 @@ def get_squad(matchday_date):
     connection = connection_pool.getconn()
     cursor = connection.cursor()
     game_id = get_game_id(matchday_date)
-    cursor.execute(f'SELECT Players.id, Matchday.Type, Matchday.Wokeup, Players.Telegram_First_Name, Players.Telegram_Last_Name, Players.Telegram_Login, Players.Telegram_ID, Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.Informal_Friendly_First_Name, Matchday.Squad FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Game_ID = \'{game_id}\' ORDER BY Matchday.Squad, Matchday.Time_Stamp ASC')
+    cursor.execute(f'SELECT Players.id, Matchday.Type, Matchday.Wokeup, Players.Telegram_First_Name, Players.Telegram_Last_Name, Players.Telegram_Login, Players.Telegram_ID, Players.Friendly_First_Name, Players.Friendly_Last_Name, Players.Informal_Friendly_First_Name, Matchday.Squad, Matchday.time_stamp FROM Matchday INNER JOIN Players ON Matchday.Player_ID=Players.id WHERE Matchday.Game_ID = \'{game_id}\' ORDER BY Matchday.Squad, Matchday.Time_Stamp ASC')
     matchdays = cursor.fetchall()
     close_connection_pool(connection_pool)
     return matchdays

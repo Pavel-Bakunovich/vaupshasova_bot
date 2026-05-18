@@ -138,6 +138,21 @@ function displaySquadList(squadAdd, squadChair, squadMaybe, squadRemove) {
         const secondDigit = num % 10;
         return numberEmojis[firstDigit] + numberEmojis[secondDigit];
     }
+
+    function formatTimeStamp(timestamp) {
+        if (!timestamp) return '';
+        const parsed = new Date(timestamp);
+        if (Number.isNaN(parsed.getTime())) {
+            return timestamp;
+        }
+
+        const day = String(parsed.getDate()).padStart(2, '0');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = monthNames[parsed.getMonth()];
+        const hours = String(parsed.getHours()).padStart(2, '0');
+        const minutes = String(parsed.getMinutes()).padStart(2, '0');
+        return `${day} ${month}, ${hours}:${minutes}`;
+    }
     
     for (let i = 0; i < slotCount; i++) {
         const player = squadAdd[i];
@@ -155,6 +170,7 @@ function displaySquadList(squadAdd, squadChair, squadMaybe, squadRemove) {
                     <div class="slot-content">
                         ${squadEmoji ? '<span class="squad-emoji">' + squadEmoji + '</span>' : ''}
                         <span class="player-name">${displayName}</span>
+                        <span class="timestamp">${formatTimeStamp(player.time_stamp)}</span>
                     </div>
                 </div>
             `;
@@ -181,6 +197,7 @@ function displaySquadList(squadAdd, squadChair, squadMaybe, squadRemove) {
                     <div class="slot-emoji">🪑</div>
                     <div class="slot-content">
                         <span class="player-name">${displayName}</span>
+                        <span class="timestamp">${formatTimeStamp(player.time_stamp)}</span>
                     </div>
                 </div>
             `;
@@ -198,6 +215,7 @@ function displaySquadList(squadAdd, squadChair, squadMaybe, squadRemove) {
                     <div class="slot-emoji">❓</div>
                     <div class="slot-content">
                         <span class="player-name">${displayName}</span>
+                        <span class="timestamp">${formatTimeStamp(player.time_stamp) || ''}</span>
                     </div>
                 </div>
             `;
@@ -215,6 +233,7 @@ function displaySquadList(squadAdd, squadChair, squadMaybe, squadRemove) {
                     <div class="slot-emoji">❌</div>
                     <div class="slot-content">
                         <span class="player-name">${displayName}</span>
+                        <span class="timestamp">${formatTimeStamp(player.time_stamp) || ''}</span>
                     </div>
                 </div>
             `;
