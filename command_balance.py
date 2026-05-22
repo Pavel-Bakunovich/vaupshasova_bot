@@ -23,7 +23,7 @@ def execute(message, bot):
                 balance = balance_item[3]
                 if balance != 0:
                     table.add_row([player_name, f"{balance} р."])
-            photo = text_to_image(table.get_string(), image_size=(320, 1200), font_size=11)
+            photo = text_to_image(table.get_string(), image_size=(320, 1350), font_size=11)
             bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
             log(f"/balance requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
