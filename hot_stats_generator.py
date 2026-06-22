@@ -14,7 +14,7 @@ class HotStatsGenerator:
         pass
 
     def get_message(self):
-        random_number = random.randint(0, 24)
+        random_number = random.randint(0, 25)
         match random_number:
             case 0:
                 return self.how_many_games_we_played(random_number)
@@ -29,42 +29,44 @@ class HotStatsGenerator:
             case 5:
                 return self.active_loss_streaks(random_number)
             case 6:
-                return self.top_goals_per_game(random_number)
+                return self.active_games_played_streaks(random_number)
             case 7:
-                return self.top_goals_alltime(random_number)
+                return self.top_goals_per_game(random_number)
             case 8:
-                return self.top_assists_per_game(random_number)
+                return self.top_goals_alltime(random_number)
             case 9:
-                return self.top_assists_alltime(random_number)
+                return self.top_assists_per_game(random_number)
             case 10:
-                return self.top_own_goals_per_game(random_number)
+                return self.top_assists_alltime(random_number)
             case 11:
-                return self.who_scored_most_own_goals(random_number)
+                return self.top_own_goals_per_game(random_number)
             case 12:
-                return self.who_has_the_higher_win_rate(random_number)
+                return self.who_scored_most_own_goals(random_number)
             case 13:
-                return self.who_paid_the_most_money(random_number)
+                return self.who_has_the_higher_win_rate(random_number)
             case 14:
-                return self.who_played_the_most_games_for_corn(random_number)
+                return self.who_paid_the_most_money(random_number)
             case 15:
-                return self.who_played_the_most_games_for_tomato(random_number)
+                return self.who_played_the_most_games_for_corn(random_number)
             case 16:
-                return self.who_sat_on_a_chair_the_most_times(random_number)
+                return self.who_played_the_most_games_for_tomato(random_number)
             case 17:
+                return self.who_sat_on_a_chair_the_most_times(random_number)
+            case 18:
                 return self.top_player_pairs(random_number)
-            case 18: 
-                return self.average_age_and_height(random_number)
             case 19: 
-                return self.attendance_streaks(random_number)
+                return self.average_age_and_height(random_number)
             case 20: 
-                return self.games_with_max_goal_difference(random_number)
+                return self.attendance_streaks(random_number)
             case 21: 
-                return self.max_total_goals_per_game_by_two_teams(random_number)
+                return self.games_with_max_goal_difference(random_number)
             case 22: 
-                return self.most_goals_scored_per_game_by_corn(random_number)
+                return self.max_total_goals_per_game_by_two_teams(random_number)
             case 23: 
-                return self.most_goals_scored_per_game_by_tomato(random_number)
+                return self.most_goals_scored_per_game_by_corn(random_number)
             case 24: 
+                return self.most_goals_scored_per_game_by_tomato(random_number)
+            case 25: 
                 return self.individual_stats_random_player()
             case _:
                 return "Нет сегодня никакой статистики"
@@ -135,6 +137,16 @@ class HotStatsGenerator:
         active_loss_streaks_from_db = database.execute_sql_query_return_many(sql_active_loss_streaks)
         text_active_loss_streaks = command_records.format_win_loose_streaks(active_loss_streaks_from_db)
         records_template = fill_records_template(records_template, constants.SQL_ACTIVE_LOSS_STREAKS, text_active_loss_streaks)
+        return records_template
+
+    def active_games_played_streaks(self, random_number):
+        records_template = self.get_records_template(random_number)
+        sql_active_games_played_streak = ""
+        with open(f"SQL Queries/{constants.SQL_GAMES_PLAYED_STREAK_ACTIVE}" , "r") as file:
+            sql_active_games_played_streak = file.read()
+        active_games_played_streaks_from_db = database.execute_sql_query_return_many(sql_active_games_played_streak)
+        text_active_games_played_streaks = command_records.format_win_loose_streaks(active_games_played_streaks_from_db)
+        records_template = fill_records_template(records_template, constants.SQL_GAMES_PLAYED_STREAK_ACTIVE, text_active_games_played_streaks)
         return records_template
 
     def top_goals_per_game(self, random_number):
@@ -256,7 +268,7 @@ class HotStatsGenerator:
         text_top_player_pairs = command_records.format_player_pairs(top_player_pairs_from_db)
         records_template = fill_records_template(records_template, constants.SQL_TOP_PLAYER_PAIRS, text_top_player_pairs)
         return records_template
-    
+
     def average_age_and_height(self, random_number):
         records_template = self.get_records_template(random_number)
         sql_average_age_and_height = ""
