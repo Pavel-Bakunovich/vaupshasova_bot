@@ -8,6 +8,8 @@
 {Active win streaks.sql}
 [!]Активные серии поражений:
 {Active loss streaks.sql}
+[!]Активные серии сыгранных игр подряд без пропуска:
+{Games played streak (Active).sql}
 [!]Наибольшее количество голов за одну игру:
 {Top goals per game.sql}
 [!]Наибольшее количество голов за всю историю:

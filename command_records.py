@@ -27,6 +27,7 @@ sql_top_goals_alltime = ""
 sql_top_player_pairs = ""
 sql_average_age_and_height = ""
 sql_attendance_streaks = ""
+sql_active_games_played_streak = ""
 sql_max_goal_difference = ""
 sql_most_goals_scored_per_game_by_corn = ""
 sql_most_goals_scored_per_game_by_tomato = ""
@@ -49,6 +50,7 @@ text_top_goals_alltime = ""
 text_top_player_pairs = ""
 text_average_age_and_height = ""
 text_attandance_streaks = ""
+text_active_games_played_streak = ""
 text_max_goal_difference = ""
 text_most_goals_scored_per_game_by_corn = ""
 text_most_goals_scored_per_game_by_tomato = ""
@@ -104,6 +106,7 @@ def build_records_text():
     text_top_player_pairs = database.execute_sql_query_return_many(sql_top_player_pairs)
     text_active_win_streaks = database.execute_sql_query_return_many(sql_active_win_streaks)
     text_active_loss_streaks = database.execute_sql_query_return_many(sql_active_loss_streaks)
+    text_active_games_played_streak = database.execute_sql_query_return_many(sql_active_games_played_streak)
     text_average_age_and_height = database.execute_sql_query_return_many(sql_average_age_and_height)
     text_attandance_streaks = database.execute_sql_query_return_many(sql_attendance_streaks)
     text_max_goal_difference = database.execute_sql_query_return_many(sql_max_goal_difference)
@@ -126,6 +129,7 @@ def build_records_text():
     records_template = fill_records_template(records_template, constants.SQL_LOSING_STREAKS, format_win_loose_streaks(text_losing_streaks))
     records_template = fill_records_template(records_template, constants.SQL_ACTIVE_WIN_STREAKS, format_win_loose_streaks(text_active_win_streaks))
     records_template = fill_records_template(records_template, constants.SQL_ACTIVE_LOSS_STREAKS, format_win_loose_streaks(text_active_loss_streaks))
+    records_template = fill_records_template(records_template, constants.SQL_GAMES_PLAYED_STREAK_ACTIVE, format_win_loose_streaks(text_active_games_played_streak))
     records_template = fill_records_template(records_template, constants.SQL_TOP_ASSISTS_ALLTIME, format_most_goals(text_top_assists_alltime))
     records_template = fill_records_template(records_template, constants.SQL_TOP_GOALS_ALLTIME, format_most_goals(text_top_goals_alltime))
     records_template = fill_records_template(records_template, constants.SQL_TOP_PLAYER_PAIRS, format_player_pairs(text_top_player_pairs))
@@ -213,6 +217,10 @@ def load_sql_queries():
     global sql_active_loss_streaks
     with open(f"SQL Queries/{constants.SQL_ACTIVE_LOSS_STREAKS}" , "r") as file:
         sql_active_loss_streaks = file.read()
+
+    global sql_active_games_played_streak
+    with open(f"SQL Queries/{constants.SQL_GAMES_PLAYED_STREAK_ACTIVE}" , "r") as file:
+        sql_active_games_played_streak = file.read()
 
     global sql_average_age_and_height
     with open(f"SQL Queries/{constants.SQL_AVERAGE_AGE_AND_HEIGHT}" , "r") as file:
