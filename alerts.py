@@ -1,6 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 import os
-import telebot
+import asyncio
 import deepseek
 import constants
 from logger import log, log_error
@@ -11,11 +11,12 @@ from backup import Database_backup
 from good_morning_message import GoodMorningMessage
 from hot_stats_generator import HotStatsGenerator
 
-API_KEY = os.environ['TELEGRAM_API_TOKEN']
-bot = telebot.TeleBot(API_KEY)
 scheduler = None
+app_instance = None
 
-def schedule_alerts():
+def schedule_alerts(app):
+    global scheduler, app_instance
+    app_instance = app
     scheduler = BackgroundScheduler()
     scheduler.add_job(start_registration,
                       'cron',
@@ -61,14 +62,14 @@ def schedule_alerts():
 
 def start_registration():
     try:
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, fill_template("📝 Погнали регистрироваться на {date}! /add", date=get_next_matchday_formatted()), message_thread_id=constants.TELEGRAM_GATHER_SQUAD_TOPIC_ID)
+        send_async_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, fill_template("📝 Погнали регистрироваться на {date}! /add", date=get_next_matchday_formatted()), message_thread_id=constants.TELEGRAM_GATHER_SQUAD_TOPIC_ID)
         log("[Automated message] 📝 Start of registration message sent out.")
     except Exception as e:
         log_error(e)
 
 def start_waking_up():
     try:
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, "💤 Просыпаемся! /wakeup", message_thread_id=constants.TELEGRAM_GAMEDAY_TOPIC_ID)
+        send_async_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, "💤 Просыпаемся! /wakeup", message_thread_id=constants.TELEGRAM_GAMEDAY_TOPIC_ID)
         log("[Automated message] 💤 Start of waking message sent out.")
     except Exception as e:
         log_error(e)
@@ -78,7 +79,7 @@ def good_morning():
         good_morning_message = GoodMorningMessage()
         good_morning_message_text = good_morning_message.get_birthday_wishes()
         if good_morning_message.any_birthdays_today() == True:
-            bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(good_morning_message_text))
+            send_async_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(good_morning_message_text))
             log(f"Good morning message with birthday wishes sent out.")
         else:
             log(f"No birthdays today.")
@@ -90,7 +91,7 @@ def hot_stats():
     try:
         hot_stats_generator = HotStatsGenerator()
         hot_stats_text = hot_stats_generator.get_message()
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(hot_stats_text))
+        send_async_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, str(hot_stats_text))
         log(f"Hot stats sent out.")
     except Exception as e:
         log_error(e)
@@ -101,7 +102,7 @@ def pitch_payment_reminder():
         date_of_last_layment_for_pitch = format_date(database.date_of_last_layment_for_pitch())
         how_much_we_owe = games_since_last_layment_for_pitch * constants.COST_OF_1_GAME
         message_text = f"💵 Напоминка про оплату за поле.\nПоследний раз мы платили за поле {date_of_last_layment_for_pitch}.\nС момента последней оплаты прошло {games_since_last_layment_for_pitch} игр (в том числе считая следующую субботу).\n💲Сумма к оплате: {how_much_we_owe} р."
-        bot.send_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, message_text, message_thread_id=constants.TELEGRAM_ACCOUNTING_TOPIC_ID)
+        send_async_message(constants.VAUPSHASOVA_LEAGUE_TELEGRAM_ID, message_text, message_thread_id=constants.TELEGRAM_ACCOUNTING_TOPIC_ID)
         log("Pitch payment reminder sent out.")
     except Exception as e:
         log_error(e)
@@ -115,6 +116,18 @@ def daily_backup():
         log("✅💿 Database backup successfully created")
     except Exception as e:
         log_error(e)
+
+def send_async_message(chat_id, text, **kwargs):
+    """Helper function to send messages from background scheduler thread"""
+    try:
+        if app_instance and hasattr(app_instance, 'bot'):
+            import threading
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(app_instance.bot.send_message(chat_id=chat_id, text=text, **kwargs))
+            loop.close()
+    except Exception as e:
+        log_error(f"Failed to send scheduled message: {e}")
 
 def shutdown():
     if scheduler is not None:

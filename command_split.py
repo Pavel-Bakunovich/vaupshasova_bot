@@ -6,7 +6,7 @@ import database
 import constants
 import deepseek
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
         current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
@@ -31,12 +31,12 @@ def execute(message, bot):
                 split_squad = deepseek.send_request(split_squad_template_text, 0)
                 log (squad_list)
 
-                bot.reply_to(message, split_squad)
+                await bot.reply_to(message, split_squad)
                 log(f"/split requested by {get_player_name_formal(current_player)}")
             else:
                 reply_to_unauthorized(bot, message, player)
         else:
-            reply_registration_not_allowed(bot, message, current_player)
+            await reply_registration_not_allowed(bot, message, current_player)
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)

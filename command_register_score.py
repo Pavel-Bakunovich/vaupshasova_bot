@@ -1,5 +1,5 @@
 from logger import log, log_error
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
 from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
@@ -7,9 +7,9 @@ import constants
 import prettytable as pt
 import datetime
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
-        bot.set_message_reaction(message.chat.id,
+        await bot.set_message_reaction(message.chat.id,
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
@@ -17,7 +17,7 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
+        if await validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             command_and_argument_split = message.text.split('\n', 1)
             if len(command_and_argument_split)>1:
                 date_params = command_and_argument_split[0].split(' ', 1)
@@ -26,7 +26,7 @@ def execute(message, bot):
                     try:
                         date = datetime.datetime.strptime(date_params[1], "%b %d, %Y")
                     except:
-                        bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_score May 17, 2025...")
+                        await bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_score May 17, 2025...")
                     if date is not None:
                         score_params = command_and_argument_split[1].split(':',1)
                         score_corn = score_params[0]
@@ -35,22 +35,22 @@ def execute(message, bot):
                         
                         if game_id is not None:
                             if score_corn.isdigit() is False or score_tomato.isdigit() is False:
-                                bot.reply_to(message, f"Что-то не то с цифрами. Введи ты уже нормально! Вот в таком формате надо: <🌽>:<🍅>")
+                                await bot.reply_to(message, f"Что-то не то с цифрами. Введи ты уже нормально! Вот в таком формате надо: <🌽>:<🍅>")
                             else:
                                 database.register_game_score(game_id, score_corn, score_tomato)
                         else:
-                            bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
+                            await bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
                 
                         log(f"Game score successfully registered: 🌽 {score_corn}:{score_tomato} 🍅")
-                        bot.reply_to(message, f"✅ Счет записал. 🌽 {score_corn}:{score_tomato} 🍅")
-                        bot.set_message_reaction(message.chat.id,
+                        await bot.reply_to(message, f"✅ Счет записал. 🌽 {score_corn}:{score_tomato} 🍅")
+                        await bot.set_message_reaction(message.chat.id,
                                             message.message_id,
                                             [ReactionTypeEmoji('✍️')],
                                     is_big=True)
                         log(f"/register_score requested by: {get_player_name_formal(current_player)}")
             else:
-                bot.reply_to(message, "Что-то не то. Укажи дату, потом переход на новую строку и счет вот в таком формате <🌽>:<🍅>")
+                await bot.reply_to(message, "Что-то не то. Укажи дату, потом переход на новую строку и счет вот в таком формате <🌽>:<🍅>")
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
         

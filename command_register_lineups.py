@@ -1,14 +1,14 @@
 from logger import log, log_error
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday
 from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 import re
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
-        bot.set_message_reaction(message.chat.id,
+        await bot.set_message_reaction(message.chat.id,
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
@@ -16,7 +16,7 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
+        if await validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             command_and_argument_split = message.text.split('\n', 1)
             if len(command_and_argument_split)>1:
                 parts = command_and_argument_split[1].split('\n')
@@ -40,15 +40,15 @@ def execute(message, bot):
                     else:
                         log(f"Can't find player to register in a lineup: {lineup_player_params}")
                 
-                bot.reply_to(message, "✅ Результат деления на команды внесен!")
-                bot.set_message_reaction(message.chat.id,
+                await bot.reply_to(message, "✅ Резултат деления на команды внесен!")
+                await bot.set_message_reaction(message.chat.id,
                                     message.message_id,
                                     [ReactionTypeEmoji('✍️')],
                                     is_big=True)
                 log(f"/register_lineups requested by: {get_player_name_formal(current_player)}")
             else:
-                bot.reply_to(message, "Пришли результат дележки! Ты ж ничего не прислал.")
+                await bot.reply_to(message, "Пришли резултат дележки! Ты ж ничего не прислал.")
 
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)

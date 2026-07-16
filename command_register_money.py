@@ -1,5 +1,5 @@
 from logger import log, log_error
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time
 from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, text_to_image, get_player_name_extended, reply_only_CEO_can_do_it, validate_CEO_zone_no_arguments
 import database
@@ -8,9 +8,9 @@ import prettytable as pt
 import datetime
 import re
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
-        bot.set_message_reaction(message.chat.id,
+        await bot.set_message_reaction(message.chat.id,
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
@@ -18,7 +18,7 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
+        if await validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             if validate_CEO_zone_no_arguments(message.from_user.id):
                 command_and_argument_split = message.text.split('\n', 1)
                 if len(command_and_argument_split)>1:
@@ -28,7 +28,7 @@ def execute(message, bot):
                         try:
                             date = datetime.datetime.strptime(date_params[1], "%b %d, %Y")
                         except:
-                            bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_money May 17, 2025")
+                            await bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_money May 17, 2025")
                         if date is not None:
                             parts = command_and_argument_split[1].split('\n')
                             game_id = database.get_game_id_without_adding_new(date)
@@ -46,7 +46,7 @@ def execute(message, bot):
                                         if len(lineup_player_params)>3:
                                             comment = lineup_player_params[3]
                                         if money_given.isdigit() is False:
-                                            bot.reply_to(message, f"Что-то не то с данными по деньгам для этого игрока: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
+                                            await bot.reply_to(message, f"Что-то не то с данными по деньгам для этого игрока: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                         else:
                                             money_given_float = float(money_given)
                                             balance_change_int = money_given_float - constants.COST_OF_1_GAME_PER_PLAYER
@@ -54,24 +54,24 @@ def execute(message, bot):
                                             individual_balance = database.get_individual_balance(player_id)[0]
                                             output += f"💰 {first_name} {last_name}: {balance_change_int} р. / {individual_balance} р.\n"
                                     else:
-                                        bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
+                                        await bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                         log(f"Can't find player to register in a lineup: {lineup_player_params}")
                                 log(f"/register_money requested by: {get_player_name_formal(current_player)}")
-                                bot.reply_to(message, "✅ Бухгалтерия записана! Деньги мутятся, бухгалтерия крутится! Ванька едет в Египет! А может и в Дубаи! Красава!")
-                                bot.reply_to(message, output)
-                                bot.set_message_reaction(message.chat.id,
+                                await bot.reply_to(message, "✅ Бухгалтерия записана! Деньги мутятся, бухгалтерия крутится! Ванька едет в Египет! А может и в Дубаи! Красава!")
+                                await bot.reply_to(message, output)
+                                await bot.set_message_reaction(message.chat.id,
                                                     message.message_id,
                                                     [ReactionTypeEmoji('✍️')],
                                                     is_big=True)
                             else:
-                                bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
+                                await bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
                     else:
-                        bot.reply_to(message, "Дату надо указать! Без даты ничего не получится. Откуда ж я знаю за какой день бухгалтерию записывать? Вот в таком формате пиши: /register_money May 17, 2025")
+                        await bot.reply_to(message, "Дату надо указать! Без даты ничего не получится. Откуда ж я знаю за какой день бухгалтерию записывать? Вот в таком формате пиши: /register_money May 17, 2025")
                 else:
-                    bot.reply_to(message, "Пришли даннные кто сколько сдал! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись!")
+                    await bot.reply_to(message, "Пришли данные кто сколько сдал! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись!")
             else:
-                reply_only_CEO_can_do_it(bot, message)
+                await reply_only_CEO_can_do_it(bot, message)
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
         

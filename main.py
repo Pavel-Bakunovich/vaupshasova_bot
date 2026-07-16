@@ -1,5 +1,4 @@
 import os
-import telebot
 import command_add
 import command_remove
 import command_chair
@@ -24,104 +23,249 @@ import command_score
 import command_records
 import alerts
 import dotenv
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram import Update
 from logger import log
 
 dotenv.load_dotenv()
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
 log("Environment variables loaded.")
-bot = telebot.TeleBot(API_KEY)
-log("Bot object initialized.")
 
-@bot.message_handler(commands=['add'])
-def add(message):
-    command_add.execute(message, bot)
+# Create a wrapper class to maintain compatibility with command modules
+class BotWrapper:
+    def __init__(self, app):
+        self.app = app
+        self.bot = app.bot
+    
+    async def send_message(self, chat_id, text, **kwargs):
+        return await self.bot.send_message(chat_id=chat_id, text=text, **kwargs)
+    
+    async def reply_to(self, message, text, **kwargs):
+        return await message.reply_text(text, **kwargs)
+    
+    async def delete_message(self, chat_id, message_id):
+        return await self.bot.delete_message(chat_id=chat_id, message_id=message_id)
+    
+    async def edit_message_text(self, text, chat_id, message_id, **kwargs):
+        return await self.bot.edit_message_text(text=text, chat_id=chat_id, message_id=message_id, **kwargs)
+    
+    async def pin_chat_message(self, chat_id, message_id):
+        return await self.bot.pin_chat_message(chat_id=chat_id, message_id=message_id)
+    
+    async def set_message_reaction(self, chat_id, message_id, reactions, **kwargs):
+        return await self.bot.set_message_reaction(chat_id=chat_id, message_id=message_id, reaction=reactions, **kwargs)
+    
+    async def send_photo(self, chat_id, photo, **kwargs):
+        # Handle PIL Image objects by converting to BytesIO
+        from io import BytesIO
+        try:
+            from PIL.Image import Image as PILImage
+        except ImportError:
+            PILImage = None
+        
+        if PILImage and isinstance(photo, PILImage):
+            # Convert PIL Image to BytesIO
+            photo_bytes = BytesIO()
+            photo.save(photo_bytes, format='PNG')
+            photo_bytes.seek(0)
+            photo = photo_bytes
+        
+        return await self.bot.send_photo(chat_id=chat_id, photo=photo, **kwargs)
 
-@bot.message_handler(commands=['remove'])
-def remove(message):
-    command_remove.execute(message, bot)
+async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_add.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['chair'])
-def chair(message):
-    command_chair.execute(message, bot)
+async def remove(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_remove.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['maybe'])
-def chair(message):
-    command_maybe.execute(message, bot)
+async def chair(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_chair.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['squad'])
-def squad(message):
-    command_squad.execute(message, bot)
+async def maybe(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_maybe.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['split'])
-def split(message):
-    command_split.execute(message, bot)
+async def squad(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_squad.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['talk'])
-def talk(message):
-    command_talk.execute(message, bot)
+async def split(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_split.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['wakeup'])
-def wakeup(message):
-    command_wakeup.execute(message, bot)
+async def talk(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_talk.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['register_lineups'])
-def register_lineups(message):
-    command_register_lineups.execute(message, bot)
+async def wakeup(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_wakeup.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['print_lineups'])
-def print_lineups(message):
-    command_print_lineups.execute(message, bot)
+async def register_lineups(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_register_lineups.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['season_stats'])
-def season_stats(message):
-    command_season_stats.execute(message, bot)
+async def print_lineups(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_print_lineups.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['alltime_stats'])
-def alltime_stats(message):
-    command_alltime_stats.execute(message, bot)
+async def season_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_season_stats.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['balance'])
-def balance(message):
-    command_balance.execute(message, bot)
+async def alltime_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_alltime_stats.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['how_much_we_owe'])
-def how_much_we_owe(message):
-    command_how_much_we_owe.execute(message, bot)
+async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_balance.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['my_balance'])
-def my_balance(message):
-    command_my_balance.execute(message, bot)
+async def how_much_we_owe(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_how_much_we_owe.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['my_stats'])
-def my_stats(message):
-    command_my_stats.execute(message, bot)
+async def my_balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_my_balance.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['register_game_stats'])
-def game_stats(message):
-    command_register_game_stats.execute(message, bot)
+async def my_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_my_stats.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['register_money'])
-def register_money(message):
-    command_register_money.execute(message, bot)
+async def register_game_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_register_game_stats.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['register_pitch_payment'])
-def register_pitch_payment(message):
-    command_register_pitch_payment.execute(message, bot)
+async def register_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_register_money.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['register_score'])
-def register_score(message):
-    command_register_score.execute(message, bot)
+async def register_pitch_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_register_pitch_payment.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['score'])
-def score(message):
-    command_score.execute(message, bot)
+async def register_score(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_register_score.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-@bot.message_handler(commands=['records'])
-def score(message):
-    command_records.execute(message, bot)
+async def score(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_score.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
 
-alerts.schedule_alerts()
-log("Alerts scheduled.")
-log("Started polling.")
-log("Bot is up and running.")
-bot.infinity_polling()
+async def records(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await command_records.execute(update.message, bot_wrapper)
+    except Exception as e:
+        from logger import log_error
+        log_error(e)
+
+def main():
+    global bot_wrapper
+    
+    app = Application.builder().token(API_KEY).build()
+    bot_wrapper = BotWrapper(app)
+    log("Bot object initialized.")
+    
+    # Add command handlers
+    app.add_handler(CommandHandler("add", add))
+    app.add_handler(CommandHandler("remove", remove))
+    app.add_handler(CommandHandler("chair", chair))
+    app.add_handler(CommandHandler("maybe", maybe))
+    app.add_handler(CommandHandler("squad", squad))
+    app.add_handler(CommandHandler("split", split))
+    app.add_handler(CommandHandler("talk", talk))
+    app.add_handler(CommandHandler("wakeup", wakeup))
+    app.add_handler(CommandHandler("register_lineups", register_lineups))
+    app.add_handler(CommandHandler("print_lineups", print_lineups))
+    app.add_handler(CommandHandler("season_stats", season_stats))
+    app.add_handler(CommandHandler("alltime_stats", alltime_stats))
+    app.add_handler(CommandHandler("balance", balance))
+    app.add_handler(CommandHandler("how_much_we_owe", how_much_we_owe))
+    app.add_handler(CommandHandler("my_balance", my_balance))
+    app.add_handler(CommandHandler("my_stats", my_stats))
+    app.add_handler(CommandHandler("register_game_stats", register_game_stats))
+    app.add_handler(CommandHandler("register_money", register_money))
+    app.add_handler(CommandHandler("register_pitch_payment", register_pitch_payment))
+    app.add_handler(CommandHandler("register_score", register_score))
+    app.add_handler(CommandHandler("score", score))
+    app.add_handler(CommandHandler("records", records))
+    
+    # Schedule alerts (synchronous setup)
+    alerts.schedule_alerts(app)
+    log("Alerts scheduled.")
+    
+    log("Started polling.")
+    log("Bot is up and running.")
+    
+    # Run the bot with blocking polling
+    app.run_polling()
+
+if __name__ == '__main__':
+    main()

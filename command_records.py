@@ -1,5 +1,5 @@
 from logger import log, log_error
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 from helpers import get_next_matchday, get_next_matchday_formatted, get_today_minsk_time, format_date, escape_markdown
 from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone, fill_records_template
 import database
@@ -56,9 +56,9 @@ text_most_goals_scored_per_game_by_corn = ""
 text_most_goals_scored_per_game_by_tomato = ""
 text_max_total_goals_per_game_by_two_teams = ""
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
-        bot.set_message_reaction(message.chat.id,
+        await bot.set_message_reaction(message.chat.id,
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
@@ -68,17 +68,17 @@ def execute(message, bot):
                                             message.from_user.username,
                                             message.from_user.id)
        
-        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
+        if await validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             records = build_records_text()
-            bot.reply_to(message, records[0])
-            bot.reply_to(message, records[1])
-            bot.set_message_reaction(message.chat.id,
+            await bot.reply_to(message, records[0])
+            await bot.reply_to(message, records[1])
+            await bot.set_message_reaction(message.chat.id,
                                                 message.message_id,
                                                 [ReactionTypeEmoji('✍️')],
                                                 is_big=True)
             log(f"/records requested by: {get_player_name_formal(current_player)}")
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
 
 def build_records_text():

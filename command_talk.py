@@ -5,7 +5,7 @@ from common import add_player_if_not_existant, reply_to_unauthorized, get_player
 import deepseek
 import constants
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
         player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
@@ -28,10 +28,10 @@ def execute(message, bot):
 
             response = deepseek.send_request(talk_prompt_template_text, 1)
 
-            bot.reply_to(message, response)
-            log(f"/talk requested by {get_player_name_formal(player)}: \'{str(params)}\'")
+            await bot.reply_to(message, response)
+            log(f"/talk requested by {get_player_name_formal(player)}: '{str(params)}'")
         else:
             reply_to_unauthorized(bot, message, player)
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)

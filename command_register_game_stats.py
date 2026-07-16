@@ -1,5 +1,5 @@
 from logger import log, log_error
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday
 from common import add_player_if_not_existant, validate_access_no_game_registration_needed, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
@@ -7,9 +7,9 @@ import constants
 import re
 import datetime
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
-        bot.set_message_reaction(message.chat.id,
+        await bot.set_message_reaction(message.chat.id,
                                             message.message_id,
                                             [ReactionTypeEmoji('👾')],
                                             is_big=True)
@@ -17,7 +17,7 @@ def execute(message, bot):
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
+        if await validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             command_and_argument_split = message.text.split('\n', 1)
             if len(command_and_argument_split)>1:
                 date_params = command_and_argument_split[0].split(' ', 1)
@@ -26,7 +26,7 @@ def execute(message, bot):
                     try:
                         date = datetime.datetime.strptime(date_params[1], "%b %d, %Y")
                     except:
-                        bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_game_stats May 17, 2025")
+                        await bot.reply_to(message, "С датой что-то неправильно! Вот в таком формате пиши: /register_game_stats May 17, 2025")
                     if date is not None:
                         parts = command_and_argument_split[1].split('\n')
                         game_id = database.get_game_id_without_adding_new(date)
@@ -48,11 +48,11 @@ def execute(message, bot):
                                         own_goals = lineup_player_params[4]
                                         is_data_valid = True
                                     except:
-                                        bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Скорее всего ты не ввел все цифры. Напротив каждого имени надо вводить 3 цифры через запятую - <голы> <асисты> <автоголы>. Давай исправь там что-нибудь и заново запускивай команду.")
+                                        await bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Скорее всего ты не ввел все цифры. Напротив каждого имени надо вводить 3 цифры через запятую - <голы> <асисты> <автоголы>. Давай исправь там что-нибудь и заново запускивай команду.")
                                     
                                     if is_data_valid is True:
                                         if goals.isdigit() is False or assists.isdigit() is False or own_goals.isdigit() is False:
-                                            bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Скорее всего ты ввел не цифру, а текст какой-то. Давай исправь там что-нибудь и заново запускивай команду.")
+                                            await bot.reply_to(message, f"Что-то не то с данными по голам/асистам/автоголам для этого игрока: {first_name} {last_name}. Скорее всего ты ввел не цифру, а текст какой-то. Давай исправь там что-нибудь и заново запускивай команду.")
                                         else:
                                             database.add_game_stats(player_id,game_id,goals,assists,own_goals)
                                             if get_player_team(player_id, squad) == constants.SQUAD_CORN:
@@ -64,23 +64,23 @@ def execute(message, bot):
                                                 if int(own_goals) > 0:
                                                     corn_scored_goals_counter += int(own_goals)
                                 else:
-                                    bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
+                                    await bot.reply_to(message, f"Вот этого игрока не смог найти в базе: {first_name} {last_name}. Давай исправь там что-нибудь и заново запускивай команду.")
                                     log(f"Can't find player to register in a lineup: {lineup_player_params}")
                             database.register_game_score(game_id,corn_scored_goals_counter,tomato_scored_goals_counter)
                             log(f"/register_game_stats requested by: {get_player_name_formal(current_player)}")
-                            bot.reply_to(message, f"✅ Статистика записана! Цифры мутятся, статистика крутится! Красава!\nСчет матча 🌽 {corn_scored_goals_counter}:{tomato_scored_goals_counter} 🍅")
-                            bot.set_message_reaction(message.chat.id,
+                            await bot.reply_to(message, f"✅ Статистика записана! Цифры мутятся, статистика крутится! Красава!\nСчет матча 🌽 {corn_scored_goals_counter}:{tomato_scored_goals_counter} 🍅")
+                            await bot.set_message_reaction(message.chat.id,
                                                 message.message_id,
                                                 [ReactionTypeEmoji('✍️')],
                                                 is_big=True)
                         else:
-                            bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
+                            await bot.reply_to(message, "Не могу найти в базе такой игровой день. Может, дату какую-то не ту указал? Должна быть по-любому суббота. И не должна быть далеко в будущем.")
                 else:
-                    bot.reply_to(message, "Дату надо указать! Без даты ничего не получится. Откуда ж я знаю за какой день эту статистику записывать? Вот в таком формате пиши: /register_game_stats May 17, 2025")
+                    await bot.reply_to(message, "Дату надо указать! Без даты ничего не получится. Откуда ж я знаю за какой день эту статистику записывать? Вот в таком формате пиши: /register_game_stats May 17, 2025")
             else:
-                bot.reply_to(message, "Пришли голы/асисты/автоголы! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись!")
+                await bot.reply_to(message, "Пришли голы/асисты/автоголы! Ты ж ничего не прислал. Знаешь в каком формате прислать? Сам разберись!")
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
 
 def get_player_team(player_id, squad):

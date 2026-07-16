@@ -1,4 +1,4 @@
-telebot
+python-telegram-bot
 pytz
 psycopg2-binary
 dotenv

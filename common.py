@@ -3,7 +3,7 @@ import deepseek
 import random
 import datetime, calendar
 import database
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 from logger import log, log_error
 from helpers import fill_template, get_next_matchday_formatted, get_next_matchday,get_today_minsk_time, allow_registration,authorized,is_CEO,get_arguments
 from PIL import Image, ImageDraw, ImageFont
@@ -78,7 +78,7 @@ def get_next_monday(hour=8, minute=0):
         next_monday += datetime.timedelta(days=7)
     return next_monday
 
-def reply_registration_not_allowed(bot, message, player):
+async def reply_registration_not_allowed(bot, message, player):
     date_now = get_today_minsk_time()
     date_next_monday = get_next_monday()
     # Calculate time difference in days, hours and minutes
@@ -89,56 +89,56 @@ def reply_registration_not_allowed(bot, message, player):
     minutes = (total_seconds % 3600) // 60
     remaining = f"{days} дней, {hours} часов, {minutes} минут"
 
-    bot.reply_to(message, f"{get_player_name(player)}, еще рано. Регистрация на следующую игру ({get_next_matchday_formatted()}) открывается в понедельник в 8:00 по минскому времени.\nДо открытия регистрации осталось {remaining}.")
-    bot.set_message_reaction(message.chat.id,
-                             message.message_id, [ReactionTypeEmoji('🤬')],
-                             is_big=True)
+    await bot.reply_to(message, f"{get_player_name(player)}, еще рано. Регистрация на следующую игру ({get_next_matchday_formatted()}) открывается в понедельник в 8:00 по минскому времени.\nДо открытия регистрации осталось {remaining}.")
+    await bot.set_message_reaction(message.chat.id,
+                                 message.message_id, [ReactionTypeEmoji('🤬')],
+                                 is_big=True)
     log(fill_template("Too early for registration message sent to {name}", name=get_player_name_formal(player)))
 
-def reply_to_unauthorized(bot, message, player):
-    bot.reply_to(message,"Вам нельзя пользоваться этим ботом. Он предназначается эксклюзивно для Лиги Ваупшасова.")
-    bot.set_message_reaction(message.chat.id,
-                             message.message_id, [ReactionTypeEmoji('🤬')],
-                             is_big=True)
+async def reply_to_unauthorized(bot, message, player):
+    await bot.reply_to(message,"Вам нельзя пользоваться этим ботом. Он предназначается эксклюзивно для Лиги Ваупшасова.")
+    await bot.set_message_reaction(message.chat.id,
+                                 message.message_id, [ReactionTypeEmoji('🤬')],
+                                 is_big=True)
     log(fill_template("Unauthorized message sent: \'{name}\', (id: {id})", name=get_player_name_formal(player),id=message.from_user.id))
 
-def reply_no_player_found(bot, message, player_name):
-    bot.reply_to(message,fill_template("Не нашлось такого игрока: \'{name}\'", name=player_name))
-    bot.set_message_reaction(message.chat.id,
-                             message.message_id, [ReactionTypeEmoji('🤬')],
-                             is_big=True)
+async def reply_no_player_found(bot, message, player_name):
+    await bot.reply_to(message,fill_template("Не нашлось такого игрока: \'{name}\'", name=player_name))
+    await bot.set_message_reaction(message.chat.id,
+                                 message.message_id, [ReactionTypeEmoji('🤬')],
+                                 is_big=True)
     log(fill_template("No player found: \'{name}\'", name=player_name))
 
-def reply_only_CEO_can_do_it(bot, message):
-    bot.reply_to(message,"Это может делать только Директор.")
-    bot.set_message_reaction(message.chat.id,
-                             message.message_id, [ReactionTypeEmoji('🤬')],
-                             is_big=True)
+async def reply_only_CEO_can_do_it(bot, message):
+    await bot.reply_to(message,"Это может делать только Директор.")
+    await bot.set_message_reaction(message.chat.id,
+                                 message.message_id, [ReactionTypeEmoji('🤬')],
+                                 is_big=True)
     log("Access restriction: Only CEO can do it")
 
-def validate_access(chat_id, player, bot, message):
+async def validate_access(chat_id, player, bot, message):
     access = False
     if player is not None:
         if (allow_registration()):
             if (authorized(chat_id)):    
                 access = True
             else:
-                reply_to_unauthorized(bot, message, player)
+                await reply_to_unauthorized(bot, message, player)
         else:
-            reply_registration_not_allowed(bot, message, player)
+            await reply_registration_not_allowed(bot, message, player)
     else:
-        reply_no_player_found(bot, message, get_arguments(message.text))
+        await reply_no_player_found(bot, message, get_arguments(message.text))
     return access
 
-def validate_access_no_game_registration_needed(chat_id, player, bot, message):
+async def validate_access_no_game_registration_needed(chat_id, player, bot, message):
     access = False
     if player is not None:
         if (authorized(chat_id)):    
             access = True
         else:
-            reply_to_unauthorized(bot, message, player)
+            await reply_to_unauthorized(bot, message, player)
     else:
-        reply_no_player_found(bot, message, get_arguments(message.text))
+        await reply_no_player_found(bot, message, get_arguments(message.text))
     return access
 
 def validate_CEO_zone(telegram_id, arguments):

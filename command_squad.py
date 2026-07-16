@@ -1,5 +1,5 @@
 from logger import log, log_error
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 import helpers
 from helpers import authorized
 from common import add_player_if_not_existant, reply_to_unauthorized, get_player_name_extended, get_player_name_formal
@@ -7,7 +7,7 @@ import database
 import constants
 import datetime
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
         current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
@@ -64,10 +64,10 @@ def execute(message, bot):
                 squad_template_text = squad_template_text.replace(
                     "{Player " + str(x) + "}", "")
 
-            bot.reply_to(message, squad_template_text)
+            await bot.reply_to(message, squad_template_text)
             log(f"/squad requested by {get_player_name_formal(current_player)}")
         else:
             reply_to_unauthorized(bot, message, player)
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)

@@ -1,5 +1,5 @@
 from logger import log, log_error
-from telebot.types import ReactionTypeEmoji
+from telegram import ReactionTypeEmoji
 from helpers import format_date
 from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
@@ -7,13 +7,13 @@ import constants
 import prettytable as pt
 import datetime
 
-def execute(message, bot):
+async def execute(message, bot):
     try:
         current_player = add_player_if_not_existant(message.from_user.first_name,
                                             message.from_user.last_name,
                                             message.from_user.username,
                                             message.from_user.id)
-        if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
+        if await validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             table = pt.PrettyTable(['Дата', 'К',':', 'П', 'Оплачено', 'Состоялась?'])
             table.align['Дата'] = 'c'
             table.align['К'] = 'r'
@@ -31,10 +31,10 @@ def execute(message, bot):
                 played = "Отменили" if game_score[4] == False else ""
                 table.add_row([date, score_corn, ":", score_tomato, paid_for_pitch, played])
             photo = text_to_image(table.get_string(), image_size=(650, 1000))
-            bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
+            await bot.send_photo(message.chat.id, photo, reply_to_message_id=message.message_id)
             log(f"/score requested by: {get_player_name_formal(current_player)}")
 
     except Exception as e:
-        bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
+        await bot.reply_to(message, constants.UNHANDLED_EXCEPTION_MESSAGE)
         log_error(e)
         
