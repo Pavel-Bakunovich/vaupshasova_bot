@@ -121,7 +121,6 @@ def send_async_message(chat_id, text, **kwargs):
     """Helper function to send messages from background scheduler thread"""
     try:
         if app_instance and hasattr(app_instance, 'bot'):
-            import threading
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             loop.run_until_complete(app_instance.bot.send_message(chat_id=chat_id, text=text, **kwargs))

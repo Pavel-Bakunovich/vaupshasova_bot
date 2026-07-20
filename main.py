@@ -26,6 +26,7 @@ import dotenv
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from telegram import Update
 from logger import log
+from logger import log_error
 
 dotenv.load_dotenv()
 API_KEY = os.environ['TELEGRAM_API_TOKEN']
@@ -76,154 +77,132 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_add.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def remove(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_remove.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def chair(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_chair.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def maybe(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_maybe.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def squad(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_squad.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def split(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_split.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def talk(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_talk.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def wakeup(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_wakeup.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def register_lineups(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_register_lineups.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def print_lineups(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_print_lineups.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def season_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_season_stats.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def alltime_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_alltime_stats.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_balance.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def how_much_we_owe(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_how_much_we_owe.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def my_balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_my_balance.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def my_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_my_stats.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def register_game_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_register_game_stats.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def register_money(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_register_money.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def register_pitch_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_register_pitch_payment.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def register_score(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_register_score.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def score(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_score.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 async def records(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await command_records.execute(update.message, bot_wrapper)
     except Exception as e:
-        from logger import log_error
         log_error(e)
 
 def main():
@@ -260,10 +239,9 @@ def main():
     # Schedule alerts (synchronous setup)
     alerts.schedule_alerts(app)
     log("Alerts scheduled.")
-    
     log("Started polling.")
     log("Bot is up and running.")
-    
+
     # Run the bot with blocking polling
     app.run_polling()
 
