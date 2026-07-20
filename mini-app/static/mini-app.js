@@ -394,7 +394,7 @@ async function registerAction(action) {
         
         if (data.success) {
             // Show success message
-            alert('✅ Регистрация успешна!');
+            alert('Эта кнопка пока не работает ❌');
             // Reload squad list
             loadSquadList();
         } else {
