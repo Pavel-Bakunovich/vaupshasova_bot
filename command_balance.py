@@ -15,7 +15,7 @@ def execute(message, bot):
         if validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             table = pt.PrettyTable(['Игрок', 'Баланс'])
             table.align['Игрок'] = 'l'
-            table.align['Баланс'] = 'с'
+            table.align['Баланс'] = 'c'
             table.hrules = True
             players_balance = database.get_players_balance()
             for balance_item in players_balance:
