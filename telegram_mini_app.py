@@ -407,10 +407,10 @@ def register_player_action():
         # For demo, always succeed
         return jsonify({
             'success': True,
-            'message': f'Action "{action}" registered successfully'
+            'message': f'Эта кнопка пока не работает ❌'
         })
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
