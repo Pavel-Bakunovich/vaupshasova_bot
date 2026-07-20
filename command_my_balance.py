@@ -1,17 +1,19 @@
 from logger import log, log_error
 from telegram import ReactionTypeEmoji
 from helpers import get_arguments, get_next_matchday, get_next_matchday_formatted, get_today_minsk_time, format_date
-from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_formal, reply_only_CEO_can_do_it, validate_CEO_zone
+from common import add_player_if_not_existant, validate_access_no_game_registration_needed, text_to_image, get_player_name_formal, add_player_if_not_existant_with_params, reply_only_CEO_can_do_it, validate_CEO_zone
 import database
 import constants
 import prettytable as pt
 
 async def execute(message, bot):
     try:
-        current_player = add_player_if_not_existant(message.from_user.first_name,
-                                            message.from_user.last_name,
-                                            message.from_user.username,
-                                            message.from_user.id)
+        current_player = add_player_if_not_existant_with_params(message.text,
+                                                                message.from_user.first_name,
+                                                                message.from_user.last_name,
+                                                                message.from_user.username,
+                                                                message.from_user.id)
+
         if await validate_access_no_game_registration_needed(message.chat.id, current_player, bot, message):
             table = pt.PrettyTable(['N','Дата', 'Сдал', 'Изменение баланса', 'Баланс на дату'])
             table.align['N'] = 'c'
