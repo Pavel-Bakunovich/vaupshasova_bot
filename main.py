@@ -23,7 +23,7 @@ import command_score
 import command_records
 import alerts
 import dotenv
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram import Update
 from logger import log
 from logger import log_error
@@ -205,10 +205,13 @@ async def records(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         log_error(e)
 
+async def post_init(app):
+    alerts.schedule_alerts(app)
+
 def main():
     global bot_wrapper
     
-    app = Application.builder().token(API_KEY).build()
+    app = Application.builder().token(API_KEY).post_init(post_init).build()
     bot_wrapper = BotWrapper(app)
     log("Bot object initialized.")
     
@@ -236,13 +239,9 @@ def main():
     app.add_handler(CommandHandler("score", score))
     app.add_handler(CommandHandler("records", records))
     
-    # Schedule alerts (synchronous setup)
-    alerts.schedule_alerts(app)
-    log("Alerts scheduled.")
     log("Started polling.")
     log("Bot is up and running.")
 
-    # Run the bot with blocking polling
     app.run_polling()
 
 if __name__ == '__main__':
