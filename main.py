@@ -208,10 +208,14 @@ async def records(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def post_init(app):
     alerts.schedule_alerts(app)
 
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    log_error(f"Unhandled exception in python-telegram-bot: {context.error}")
+
 def main():
     global bot_wrapper
     
     app = Application.builder().token(API_KEY).post_init(post_init).build()
+    app.add_error_handler(error_handler)
     bot_wrapper = BotWrapper(app)
     log("Bot object initialized.")
     
