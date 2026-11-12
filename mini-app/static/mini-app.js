@@ -90,7 +90,7 @@ function updatePlayerDisplay(player, stats, season_stats, current_year, attendan
     if (attendanceStreak) {
         document.getElementById('attendance-streak-label').textContent = attendanceStreak.played
             ? 'Игр сыграно подряд:'
-            : 'Пропустил игр:';
+            : 'Пропустил игр подряд:';
         document.getElementById('attendance-streak-count').textContent = attendanceStreak.count;
     }
     document.getElementById('season-header').textContent = `Сезон ${current_year}`;
