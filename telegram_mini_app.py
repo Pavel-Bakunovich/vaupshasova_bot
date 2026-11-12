@@ -152,6 +152,7 @@ def get_player(telegram_id):
         }
 
     individual_balance = database.get_individual_balance(player_id)
+    attendance_streak = database.get_active_attendance_streak(player_id) if player_id is not None else None
     
     stats =  {
         'games_played': individual_stats[0] if individual_stats[1] is not None else 0,
@@ -178,7 +179,11 @@ def get_player(telegram_id):
         'stats': stats,
         'season_stats': season_stats_dict,
         'current_year': current_year,
-        'balance': individual_balance[0] if individual_balance else 0
+        'balance': individual_balance[0] if individual_balance else 0,
+        'attendance_streak': {
+            'played': attendance_streak[0],
+            'count': attendance_streak[1]
+        } if attendance_streak else None
     })
 
 @app.route('/api/next-matchday-squad/<int:telegram_id>')

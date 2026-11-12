@@ -33,7 +33,7 @@ async function loadPlayerData() {
         const data = await response.json();
         if (data.success) {
             currentPlayerData = data.player;
-            updatePlayerDisplay(data.player, data.stats, data.season_stats, data.current_year);
+            updatePlayerDisplay(data.player, data.stats, data.season_stats, data.current_year, data.attendance_streak);
             updateBalance(data.balance);
             await loadPerformance();
         }
@@ -80,11 +80,19 @@ function displayPerformance(performance) {
     }
 }
 
-function updatePlayerDisplay(player, stats, season_stats, current_year) {
+function updatePlayerDisplay(player, stats, season_stats, current_year, attendanceStreak) {
     // Get display name (prefer friendly name)
     const displayName = `${player.friendly_first_name || player.first_name} ${player.friendly_last_name || player.last_name}`;
     
     document.getElementById('player-greeting').textContent = `Привет, ${displayName}`;
+    const attendanceStreakElement = document.getElementById('attendance-streak');
+    attendanceStreakElement.hidden = !attendanceStreak;
+    if (attendanceStreak) {
+        document.getElementById('attendance-streak-label').textContent = attendanceStreak.played
+            ? 'Игр сыграно подряд:'
+            : 'Пропустил игр:';
+        document.getElementById('attendance-streak-count').textContent = attendanceStreak.count;
+    }
     document.getElementById('season-header').textContent = `Сезон ${current_year}`;
     document.getElementById('season-games').textContent = season_stats.games_played;
     document.getElementById('season-goals').textContent = season_stats.goals;

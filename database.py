@@ -210,6 +210,17 @@ def get_last_individual_games(player_id):
     connection.commit()
     return stats
 
+def get_active_attendance_streak(player_id):
+    with open(f"SQL Queries/{constants.SQL_ACTIVE_ATTENDANCE_STREAK}", "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(sql_file, (player_id,))
+    streak = cursor.fetchone()
+    close_connection_pool(connection_pool)
+    return streak
+
 def get_max_goals_per_game_by_player(player_id):
     with open(f"SQL Queries/{constants.SQL_MAX_GOALS_PER_GAME_BY_PLAYER}" , "r") as file:
         sql_file = file.read()
