@@ -1,6 +1,12 @@
 // Initialize Telegram WebApp
 const webApp = window.Telegram.WebApp;
 webApp.ready();
+webApp.expand();
+// Stop vertical swipes inside the app from minimizing/closing the mini-app
+// (Bot API 7.7+). The app can still be closed from Telegram's header.
+if (typeof webApp.disableVerticalSwipes === 'function') {
+    webApp.disableVerticalSwipes();
+}
 
 // Get user data from Telegram (or mock for testing)
 let user = webApp.initDataUnsafe?.user;
