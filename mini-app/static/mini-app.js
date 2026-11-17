@@ -422,7 +422,11 @@ function showScreen(screenId) {
     
     // Show selected screen
     document.getElementById(screenId).classList.add('active');
-    
+
+    // All screens share the same document scroll, so reset it —
+    // otherwise the new screen opens at the previous screen's scroll offset
+    window.scrollTo(0, 0);
+
     // Load data for specific screens
     if (screenId === 'balance-screen') {
         loadBalanceData();
