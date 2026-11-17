@@ -370,24 +370,54 @@ async function loadPersonalStats() {
     }
 }
 
+function formatMoney(amount, withSign = false) {
+    const sign = withSign && amount > 0 ? '+' : '';
+    return `${sign}${amount} р.`;
+}
+
+function moneyClass(amount) {
+    return amount > 0 ? 'positive' : amount < 0 ? 'negative' : 'neutral';
+}
+
 async function loadBalanceData() {
     if (!currentPlayerData) return;
-    
+
+    const amountItem = document.getElementById('balance-amount-item');
+    const content = document.getElementById('balance-history-content');
+    content.innerHTML = '<div class="loading">Загрузка...</div>';
+
     try {
         const response = await fetch(`/api/player/${currentPlayerData.id}/balance`);
         const data = await response.json();
-        
-        if (data.success) {
-            // Format balance
-            const balanceAmount = data.balance || 0;
-            const balanceClass = balanceAmount > 0 ? 'positive' : balanceAmount < 0 ? 'negative' : 'neutral';
-            const balanceSign = balanceAmount > 0 ? '+' : '';
-            
-            document.getElementById('balance-amount').textContent = `${balanceSign}${balanceAmount}`;
-            document.getElementById('balance-amount').parentElement.classList.add(balanceClass);
+        if (!data.success) throw new Error(data.error || 'Failed to load balance');
+
+        const balanceAmount = data.balance || 0;
+        amountItem.classList.remove('positive', 'negative', 'neutral');
+        amountItem.classList.add(moneyClass(balanceAmount));
+        document.getElementById('balance-amount').textContent = formatMoney(balanceAmount, true);
+        document.getElementById('balance-total-paid').textContent = formatMoney(data.total_paid || 0);
+
+        if (!data.history || data.history.length === 0) {
+            content.innerHTML = '<div class="loading">Платежей пока нет</div>';
+            return;
         }
+
+        let html = `<div class="table-responsive"><table class="stat-table balance-table"><thead><tr>
+            <th>Дата</th><th>Сдал</th><th>Изменение баланса</th><th>Баланс на дату</th>
+        </tr></thead><tbody>`;
+        data.history.forEach(item => {
+            html += `<tr>
+                <td class="date-col">${item.date || '—'}</td>
+                <td>${formatMoney(item.money_given)}</td>
+                <td class="${moneyClass(item.balance_change)}">${formatMoney(item.balance_change, true)}</td>
+                <td class="${moneyClass(item.balance_by_date)}">${formatMoney(item.balance_by_date, true)}</td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+        content.innerHTML = html;
     } catch (error) {
         console.error('Error loading balance:', error);
+        content.innerHTML = '<div class="error">Ошибка при загрузке баланса</div>';
     }
 }
 

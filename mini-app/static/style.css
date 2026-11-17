@@ -463,6 +463,23 @@ body {
     white-space: nowrap;
 }
 
+.balance-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.balance-table th:not(:first-child),
+.balance-table td:not(:first-child) {
+    text-align: right;
+}
+
+.balance-table td,
+.balance-table th {
+    white-space: nowrap;
+}
+
 .loading {
     text-align: center;
     padding: 40px 20px;

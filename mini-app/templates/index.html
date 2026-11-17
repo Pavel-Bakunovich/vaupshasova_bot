@@ -194,13 +194,17 @@
                 <p id="balance-name">-</p>
             </div>
             <div class="details-content">
-                <div class="player-card">
+                <div class="player-card balance-card">
+                    <div class="stat-item" id="balance-amount-item">
+                        <div class="stat-label">Текущий баланс</div>
+                        <div class="stat-value" id="balance-amount">-</div>
+                    </div>
                     <div class="stat-item">
-                        <div class="stat-label">Баланс</div>
-                        <div class="stat-value" id="balance-amount">0</div>
+                        <div class="stat-label">Сдал за всю историю</div>
+                        <div class="stat-value" id="balance-total-paid">-</div>
                     </div>
                 </div>
-                <p class="loading">Баланс - это разница между внесёнными деньгами и потраченными на игры.</p>
+                <div id="balance-history-content"><div class="loading">Загрузка...</div></div>
             </div>
         </div>
     </div>

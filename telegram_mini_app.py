@@ -112,11 +112,6 @@ MOCK_STREAKS = {
     2: {'win_streak': 1, 'loss_streak': 2}
 }
 
-MOCK_BALANCE = {
-    1: {'balance': 150, 'total_paid': 350},
-    2: {'balance': -50, 'total_paid': 250}
-}
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -273,16 +268,36 @@ def get_player_streaks(player_id):
         'loss_streak': streaks['loss_streak'],
     })
 
+def _money(value):
+    """Convert DB numeric (Decimal/None) to a JSON-friendly number"""
+    if value is None:
+        return 0
+    value = float(value)
+    return int(value) if value.is_integer() else round(value, 2)
+
 @app.route('/api/player/<int:player_id>/balance')
 def get_player_balance(player_id):
-    """Get player's financial balance (mock data)"""
-    balance_data = MOCK_BALANCE.get(player_id, {'balance': 0, 'total_paid': 0})
-    
-    return jsonify({
-        'success': True,
-        'balance': balance_data['balance'],
-        'total_paid': balance_data['total_paid'],
-    })
+    """Get player's current balance, total paid and recent payments history"""
+    try:
+        individual_balance = database.get_individual_balance(player_id)
+        history = []
+        for payment in database.get_payments_history(player_id):
+            history.append({
+                'date': helpers.format_date(payment[0]) if payment[0] else None,
+                'money_given': _money(payment[1]),
+                'balance_change': _money(payment[2]),
+                'balance_by_date': _money(payment[3]),
+            })
+
+        return jsonify({
+            'success': True,
+            'balance': _money(individual_balance[0]) if individual_balance else 0,
+            'total_paid': _money(individual_balance[1]) if individual_balance else 0,
+            'history': history,
+        })
+    except Exception as e:
+        print(f"Error in get_player_balance: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/player/<int:player_id>/last-games-performance')
 def get_player_last_games_performance(player_id):
