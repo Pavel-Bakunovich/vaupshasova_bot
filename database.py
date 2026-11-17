@@ -351,6 +351,37 @@ where Matchday.type like 'add'
     connection.commit()
     return stats
 
+def get_games_log():
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute('''
+WITH game_scorers AS (
+    SELECT Matchday.Game_ID,
+        Players.Friendly_First_Name || ' ' || Players.Friendly_Last_Name AS player_name,
+        Matchday.Goals,
+        RANK() OVER (PARTITION BY Matchday.Game_ID ORDER BY Matchday.Goals DESC) AS goals_rank
+    FROM Matchday
+    INNER JOIN Players ON Players.id = Matchday.Player_ID
+    WHERE Matchday.Type = 'add'
+        AND Matchday.Goals > 0
+)
+SELECT Games.Game_Date, Games.Score_Corn, Games.Score_Tomato,
+    STRING_AGG(game_scorers.player_name, ', ' ORDER BY game_scorers.player_name) AS top_scorers,
+    MAX(game_scorers.Goals) AS top_goals
+FROM Games
+LEFT JOIN game_scorers ON game_scorers.Game_ID = Games.id AND game_scorers.goals_rank = 1
+WHERE Games.Played = TRUE
+    AND Games.Game_Date <= current_date
+    AND Games.Score_Corn IS NOT NULL
+    AND Games.Score_Tomato IS NOT NULL
+GROUP BY Games.id, Games.Game_Date, Games.Score_Corn, Games.Score_Tomato
+ORDER BY Games.Game_Date DESC;
+    ''')
+    games = cursor.fetchall()
+    close_connection_pool(connection_pool)
+    return games
+
 def get_season_score(year):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()

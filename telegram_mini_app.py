@@ -398,6 +398,24 @@ def get_alltime_stats():
         print(f"Error in get_alltime_stats: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/games-log')
+def get_games_log():
+    """Get list of all played games with score and top scorer(s)"""
+    try:
+        games = []
+        for game in database.get_games_log():
+            games.append({
+                'date': f"{helpers.format_date(game[0])}",
+                'score_corn': game[1],
+                'score_tomato': game[2],
+                'top_scorers': game[3],
+                'top_goals': game[4],
+            })
+        return jsonify({'success': True, 'games': games})
+    except Exception as e:
+        print(f"Error in get_games_log: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/register-player-action', methods=['POST'])
 def register_player_action():
     """Register player action (mock implementation)"""

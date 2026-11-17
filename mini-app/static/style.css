@@ -447,6 +447,16 @@ body {
     margin-bottom: 0;
 }
 
+.games-log-table .team-col,
+.games-log-table .score-col {
+    text-align: center;
+}
+
+.games-log-table .date-col,
+.games-log-table .score-col {
+    white-space: nowrap;
+}
+
 .loading {
     text-align: center;
     padding: 40px 20px;

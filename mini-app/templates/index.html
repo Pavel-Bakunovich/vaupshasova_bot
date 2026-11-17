@@ -100,6 +100,7 @@
                 <div class="nav-links">
                     <button class="nav-btn" onclick="showScreen('season-stats-screen')">📈 Статистика сезона</button>
                     <button class="nav-btn" onclick="showScreen('alltime-stats-screen')">📊 Полная статистика</button>
+                    <button class="nav-btn" onclick="showScreen('games-log-screen')">📜 История игр</button>
                     <button class="nav-btn" onclick="showScreen('records-screen')">🏅 Рекорды</button>
                     <button class="nav-btn" onclick="showScreen('balance-screen')">💰 Финансовый баланс</button>
                 </div>
@@ -115,6 +116,18 @@
             </div>
             <div class="details-content">
                 <div id="alltime-stats-content"></div>
+            </div>
+        </div>
+
+        <!-- Games Log Screen -->
+        <div id="games-log-screen" class="screen">
+            <div class="header">
+                <button class="back-button" onclick="showScreen('home-screen')">← Назад</button>
+                <h1>📜 История игр</h1>
+                <p id="games-log-header">-</p>
+            </div>
+            <div class="details-content">
+                <div id="games-log-content"></div>
             </div>
         </div>
 

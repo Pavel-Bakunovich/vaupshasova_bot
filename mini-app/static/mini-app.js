@@ -430,6 +430,45 @@ function showScreen(screenId) {
         loadSeasonStats();
     } else if (screenId === 'alltime-stats-screen') {
         loadAlltimeStatsTable();
+    } else if (screenId === 'games-log-screen') {
+        loadGamesLog();
+    }
+}
+
+async function loadGamesLog() {
+    const content = document.getElementById('games-log-content');
+    try {
+        const response = await fetch('/api/games-log');
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error || 'Failed to load games log');
+
+        document.getElementById('games-log-header').textContent = `Всего игр: ${data.games.length}`;
+
+        if (data.games.length === 0) {
+            content.innerHTML = '<div class="loading">Игр пока нет</div>';
+            return;
+        }
+
+        let html = `<div class="table-responsive"><table class="stat-table games-log-table"><thead><tr>
+            <th>Дата</th><th class="team-col">Кукуруза</th><th class="score-col">Счёт</th><th class="team-col">Помидоры</th><th>Лучший бомбардир</th>
+        </tr></thead><tbody>`;
+        data.games.forEach(game => {
+            const cornScore = game.score_corn > game.score_tomato ? `<b>${game.score_corn}</b>` : game.score_corn;
+            const tomatoScore = game.score_tomato > game.score_corn ? `<b>${game.score_tomato}</b>` : game.score_tomato;
+            const topScorer = game.top_scorers ? `${game.top_scorers} (${game.top_goals})` : '—';
+            html += `<tr>
+                <td class="date-col">${game.date}</td>
+                <td class="team-col">🌽</td>
+                <td class="score-col">${cornScore}&nbsp;:&nbsp;${tomatoScore}</td>
+                <td class="team-col">🍅</td>
+                <td>${topScorer}</td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+        content.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading games log:', error);
+        content.innerHTML = '<div class="error">Ошибка при загрузке истории игр</div>';
     }
 }
 
