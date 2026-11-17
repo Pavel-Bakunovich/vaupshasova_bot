@@ -351,7 +351,7 @@ where Matchday.type like 'add'
     connection.commit()
     return stats
 
-def get_games_log():
+def get_games_log(player_id=None):
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
     cursor = connection.cursor()
@@ -368,7 +368,11 @@ WITH game_scorers AS (
 )
 SELECT Games.Game_Date, Games.Score_Corn, Games.Score_Tomato,
     STRING_AGG(game_scorers.player_name, ', ' ORDER BY game_scorers.player_name) AS top_scorers,
-    MAX(game_scorers.Goals) AS top_goals
+    MAX(game_scorers.Goals) AS top_goals,
+    (SELECT MAX(pm.Squad) FROM Matchday pm
+        WHERE pm.Game_ID = Games.id AND pm.Player_ID = %(player_id)s AND pm.Type = 'add') AS player_squad,
+    EXISTS (SELECT 1 FROM Matchday pm
+        WHERE pm.Game_ID = Games.id AND pm.Player_ID = %(player_id)s AND pm.Type = 'add') AS player_played
 FROM Games
 LEFT JOIN game_scorers ON game_scorers.Game_ID = Games.id AND game_scorers.goals_rank = 1
 WHERE Games.Played = TRUE
@@ -377,7 +381,7 @@ WHERE Games.Played = TRUE
     AND Games.Score_Tomato IS NOT NULL
 GROUP BY Games.id, Games.Game_Date, Games.Score_Corn, Games.Score_Tomato
 ORDER BY Games.Game_Date DESC;
-    ''')
+    ''', {'player_id': player_id})
     games = cursor.fetchall()
     close_connection_pool(connection_pool)
     return games

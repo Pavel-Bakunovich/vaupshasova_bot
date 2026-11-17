@@ -417,14 +417,18 @@ def get_alltime_stats():
 def get_games_log():
     """Get list of all played games with score and top scorer(s)"""
     try:
+        player_id = request.args.get('player_id', type=int)
         games = []
-        for game in database.get_games_log():
+        for game in database.get_games_log(player_id):
             games.append({
                 'date': f"{helpers.format_date(game[0])}",
                 'score_corn': game[1],
                 'score_tomato': game[2],
                 'top_scorers': game[3],
                 'top_goals': game[4],
+                'player_played': bool(game[6]),
+                'player_squad_emoji': constants.SQUAD_CORN_EMOJI if game[5] == constants.SQUAD_CORN
+                    else constants.SQUAD_TOMATO_EMOJI if game[5] == constants.SQUAD_TOMATO else None,
             })
         return jsonify({'success': True, 'games': games})
     except Exception as e:

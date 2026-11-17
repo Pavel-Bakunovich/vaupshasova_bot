@@ -478,7 +478,8 @@ function showScreen(screenId) {
 async function loadGamesLog() {
     const content = document.getElementById('games-log-content');
     try {
-        const response = await fetch('/api/games-log');
+        const playerParam = currentPlayerData && currentPlayerData.id ? `?player_id=${currentPlayerData.id}` : '';
+        const response = await fetch(`/api/games-log${playerParam}`);
         const data = await response.json();
         if (!data.success) throw new Error(data.error || 'Failed to load games log');
 
@@ -490,18 +491,20 @@ async function loadGamesLog() {
         }
 
         let html = `<div class="table-responsive"><table class="stat-table games-log-table"><thead><tr>
-            <th>Дата</th><th class="team-col">Кукуруза</th><th class="score-col">Счёт</th><th class="team-col">Помидоры</th><th>Лучший бомбардир</th>
+            <th>Дата</th><th class="team-col">Кукуруза</th><th class="score-col">Счёт</th><th class="team-col">Помидоры</th><th>Лучший бомбардир</th><th class="played-col">Я играл</th>
         </tr></thead><tbody>`;
         data.games.forEach(game => {
             const cornScore = game.score_corn > game.score_tomato ? `<b>${game.score_corn}</b>` : game.score_corn;
             const tomatoScore = game.score_tomato > game.score_corn ? `<b>${game.score_tomato}</b>` : game.score_tomato;
             const topScorer = game.top_scorers ? `${game.top_scorers} (${game.top_goals})` : '—';
-            html += `<tr>
+            const played = game.player_played ? `✅${game.player_squad_emoji ? ' ' + game.player_squad_emoji : ''}` : '—';
+            html += `<tr${game.player_played ? ' class="player-played"' : ''}>
                 <td class="date-col">${game.date}</td>
                 <td class="team-col">🌽</td>
                 <td class="score-col">${cornScore}&nbsp;:&nbsp;${tomatoScore}</td>
                 <td class="team-col">🍅</td>
                 <td>${topScorer}</td>
+                <td class="played-col">${played}</td>
             </tr>`;
         });
         html += '</tbody></table></div>';

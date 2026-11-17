@@ -458,6 +458,11 @@ body {
     text-align: center;
 }
 
+.games-log-table .played-col {
+    text-align: center;
+    white-space: nowrap;
+}
+
 .games-log-table .date-col,
 .games-log-table .score-col {
     white-space: nowrap;
