@@ -472,7 +472,221 @@ function showScreen(screenId) {
         loadAlltimeStatsTable();
     } else if (screenId === 'games-log-screen') {
         loadGamesLog();
+    } else if (screenId === 'records-screen') {
+        loadRecords();
     }
+}
+
+// ---------- Records screen ----------
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, ch => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+    ));
+}
+
+const RECORD_GROUPS = [
+    { id: 'streaks', title: 'Серии', icon: '🔥' },
+    { id: 'goals', title: 'Голы и асисты', icon: '⚽️' },
+    { id: 'players', title: 'Игроки', icon: '👥' },
+    { id: 'games', title: 'Игры', icon: '🏟️' },
+];
+
+function recordGroupOf(section) {
+    const first = section.items[0];
+    const title = section.title.toLowerCase();
+    if (title.includes('серии') || title.includes('подряд')) return 'streaks';
+    if (first && first.type === 'game') return 'games';
+    if (title.includes('гол') || title.includes('асист')) return 'goals';
+    return 'players';
+}
+
+function recordSectionIcon(section) {
+    const title = section.title.toLowerCase();
+    if (title.includes('поражен')) return '💔';
+    if (title.includes('победн')) return '🏆';
+    if (title.includes('без пропуск')) return '🔁';
+    if (title.includes('автогол')) return '🙈';
+    if (title.includes('асист')) return '🎯';
+    if (title.includes('процент побед')) return '📈';
+    if (title.includes('кукуруз')) return '🌽';
+    if (title.includes('помидор')) return '🍅';
+    if (title.includes('разгромн')) return '💥';
+    if (title.includes('количеством голов')) return '🥅';
+    if (title.includes('пары')) return '🤝';
+    if (title.includes('средние')) return '📊';
+    const first = section.items[0];
+    return (first && first.emoji) || '🏅';
+}
+
+function formatRecordValue(value, unit) {
+    if (unit === '%') return `${value}<span class="record-unit">%</span>`;
+    if (unit) return `${value}<span class="record-unit">${escapeHtml(unit)}</span>`;
+    return `${value}`;
+}
+
+// Competition ranking: equal values share a place (1, 1, 3...)
+function recordRanks(items) {
+    const ranks = [];
+    items.forEach((item, i) => {
+        const same = i > 0 && items[i - 1].value === item.value;
+        ranks.push(same ? ranks[i - 1] : i + 1);
+    });
+    return ranks;
+}
+
+function recordRankBadge(rank) {
+    const cls = rank <= 3 ? ` rank-${rank}` : '';
+    return `<div class="record-rank${cls}">${rank}</div>`;
+}
+
+function renderPlayerRecord(item, rank, maxValue, currentName) {
+    const isMe = currentName && item.name === currentName;
+    const bar = item.unit === '%'
+        ? `<div class="record-bar"><span style="width:${Math.min(item.value, 100)}%"></span></div>`
+        : (maxValue > 0 ? `<div class="record-bar subtle"><span style="width:${(item.value / maxValue) * 100}%"></span></div>` : '');
+    return `
+        <div class="record-row${rank === 1 ? ' leader' : ''}${isMe ? ' me' : ''}">
+            ${recordRankBadge(rank)}
+            <div class="record-main">
+                <div class="record-name">${escapeHtml(item.name)}</div>
+                ${item.detail ? `<div class="record-detail">${escapeHtml(item.detail)}</div>` : ''}
+                ${bar}
+            </div>
+            <div class="record-value">${formatRecordValue(item.value, item.unit)}</div>
+        </div>`;
+}
+
+function renderPairRecord(item, rank, currentName) {
+    const isMe = currentName && item.names.includes(currentName);
+    return `
+        <div class="record-row${rank === 1 ? ' leader' : ''}${isMe ? ' me' : ''}">
+            ${recordRankBadge(rank)}
+            <div class="record-main">
+                <div class="record-name record-pair">
+                    <span class="record-team">${escapeHtml(item.emoji)}</span>
+                    <span>${escapeHtml(item.names[0])}</span>
+                    <span class="record-plus">+</span>
+                    <span>${escapeHtml(item.names[1])}</span>
+                </div>
+            </div>
+            <div class="record-value">${formatRecordValue(item.value, item.unit)}</div>
+        </div>`;
+}
+
+function renderGameRecord(item, rank) {
+    const cornWin = item.score_corn > item.score_tomato;
+    const tomatoWin = item.score_tomato > item.score_corn;
+    return `
+        <div class="record-row record-game${rank === 1 ? ' leader' : ''}">
+            ${recordRankBadge(rank)}
+            <div class="record-main">
+                <div class="record-name">${escapeHtml(item.date)}</div>
+                ${item.detail ? `<div class="record-detail">${escapeHtml(item.detail)}</div>` : ''}
+            </div>
+            <div class="record-scoreboard">
+                <span class="team">🌽</span>
+                <span class="goals${cornWin ? ' win' : ''}">${item.score_corn}</span>
+                <span class="sep">:</span>
+                <span class="goals${tomatoWin ? ' win' : ''}">${item.score_tomato}</span>
+                <span class="team">🍅</span>
+            </div>
+        </div>`;
+}
+
+function renderStatTiles(items) {
+    return `<div class="record-tiles">${items.map(item => `
+        <div class="record-tile">
+            <div class="record-tile-icon">${escapeHtml(item.emoji)}</div>
+            <div class="record-tile-value">${escapeHtml(item.value)}</div>
+            <div class="record-tile-label">${escapeHtml(item.label)}</div>
+        </div>`).join('')}</div>`;
+}
+
+function renderRecordSection(section, currentName) {
+    const items = section.items;
+    const isLive = section.title.toLowerCase().startsWith('активные');
+    let body;
+
+    if (items.length === 0) {
+        body = '<div class="record-empty">Пока нет данных</div>';
+    } else if (items.every(item => item.type === 'stat')) {
+        body = renderStatTiles(items);
+    } else {
+        // Game records are ranked by position, others by their value
+        const ranks = items[0].type === 'game' ? items.map((_, i) => i + 1) : recordRanks(items);
+        const numeric = items.filter(item => item.type === 'player' && typeof item.value === 'number');
+        const maxValue = numeric.length ? Math.max(...numeric.map(item => item.value)) : 0;
+        body = items.map((item, i) => {
+            if (item.type === 'player') return renderPlayerRecord(item, ranks[i], maxValue, currentName);
+            if (item.type === 'pair') return renderPairRecord(item, ranks[i], currentName);
+            if (item.type === 'game') return renderGameRecord(item, ranks[i]);
+            if (item.type === 'stat') return renderStatTiles([item]);
+            return `<div class="record-row"><div class="record-main">${escapeHtml(item.text)}</div></div>`;
+        }).join('');
+    }
+
+    return `
+        <section class="record-card">
+            <div class="record-card-header">
+                <span class="record-card-icon">${recordSectionIcon(section)}</span>
+                <h3 class="record-card-title">${escapeHtml(section.title)}</h3>
+                ${isLive ? '<span class="record-live">LIVE</span>' : ''}
+            </div>
+            <div class="record-list">${body}</div>
+        </section>`;
+}
+
+async function loadRecords() {
+    const content = document.getElementById('records-content');
+    if (!content.dataset.loaded) {
+        content.innerHTML = '<div class="loading">Загрузка рекордов...</div>';
+    }
+    try {
+        const response = await fetch('/api/records');
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error || 'Failed to load records');
+
+        const currentName = currentPlayerData
+            ? `${currentPlayerData.friendly_first_name || ''} ${currentPlayerData.friendly_last_name || ''}`.trim()
+            : null;
+
+        const summaryHtml = data.summary.length ? `
+            <div class="record-summary">${data.summary.map(item => `
+                <div class="record-summary-item">
+                    <div class="record-summary-value">${escapeHtml(item.value ?? '—')}</div>
+                    <div class="record-summary-label">${escapeHtml(item.label)}</div>
+                </div>`).join('')}
+            </div>` : '';
+
+        const grouped = Object.fromEntries(RECORD_GROUPS.map(group => [group.id, []]));
+        data.sections.forEach(section => grouped[recordGroupOf(section)].push(section));
+        const groups = RECORD_GROUPS.filter(group => grouped[group.id].length);
+
+        const chipsHtml = `<div class="record-chips">${groups.map(group =>
+            `<button class="record-chip" onclick="scrollToRecordGroup('${group.id}')">${group.icon} ${group.title}</button>`
+        ).join('')}</div>`;
+
+        const groupsHtml = groups.map(group => `
+            <div class="record-group" id="record-group-${group.id}">
+                <h2 class="record-group-title">${group.icon} ${group.title}</h2>
+                ${grouped[group.id].map(section => renderRecordSection(section, currentName)).join('')}
+            </div>`).join('');
+
+        content.innerHTML = summaryHtml + chipsHtml + groupsHtml;
+        content.dataset.loaded = '1';
+    } catch (error) {
+        console.error('Error loading records:', error);
+        content.innerHTML = '<div class="error">Ошибка при загрузке рекордов</div>';
+    }
+}
+
+function scrollToRecordGroup(groupId) {
+    const target = document.getElementById(`record-group-${groupId}`);
+    if (!target) return;
+    const header = document.querySelector('#records-screen .header');
+    const offset = header ? header.offsetHeight + 8 : 0;
+    window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
 }
 
 async function loadGamesLog() {

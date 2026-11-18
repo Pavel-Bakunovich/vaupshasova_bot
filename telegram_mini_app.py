@@ -435,6 +435,117 @@ def get_games_log():
         print(f"Error in get_games_log: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+def _record_number(value):
+    """DB numeric (int/Decimal/float) -> JSON number: 1704.0 -> 1704, 66.67 -> 66.67"""
+    if value is None:
+        return 0
+    number = float(value)
+    return int(number) if number.is_integer() else round(number, 2)
+
+def _record_date(value):
+    return helpers.format_date(value) if value else None
+
+def _record_squad_emoji(squad):
+    if squad == constants.SQUAD_CORN:
+        return constants.SQUAD_CORN_EMOJI
+    if squad == constants.SQUAD_TOMATO:
+        return constants.SQUAD_TOMATO_EMOJI
+    return None
+
+def _record_streak(row, emoji):
+    # name, length, start date, end date
+    return {'type': 'player', 'emoji': emoji, 'name': row[0], 'value': _record_number(row[1]),
+            'unit': None, 'detail': f"{_record_date(row[2])} - {_record_date(row[3])}"}
+
+def _record_per_game(row, emoji='⚽️'):
+    # name, count, game date
+    return {'type': 'player', 'emoji': emoji, 'name': row[0], 'value': _record_number(row[1]),
+            'unit': None, 'detail': _record_date(row[2])}
+
+def _record_total(emoji, unit=None, value_index=1):
+    def build(row):
+        return {'type': 'player', 'emoji': emoji, 'name': row[0],
+                'value': _record_number(row[value_index]), 'unit': unit, 'detail': None}
+    return build
+
+def _record_pair(row):
+    # player 1, player 2, games together, ..., squad
+    return {'type': 'pair', 'emoji': _record_squad_emoji(row[6]) or '🤝', 'names': [row[0], row[1]],
+            'value': _record_number(row[2]), 'unit': 'игр'}
+
+def _record_game(detail_label=None):
+    # game date, corn score, tomato score[, difference / total goals]
+    def build(row):
+        return {'type': 'game', 'emoji': '🔝', 'date': _record_date(row[0]),
+                'score_corn': row[1], 'score_tomato': row[2],
+                'detail': f"{detail_label} {row[3]}" if detail_label else None}
+    return build
+
+# Same sections, order and SQL queries as records_template.txt / command_records.build_records_text()
+RECORD_SECTIONS = [
+    ('Самые длинные победные серии', constants.SQL_WIN_STREAKS, lambda r: _record_streak(r, '🙌')),
+    ('Самые длинные серии поражений', constants.SQL_LOSING_STREAKS, lambda r: _record_streak(r, '🙌')),
+    ('Активные победные серии', constants.SQL_ACTIVE_WIN_STREAKS, lambda r: _record_streak(r, '🙌')),
+    ('Активные серии поражений', constants.SQL_ACTIVE_LOSS_STREAKS, lambda r: _record_streak(r, '🙌')),
+    ('Активные серии сыгранных игр подряд без пропуска', constants.SQL_GAMES_PLAYED_STREAK_ACTIVE, lambda r: _record_streak(r, '🙌')),
+    ('Наибольшее количество голов за одну игру', constants.SQL_TOP_GOALS_PER_GAME, _record_per_game),
+    ('Наибольшее количество голов за всю историю', constants.SQL_TOP_GOALS_ALLTIME, _record_total('⚽️')),
+    ('Наибольшее количество асистов за одну игру', constants.SQL_TOP_ASSISTS_PER_GAME, _record_per_game),
+    ('Наибольшее количество асистов за всю историю', constants.SQL_TOP_ASSISTS_ALLTIME, _record_total('⚽️')),
+    ('Наибольшее количество автоголов за одну игру', constants.SQL_TOP_OWN_GOALS_PER_GAME, _record_per_game),
+    ('Наибольшее количество автоголов за всю историю', constants.SQL_WHO_SCORED_MOST_OWN_GOALS, _record_total('⚽️')),
+    ('Самый высокий процент побед', constants.SQL_WHO_HAS_THE_HIGHER_WIN_RATE, _record_total('🔥', '%', value_index=3)),
+    ('Наибольшее количество денег, которые сдал игрок за всю историю', constants.SQL_WHO_PAID_THE_MOST_MONEY, _record_total('💲', 'р.')),
+    ('Кто сыграл больше всего игр за Кукурузу', constants.SQL_WHO_PLAYED_THE_MOST_GAMES_FOR_CORN, _record_total('🌽')),
+    ('Кто сыграл больше всего игр за Помидоры', constants.SQL_WHO_PLAYED_THE_MOST_GAMES_FOR_TOMATO, _record_total('🍅')),
+    ('Кто сидел на стуле наибольшее количество раз', constants.SQL_WHO_SAT_ON_A_CHAIR_THE_MOST_TIMES, _record_total('🪑')),
+    ('Пары игроков, которые сыграли больше всего игр вместе', constants.SQL_TOP_PLAYER_PAIRS, _record_pair),
+    ('Средние показатели лиги', constants.SQL_AVERAGE_AGE_AND_HEIGHT, None),
+    ('Наибольшее количество сыгранных игр подряд без пропусков', constants.SQL_ATTENDANCE_STREAKS, lambda r: _record_streak(r, '🔁')),
+    ('Топ игр с наиболее разгромным счетом', constants.SQL_MAX_GOAL_DIFFERENCE, _record_game('разница')),
+    ('Топ игр с наибольшим количеством голов', constants.SQL_MAX_TOTAL_GOALS_PER_GAME_BY_TWO_TEAMS, _record_game('всего голов')),
+    ('Топ игр, где Кукурузы забили наибольшее количество голов за игру', constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_CORN, _record_game()),
+    ('Топ игр, где Помидоры забили наибольшее количество голов за игру', constants.SQL_MOST_GOALS_SCORED_PER_GAME_BY_TOMATO, _record_game()),
+]
+
+def _read_records_sql(file_name):
+    with open(os.path.join('SQL Queries', file_name), 'r') as file:
+        return file.read()
+
+def _average_age_and_height_items(rows):
+    if not rows or rows[0][0] is None:
+        return []
+    height, age = rows[0][0], rows[0][1]
+    return [
+        {'type': 'stat', 'emoji': '👢', 'label': 'Средний рост', 'value': f"{height:.2f} см"},
+        {'type': 'stat', 'emoji': '👴', 'label': 'Средний возраст', 'value': f"{age:.2f} лет"},
+    ]
+
+@app.route('/api/records')
+def get_records():
+    """League records: same SQL queries as the /records bot command (command_records.py)"""
+    try:
+        summary = [
+            {'label': 'Общее количество игр, которое мы сыграли',
+             'value': _record_number(database.execute_sql_query_return_one(_read_records_sql(constants.SQL_HOW_MANY_GAMES_WE_PLAYED)))},
+            {'label': 'Общее количество игр, которое было отменено',
+             'value': _record_number(database.execute_sql_query_return_one(_read_records_sql(constants.SQL_HOW_MANY_GAMES_WERE_CANCELLED)))},
+        ]
+
+        sections = []
+        for title, sql_file, build_item in RECORD_SECTIONS:
+            rows = database.execute_sql_query_return_many(_read_records_sql(sql_file))
+            if build_item is None:
+                items = _average_age_and_height_items(rows)
+            else:
+                items = [build_item(row) for row in rows]
+            sections.append({'title': title, 'items': items})
+
+        return jsonify({'success': True, 'summary': summary, 'sections': sections})
+    except Exception as e:
+        print(f"Error in get_records: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/register-player-action', methods=['POST'])
 def register_player_action():
     """Register player action (mock implementation)"""
