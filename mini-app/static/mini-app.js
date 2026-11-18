@@ -474,6 +474,61 @@ function showScreen(screenId) {
         loadGamesLog();
     } else if (screenId === 'records-screen') {
         loadRecords();
+    } else if (screenId === 'seasons-history-screen') {
+        loadSeasonsHistory();
+    }
+}
+
+// ---------- Seasons history screen ----------
+
+function formatSeasonLeader(leader) {
+    if (!leader) return '—';
+    return `${escapeHtml(leader.names)} (${leader.value})`;
+}
+
+async function loadSeasonsHistory() {
+    const content = document.getElementById('seasons-history-content');
+    try {
+        const response = await fetch('/api/seasons-history');
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error || 'Failed to load seasons history');
+
+        document.getElementById('seasons-history-header').textContent = `Всего сезонов: ${data.seasons.length}`;
+
+        if (data.seasons.length === 0) {
+            content.innerHTML = '<div class="loading">Сезонов пока нет</div>';
+            return;
+        }
+
+        let html = `<div class="table-responsive"><table class="stat-table seasons-history-table"><thead><tr>
+            <th>Сезон</th><th class="center-col">Победитель</th><th>Лучший бомбардир</th><th>Лучший ассистент</th><th>Больше всех автоголов</th><th>Больше всех игр</th><th class="center-col">Отменено игр</th>
+        </tr></thead><tbody>`;
+        data.seasons.forEach(season => {
+            const inProgress = season.year === data.current_year;
+            const cornScore = season.corn_wins > season.tomato_wins ? `<b>${season.corn_wins}</b>` : season.corn_wins;
+            const tomatoScore = season.tomato_wins > season.corn_wins ? `<b>${season.tomato_wins}</b>` : season.tomato_wins;
+            const winner = season.winner_emoji || '🤝';
+            const draws = season.draws ? `<div class="season-draws">ничьих: ${season.draws}</div>` : '';
+            const hasResults = season.corn_wins + season.tomato_wins + season.draws > 0;
+            const winnerCell = hasResults ? `
+                    <div class="season-winner">${winner}</div>
+                    <div class="season-score">🌽&nbsp;${cornScore}&nbsp;:&nbsp;${tomatoScore}&nbsp;🍅</div>
+                    ${draws}` : '—<div class="season-draws">нет данных</div>';
+            html += `<tr>
+                <td class="year-col">${season.year}${inProgress ? '<div class="season-draws">идёт</div>' : ''}</td>
+                <td class="center-col winner-col">${winnerCell}</td>
+                <td>${formatSeasonLeader(season.top_scorer)}</td>
+                <td>${formatSeasonLeader(season.top_assistant)}</td>
+                <td>${formatSeasonLeader(season.top_own_goal_scorer)}</td>
+                <td>${formatSeasonLeader(season.top_games_player)}</td>
+                <td class="center-col">${season.cancelled}</td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+        content.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading seasons history:', error);
+        content.innerHTML = '<div class="error">Ошибка при загрузке истории сезонов</div>';
     }
 }
 

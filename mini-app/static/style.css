@@ -892,3 +892,34 @@ body {
     font-size: 13px;
     color: var(--tg-theme-hint-color, #8f9bb3);
 }
+
+/* ---------- Seasons History Screen ---------- */
+.seasons-history-table .center-col {
+    text-align: center;
+}
+
+.seasons-history-table .year-col {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.seasons-history-table .winner-col {
+    white-space: nowrap;
+}
+
+.season-winner {
+    font-size: 22px;
+    line-height: 1.1;
+}
+
+.season-score {
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.season-draws {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--tg-theme-hint-color, #999);
+    margin-top: 2px;
+}

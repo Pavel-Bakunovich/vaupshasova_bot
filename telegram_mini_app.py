@@ -435,6 +435,39 @@ def get_games_log():
         print(f"Error in get_games_log: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/seasons-history')
+def get_seasons_history():
+    """Per-season summary: winner and score, top scorer / assistant / own goal scorer, cancelled games"""
+    try:
+        def leader(names, value):
+            return {'names': names, 'value': int(value)} if names else None
+
+        seasons = []
+        for row in database.get_seasons_history():
+            corn_wins, tomato_wins, draws = int(row[1] or 0), int(row[2] or 0), int(row[3] or 0)
+            if corn_wins > tomato_wins:
+                winner = constants.SQUAD_CORN_EMOJI
+            elif tomato_wins > corn_wins:
+                winner = constants.SQUAD_TOMATO_EMOJI
+            else:
+                winner = None
+            seasons.append({
+                'year': row[0],
+                'corn_wins': corn_wins,
+                'tomato_wins': tomato_wins,
+                'draws': draws,
+                'winner_emoji': winner,
+                'top_scorer': leader(row[4], row[5]),
+                'top_assistant': leader(row[6], row[7]),
+                'top_own_goal_scorer': leader(row[8], row[9]),
+                'cancelled': int(row[10] or 0),
+                'top_games_player': leader(row[11], row[12]),
+            })
+        return jsonify({'success': True, 'seasons': seasons, 'current_year': datetime.now().year})
+    except Exception as e:
+        print(f"Error in get_seasons_history: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 def _record_number(value):
     """DB numeric (int/Decimal/float) -> JSON number: 1704.0 -> 1704, 66.67 -> 66.67"""
     if value is None:

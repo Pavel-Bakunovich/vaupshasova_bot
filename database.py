@@ -408,6 +408,19 @@ FROM
     connection.commit()
     return season_score
 
+def get_seasons_history():
+    """One row per season (year): corn wins, tomato wins, draws, cancelled games,
+    and the leaders (ties joined by ', ') in goals, assists and own goals."""
+    with open(f"SQL Queries/{constants.SQL_SEASONS_HISTORY}", "r") as file:
+        sql_file = file.read()
+    connection_pool = create_connection_pool()
+    connection = connection_pool.getconn()
+    cursor = connection.cursor()
+    cursor.execute(sql_file)
+    seasons = cursor.fetchall()
+    close_connection_pool(connection_pool)
+    return seasons
+
 def get_players_balance():
     connection_pool = create_connection_pool()
     connection = connection_pool.getconn()
