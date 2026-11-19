@@ -10,6 +10,7 @@ if (typeof webApp.disableVerticalSwipes === 'function') {
 
 // Get user data from Telegram (or mock for testing)
 let user = webApp.initDataUnsafe?.user;
+const openedInTelegram = !!(user && user.id);
 if (!user || !user.id) {
     // Mock user for browser testing
     user = { id: 343151297, first_name: 'Паша', last_name: 'Бакунович Тест' };
@@ -27,8 +28,31 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function initializeApp() {
+    logAppOpen();
     await loadPlayerData();
     await loadSquadList();
+}
+
+// Fire-and-forget: tell the server someone opened the app (shows up in Railway logs)
+function logAppOpen() {
+    try {
+        fetch('/api/app-opened', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            keepalive: true,
+            body: JSON.stringify({
+                source: openedInTelegram ? 'telegram' : 'browser',
+                telegram_id: openedInTelegram ? user.id : null,
+                first_name: openedInTelegram ? user.first_name : null,
+                last_name: openedInTelegram ? user.last_name : null,
+                username: openedInTelegram ? user.username : null,
+                platform: webApp.platform,
+                version: webApp.version,
+            }),
+        }).catch(() => {});
+    } catch (e) {
+        // Logging must never break the app
+    }
 }
 
 async function loadPlayerData() {

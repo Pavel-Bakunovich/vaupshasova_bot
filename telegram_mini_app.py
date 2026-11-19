@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import database
 import helpers
 import constants
+from logger import log, log_error
 
 app = Flask(__name__, template_folder='mini-app/templates', static_folder='mini-app/static')
 
@@ -115,6 +116,34 @@ MOCK_STREAKS = {
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/api/app-opened', methods=['POST'])
+def app_opened():
+    """Write a log line every time someone opens the mini-app (visible in Railway logs)"""
+    try:
+        data = request.get_json(silent=True) or {}
+        source = data.get('source') or 'unknown'
+        try:
+            telegram_id = int(data.get('telegram_id')) if data.get('telegram_id') is not None else None
+        except (TypeError, ValueError):
+            telegram_id = None
+        name = ' '.join(filter(None, [data.get('first_name'), data.get('last_name')])) or '-'
+        username = f"@{data['username']}" if data.get('username') else '-'
+        ip = (request.headers.get('X-Forwarded-For') or request.remote_addr or '-').split(',')[0].strip()
+        user_agent = request.headers.get('User-Agent', '-')
+
+        if telegram_id:
+            player = database.find_player(telegram_id)
+            player_label = f"{player[4]} {player[5]}" if player else 'not registered'
+        else:
+            player_label = '-'
+
+        log(f"[MINI-APP OPENED] source={source} telegram_id={telegram_id or '-'} name=\"{name}\" "
+            f"username={username} player=\"{player_label}\" platform={data.get('platform') or '-'} "
+            f"version={data.get('version') or '-'} ip={ip} ua=\"{user_agent}\"")
+    except Exception as e:
+        log_error(f"[MINI-APP OPENED] failed to log app open: {e}")
+    return jsonify({'success': True})
 
 @app.route('/api/player/<int:telegram_id>')
 def get_player(telegram_id):
