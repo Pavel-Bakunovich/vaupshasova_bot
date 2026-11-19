@@ -10,3 +10,4 @@ Pillow
 dropbox
 newsapi-python
 flask
+gunicorn
