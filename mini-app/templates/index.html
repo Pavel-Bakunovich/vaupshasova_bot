@@ -221,6 +221,10 @@
             </div>
         </div>
     </div>
-    
+
+{% if request.host.split(':', 1)[0] in ['vaupshasova-mini-app-production.up.railway.app'] %}
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "9c7d08e0f6f24a58883bd832488e503e"}'></script><!-- End Cloudflare Web Analytics -->
+{% endif %}
+
 </body>
 </html>
