@@ -116,7 +116,11 @@ def alltime_personal_stats(current_player):
     active_loss_streak = database.get_active_loss_streak_by_player(player_id)
     active_no_loss_streak = database.get_active_no_loss_streak_by_player(player_id)
     top_win_streak = database.get_top_win_streak_by_player(player_id)
+    if top_win_streak is None:
+        top_win_streak = (None, "-", None, None)
     top_loss_streak = database.get_top_loss_streak_by_player(player_id)
+    if top_loss_streak is None:
+        top_loss_streak = (None, "-", None, None)
     top_no_loss_streak = database.get_top_no_loss_streak_by_player(player_id)
 
     max_goals_per_game = database.get_max_goals_per_game_by_player(player_id)
